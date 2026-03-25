@@ -1,0 +1,335 @@
+/* Stadiums.css - Premium Redesign */
+
+/* ===================================
+   STADIUMS LIST PAGE HERO
+   =================================== */
+.stadiums-page { min-height: 100vh; }
+
+.stadiums-hero {
+  position: relative;
+  min-height: 380px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-top: 4.5rem;
+}
+
+.stadiums-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to bottom,
+      rgba(7,9,15,0.25) 0%,
+      rgba(7,9,15,0.75) 60%,
+      rgba(7,9,15,1) 100%
+    ),
+    url('https://images.unsplash.com/photo-1563807894768-f28bee0d37b6?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center 30%;
+  z-index: 0;
+}
+
+.stadiums-hero-particles {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,238,255,0.04) 1px, transparent 1px);
+  background-size: 36px 36px;
+  z-index: 0;
+}
+
+.stadiums-hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 3.5rem 1.5rem 5rem;
+}
+
+.stadiums-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,238,255,0.1);
+  border: 1px solid rgba(0,238,255,0.25);
+  color: var(--primary-accent);
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.stadiums-hero-title {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #fff 40%, var(--primary-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stadiums-hero-sub {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 580px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+/* Country Tabs */
+.stadiums-country-tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.stadiums-country-tab {
+  padding: 0.6rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  background: rgba(20,24,36,0.6);
+  backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stadiums-country-tab:hover {
+  border-color: var(--primary-accent);
+  color: var(--text-primary);
+}
+
+.stadiums-country-tab.active {
+  background: rgba(0,238,255,0.1);
+  border-color: var(--primary-accent);
+  color: var(--primary-accent);
+}
+
+/* ===================================
+   STADIUMS BODY
+   =================================== */
+.stadiums-body {
+  padding-top: 2.5rem;
+  padding-bottom: 5rem;
+}
+
+.stadiums-results-count {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.stadiums-results-count strong {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.stadiums-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* ===================================
+   STADIUM DETAIL PAGE
+   =================================== */
+.stadium-detail-page {
+  min-height: 100vh;
+}
+
+.stadium-detail-hero {
+  position: relative;
+  height: 65vh;
+  min-height: 420px;
+  overflow: hidden;
+}
+
+.stadium-detail-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  animation: slow-zoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes slow-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+.stadium-detail-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(7,9,15,1) 0%,
+    rgba(7,9,15,0.7) 40%,
+    rgba(7,9,15,0.2) 100%
+  );
+}
+
+.stadium-detail-hero-content {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  padding: 2.5rem 1.5rem;
+}
+
+.stadium-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.25rem;
+  background: rgba(20,24,36,0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 9999px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.stadium-back-btn:hover {
+  background: rgba(0,238,255,0.1);
+  border-color: var(--primary-accent);
+  color: var(--primary-accent);
+}
+
+.stadium-detail-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.stadium-detail-badge-country,
+.stadium-detail-badge-matches {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.stadium-detail-badge-country {
+  background: rgba(0,238,255,0.12);
+  border: 1px solid rgba(0,238,255,0.25);
+  color: var(--primary-accent);
+}
+
+.stadium-detail-badge-matches {
+  background: rgba(245,158,11,0.12);
+  border: 1px solid rgba(245,158,11,0.3);
+  color: var(--warning-color);
+}
+
+.stadium-detail-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  margin-bottom: 1.5rem;
+}
+
+.stadium-detail-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(20,24,36,0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+}
+
+.sdetail-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.sdetail-stat-icon {
+  color: var(--primary-accent);
+  font-size: 1rem;
+  margin-bottom: 0.15rem;
+}
+
+.sdetail-stat-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.sdetail-stat-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.sdetail-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,0.1);
+}
+
+/* Detail body */
+.stadium-detail-body {
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+}
+
+.stadium-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .stadium-detail-grid { grid-template-columns: 1fr; }
+}
+
+.stadium-detail-sidebar {
+  position: sticky;
+  top: 6rem;
+}
+
+/* Transport list */
+.stadium-transport-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.stadium-transport-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}

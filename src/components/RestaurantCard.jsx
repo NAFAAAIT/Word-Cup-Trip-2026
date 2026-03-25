@@ -1,0 +1,69 @@
+import React, { useState } from 'react';
+import { FaHeart, FaStar, FaMapMarkerAlt, FaUtensils, FaMap } from 'react-icons/fa';
+import './CardComponents.css';
+
+function RestaurantCard({ restaurant }) {
+  const [liked, setLiked] = useState(false);
+
+  return (
+    <div className="rest-card-v2">
+      {/* Image */}
+      <div className="rest-card-v2-img-wrap">
+        <img src={restaurant.image} alt={restaurant.name} className="rest-card-v2-img" />
+        <div className="rest-card-v2-gradient" />
+
+        {/* Like btn */}
+        <button
+          className={`rest-v2-like-btn ${liked ? 'liked' : ''}`}
+          onClick={() => setLiked(!liked)}
+          aria-label="Save restaurant"
+        >
+          <FaHeart />
+        </button>
+
+        {/* Cuisine badge on image */}
+        <div className="rest-card-v2-cuisine-badge">
+          <FaUtensils />
+          {restaurant.cuisine}
+        </div>
+
+        {/* Rating badge */}
+        <div className="rest-card-v2-rating-badge">
+          <FaStar /> {restaurant.rating}
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="rest-card-v2-body">
+        <h3 className="rest-v2-name">{restaurant.name}</h3>
+
+        <div className="rest-v2-meta">
+          <span className="rest-v2-country">{restaurant.country}</span>
+          {restaurant.distance && (
+            <span className="rest-v2-distance">
+              <FaMapMarkerAlt /> {restaurant.distance}
+            </span>
+          )}
+        </div>
+
+        {restaurant.description && (
+          <p className="rest-v2-desc">{restaurant.description}</p>
+        )}
+
+        {restaurant.tags?.length > 0 && (
+          <div className="rest-v2-tags">
+            {restaurant.tags.map((tag, i) => (
+              <span key={i} className="rest-v2-tag">{tag}</span>
+            ))}
+          </div>
+        )}
+
+        <button className="rest-v2-cta">
+          <FaMap /> View on Map
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default RestaurantCard;

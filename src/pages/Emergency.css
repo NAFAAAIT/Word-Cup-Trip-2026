@@ -1,0 +1,239 @@
+/* Emergency.css - Premium Redesign */
+
+/* ===================================
+   HERO
+   =================================== */
+.emergency-page { min-height: 100vh; }
+
+.emergency-hero {
+  position: relative;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-top: 4.5rem;
+}
+
+.emergency-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to bottom, rgba(7,9,15,0.4) 0%, rgba(7,9,15,0.82) 70%, rgba(7,9,15,1) 100%),
+    url('https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.emergency-hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 3rem 1.5rem 4rem;
+}
+
+.emergency-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.4);
+  color: var(--danger-color);
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.pulsing {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+}
+
+.emergency-hero-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, #fff 40%, var(--danger-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.emergency-hero-sub {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* ===================================
+   BODY
+   =================================== */
+.emergency-body {
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+}
+
+/* Priority cards */
+.emrg-priority-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .emrg-priority-grid { grid-template-columns: 1fr; }
+}
+
+.emrg-card {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--e-bg, rgba(59,130,246,0.08));
+  border: 1px solid var(--e-border, rgba(59,130,246,0.25));
+  border-radius: 1.25rem;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.emrg-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+
+.emrg-card-icon-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  background: var(--e-bg);
+  border-right: 1px solid var(--e-border, var(--border-color));
+  padding: 1.5rem 0.75rem;
+  flex-shrink: 0;
+}
+
+.emrg-icon {
+  font-size: 1.75rem;
+  color: var(--e-color, var(--primary-accent));
+  filter: drop-shadow(0 0 8px var(--e-color, transparent));
+}
+
+.emrg-card-body {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.emrg-card-label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--e-color, var(--text-muted));
+}
+
+.emrg-card-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.emrg-call-btn {
+  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: var(--e-bg);
+  border: 1px solid var(--e-border);
+  color: var(--e-color, var(--primary-accent));
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.emrg-call-btn:hover {
+  background: var(--e-color);
+  color: #07090f;
+}
+
+/* Main grid */
+.emrg-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .emrg-main-grid { grid-template-columns: 1fr; }
+}
+
+/* SOS button */
+.emrg-sos-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05));
+  border: 1px solid rgba(239,68,68,0.4);
+  color: var(--danger-color);
+  border-radius: 0.75rem;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-align: center;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+/* Hospital row */
+.emrg-hospital-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.emrg-hospital-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.emrg-btn-sm {
+  font-size: 0.75rem !important;
+  padding: 0.4rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Legend */
+.emrg-map-legend {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.emrg-legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.35rem;
+}
