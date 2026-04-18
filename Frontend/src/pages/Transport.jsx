@@ -1,0 +1,318 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import TransportMap from '../components/TransportMap';
+import {
+  FaSubway,
+  FaBus,
+  FaTaxi,
+  FaTrain,
+  FaMapMarkerAlt,
+  FaClock,
+  FaMoneyBillAlt,
+  FaSyncAlt,
+  FaSearch,
+  FaUndoAlt,
+} from 'react-icons/fa';
+import { mockTransports } from '../data/mockData';
+import './Transport.css';
+
+const typeIcon = {
+  Subway: FaSubway,
+  Bus: FaBus,
+  Taxi: FaTaxi,
+  Train: FaTrain,
+};
+
+const DEFAULT_FILTERS = {
+  activeType: 'All',
+  sortBy: 'fastest',
+  statusFilter: 'All',
+  durationMax: 60,
+  costMax: 40,
+  searchText: '',
+};
+
+function TransportCard({ option, isSelected, onSelect }) {
+  const Icon = typeIcon[option.type] || FaBus;
+
+  return (
+    <button
+      type="button"
+      className={`transport-card-v2 ${isSelected ? 'selected' : ''}`}
+      onClick={() => onSelect(option.id)}
+      aria-pressed={isSelected}
+    >
+      <div className="transport-card-icon-col" style={{ '--t-color': option.color }}>
+        <Icon className="transport-icon-v2" />
+        <span className="transport-type-label">{option.type}</span>
+      </div>
+      <div className="transport-card-body-v2">
+        <div className="transport-card-header-v2">
+          <h3 className="transport-name-v2">{option.lineName}</h3>
+          <span className={`transport-status-badge ${option.statusOk ? 'ok' : 'warn'}`}>
+            <FaSyncAlt /> {option.status}
+          </span>
+        </div>
+        <p className="transport-route-v2">
+          <FaMapMarkerAlt /> {option.from} to {option.to}
+        </p>
+        <div className="transport-meta-v2">
+          <span><FaClock /> {option.durationMin} mins</span>
+          <span><FaMoneyBillAlt /> {option.costLabel}</span>
+          <span className="transport-freq-v2">{option.frequencyLabel}</span>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function Transport() {
+  const [searchParams] = useSearchParams();
+  const cities = useMemo(() => [...new Set(mockTransports.map((route) => route.city))], []);
+
+  const [activeCity, setActiveCity] = useState(cities[0] || 'New York/NJ');
+  const [activeType, setActiveType] = useState(DEFAULT_FILTERS.activeType);
+  const [sortBy, setSortBy] = useState(DEFAULT_FILTERS.sortBy);
+  const [statusFilter, setStatusFilter] = useState(DEFAULT_FILTERS.statusFilter);
+  const [durationMax, setDurationMax] = useState(DEFAULT_FILTERS.durationMax);
+  const [costMax, setCostMax] = useState(DEFAULT_FILTERS.costMax);
+  const [searchText, setSearchText] = useState(DEFAULT_FILTERS.searchText);
+  const [selectedRouteId, setSelectedRouteId] = useState(null);
+  const [fromMatchLabel, setFromMatchLabel] = useState('');
+
+  const routeTypes = useMemo(() => ['All', ...new Set(mockTransports.map((route) => route.type))], []);
+
+  useEffect(() => {
+    const city = searchParams.get('city');
+    const stadium = searchParams.get('stadium');
+    const kickoff = searchParams.get('kickoff');
+
+    if (city && cities.includes(city)) {
+      setActiveCity(city);
+    }
+
+    if (stadium) {
+      setSearchText(stadium);
+      setFromMatchLabel(`${stadium}${kickoff ? ` - ${kickoff}` : ''}`);
+    }
+  }, [cities, searchParams]);
+
+  const filteredRoutes = useMemo(() => {
+    const loweredSearch = searchText.trim().toLowerCase();
+
+    const list = mockTransports.filter((route) => {
+      const matchesCity = route.city === activeCity;
+      const matchesType = activeType === 'All' || route.type === activeType;
+      const matchesStatus = statusFilter === 'All' || route.status === statusFilter;
+      const matchesDuration = route.durationMin <= durationMax;
+      const matchesCost = route.costUsd <= costMax;
+      const matchesSearch =
+        !loweredSearch ||
+        route.lineName.toLowerCase().includes(loweredSearch) ||
+        route.from.toLowerCase().includes(loweredSearch) ||
+        route.to.toLowerCase().includes(loweredSearch) ||
+        route.stadium.toLowerCase().includes(loweredSearch);
+
+      return matchesCity && matchesType && matchesStatus && matchesDuration && matchesCost && matchesSearch;
+    });
+
+    const sorted = [...list];
+    sorted.sort((a, b) => {
+      if (sortBy === 'cheapest') {
+        return a.costUsd - b.costUsd;
+      }
+
+      if (sortBy === 'frequent') {
+        const af = a.frequencyMin ?? Number.POSITIVE_INFINITY;
+        const bf = b.frequencyMin ?? Number.POSITIVE_INFINITY;
+        return af - bf;
+      }
+
+      return a.durationMin - b.durationMin;
+    });
+
+    return sorted;
+  }, [activeCity, activeType, costMax, durationMax, searchText, sortBy, statusFilter]);
+
+  useEffect(() => {
+    if (!filteredRoutes.length) {
+      setSelectedRouteId(null);
+      return;
+    }
+
+    const selectedStillExists = filteredRoutes.some((route) => route.id === selectedRouteId);
+    if (!selectedStillExists) {
+      setSelectedRouteId(filteredRoutes[0].id);
+    }
+  }, [filteredRoutes, selectedRouteId]);
+
+  const resetFilters = () => {
+    setActiveType(DEFAULT_FILTERS.activeType);
+    setSortBy(DEFAULT_FILTERS.sortBy);
+    setStatusFilter(DEFAULT_FILTERS.statusFilter);
+    setDurationMax(DEFAULT_FILTERS.durationMax);
+    setCostMax(DEFAULT_FILTERS.costMax);
+    setSearchText(DEFAULT_FILTERS.searchText);
+  };
+
+  return (
+    <div className="transport-page">
+      <div className="transport-hero">
+        <div className="transport-hero-overlay" />
+        <div className="container transport-hero-content">
+          <div className="transport-hero-badge">
+            <FaBus /> Fan Transit Guide
+          </div>
+          <h1 className="transport-hero-title">Getting Around</h1>
+          <p className="transport-hero-sub">Navigate host cities with real-time transit options straight to the stadiums</p>
+
+          {fromMatchLabel && (
+            <div className="transport-match-banner" role="status">
+              Planning route from match context: {fromMatchLabel}
+            </div>
+          )}
+
+          <label className="transport-search-wrap" htmlFor="transport-search">
+            <FaSearch />
+            <input
+              id="transport-search"
+              type="text"
+              value={searchText}
+              onChange={(event) => setSearchText(event.target.value)}
+              placeholder="Search by line, stadium, start, or destination"
+            />
+          </label>
+
+          <div className="transport-city-tabs">
+            {cities.map(c => (
+              <button
+                key={c}
+                className={`transport-city-tab ${activeCity === c ? 'active' : ''}`}
+                onClick={() => setActiveCity(c)}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="container transport-body">
+        <div className="transport-controls glass-panel">
+          <div className="transport-type-tabs" role="tablist" aria-label="Transport type filter">
+            {routeTypes.map((type) => (
+              <button
+                type="button"
+                key={type}
+                className={`transport-type-tab ${activeType === type ? 'active' : ''}`}
+                onClick={() => setActiveType(type)}
+                role="tab"
+                aria-selected={activeType === type}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+
+          <div className="transport-filter-grid">
+            <label>
+              Sort
+              <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+                <option value="fastest">Fastest</option>
+                <option value="cheapest">Cheapest</option>
+                <option value="frequent">Most Frequent</option>
+              </select>
+            </label>
+
+            <label>
+              Status
+              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+                <option value="All">All</option>
+                <option value="On Time">On Time</option>
+                <option value="Frequent">Frequent</option>
+                <option value="High Demand">High Demand</option>
+              </select>
+            </label>
+
+            <label>
+              Max Duration ({durationMax} mins)
+              <input
+                type="range"
+                min="10"
+                max="60"
+                step="5"
+                value={durationMax}
+                onChange={(event) => setDurationMax(Number(event.target.value))}
+              />
+            </label>
+
+            <label>
+              Max Cost (${costMax})
+              <input
+                type="range"
+                min="0"
+                max="40"
+                step="1"
+                value={costMax}
+                onChange={(event) => setCostMax(Number(event.target.value))}
+              />
+            </label>
+
+            <button type="button" className="btn btn-secondary transport-reset-btn" onClick={resetFilters}>
+              <FaUndoAlt /> Reset Filters
+            </button>
+          </div>
+        </div>
+
+        <div className="transport-results-bar">
+          Showing <strong>{filteredRoutes.length}</strong> of{' '}
+          <strong>{mockTransports.filter((route) => route.city === activeCity).length}</strong> routes in {activeCity}
+        </div>
+
+        <div className="transport-layout">
+          <div>
+            <h2 className="section-title mb-6">🚌 Recommended Routes — {activeCity}</h2>
+
+            {!filteredRoutes.length ? (
+              <div className="transport-empty-state">
+                <h3>No routes found</h3>
+                <p>Try broader filters or reset to view all routes for this city.</p>
+                <button type="button" className="btn btn-secondary" onClick={resetFilters}>
+                  <FaUndoAlt /> Reset Filters
+                </button>
+              </div>
+            ) : (
+              <div className="transport-cards-list">
+                {filteredRoutes.map((opt) => (
+                  <TransportCard
+                    key={opt.id}
+                    option={opt}
+                    isSelected={opt.id === selectedRouteId}
+                    onSelect={setSelectedRouteId}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h2 className="section-title mb-6">🗺️ Live Transit Map</h2>
+            <TransportMap
+              routes={filteredRoutes}
+              selectedRouteId={selectedRouteId}
+              onSelectRoute={setSelectedRouteId}
+            />
+            <div className="transport-map-legend">
+              <span className="legend-dot" style={{ background: '#00eeff' }} /> Subway
+              <span className="legend-dot" style={{ background: '#f59e0b' }} /> Bus
+              <span className="legend-dot" style={{ background: '#ef4444' }} /> Taxi Zone
+              <span className="legend-dot" style={{ background: '#10b981' }} /> Train
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Transport;

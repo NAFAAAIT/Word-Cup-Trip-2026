@@ -1,13 +1,55 @@
-import React, { useState } from 'react';
-import MapPlaceholder from '../components/MapPlaceholder';
+import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import StadiumLocationMap from '../components/StadiumLocationMap';
 import HotelCard from '../components/HotelCard';
 import RestaurantCard from '../components/RestaurantCard';
-import { mockStadiums, mockHotels, mockRestaurants } from '../data/mockData';
+import { mockMatches, mockStadiums, mockHotels, mockRestaurants } from '../data/mockData';
 import StadiumCard from '../components/StadiumCard';
-import { FaArrowLeft, FaUsers, FaFutbol, FaMapMarkerAlt, FaBus, FaParking, FaSubway } from 'react-icons/fa';
+import { FaArrowLeft, FaUsers, FaFutbol, FaMapMarkerAlt, FaBus, FaParking, FaSubway, FaRoute, FaCalendarAlt } from 'react-icons/fa';
 import './Stadiums.css';
 
 function StadiumDetailView({ stadium, onBack }) {
+  const navigate = useNavigate();
+
+  const relatedMatches = useMemo(
+    () => mockMatches.filter((match) => match.stadium === stadium.name),
+    [stadium.name]
+  );
+
+  const transportCity = relatedMatches[0]?.city || stadium.city;
+
+  const nearbyHotels = useMemo(() => {
+    const cityToken = (transportCity || '').split('/')[0].trim().toLowerCase();
+    const scoped = mockHotels.filter((hotel) =>
+      (hotel.city || '').toLowerCase().includes(cityToken)
+    );
+
+    return (scoped.length ? scoped : mockHotels).slice(0, 2);
+  }, [transportCity]);
+
+  const nearbyRestaurants = useMemo(() => {
+    const scoped = mockRestaurants.filter((restaurant) => restaurant.country === stadium.country);
+    return (scoped.length ? scoped : mockRestaurants).slice(0, 2);
+  }, [stadium.country]);
+
+  const openTransport = () => {
+    const params = new URLSearchParams({
+      city: transportCity,
+      stadium: stadium.name,
+    });
+
+    navigate(`/transport?${params.toString()}`);
+  };
+
+  const openMatches = () => {
+    const params = new URLSearchParams({
+      stadium: stadium.name,
+      city: transportCity,
+    });
+
+    navigate(`/matches?${params.toString()}`);
+  };
+
   return (
     <div className="stadium-detail-page fade-in">
       {/* Full-bleed hero */}
@@ -40,6 +82,15 @@ function StadiumDetailView({ stadium, onBack }) {
               <span className="sdetail-stat-label">Matches</span>
             </div>
           </div>
+
+          <div className="stadium-detail-cta-row">
+            <button className="btn btn-primary stadium-detail-cta" onClick={openTransport}>
+              <FaRoute /> Plan Transport
+            </button>
+            <button className="btn btn-secondary stadium-detail-cta" onClick={openMatches}>
+              <FaCalendarAlt /> View Stadium Matches
+            </button>
+          </div>
         </div>
       </div>
 
@@ -55,14 +106,14 @@ function StadiumDetailView({ stadium, onBack }) {
             <section className="mb-8">
               <h2 className="section-title">🏨 Nearby Hotels</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {mockHotels.slice(0, 2).map(h => <HotelCard key={h.id} hotel={h} />)}
+                {nearbyHotels.map(h => <HotelCard key={h.id} hotel={h} />)}
               </div>
             </section>
 
             <section>
               <h2 className="section-title">🍽️ Nearby Dining</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {mockRestaurants.slice(0, 2).map(r => <RestaurantCard key={r.id} restaurant={r} />)}
+                {nearbyRestaurants.map(r => <RestaurantCard key={r.id} restaurant={r} />)}
               </div>
             </section>
           </div>
@@ -73,7 +124,7 @@ function StadiumDetailView({ stadium, onBack }) {
               <h3 className="font-bold mb-4 flex items-center gap-2">
                 <FaMapMarkerAlt className="text-primary-accent" /> Stadium Location
               </h3>
-              <MapPlaceholder height="280px" title={stadium.name} />
+              <StadiumLocationMap stadiumName={stadium.name} city={`${stadium.city}, ${stadium.country}`} />
             </div>
             <div className="card p-6">
               <h3 className="font-bold mb-4 flex items-center gap-2">

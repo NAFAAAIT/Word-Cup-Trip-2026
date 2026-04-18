@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import Home from './pages/Home';
@@ -10,13 +11,14 @@ import Restaurants from './pages/Restaurants';
 import Stadiums from './pages/Stadiums';
 import Transport from './pages/Transport';
 import Emergency from './pages/Emergency';
-import MyTrip from './pages/MyTrip';
+import Matches from './pages/Matches';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Navbar />
       <div className="page-container">
         <Routes>
@@ -26,7 +28,7 @@ function App() {
           <Route path="/stadiums" element={<Stadiums />} />
           <Route path="/transport" element={<Transport />} />
           <Route path="/emergency" element={<Emergency />} />
-          <Route path="/trip" element={<MyTrip />} />
+          <Route path="/matches" element={<Matches />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
         </Routes>

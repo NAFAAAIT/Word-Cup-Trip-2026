@@ -51,8 +51,8 @@ function Home() {
               <Link to="/stadiums" className="btn btn-primary">
                 <FaGlobeAmericas /> Explore Stadiums
               </Link>
-              <Link to="/trip" className="btn btn-secondary">
-                Plan My Trip <FaArrowRight />
+              <Link to="/matches" className="btn btn-secondary">
+                View Matches <FaArrowRight />
               </Link>
             </div>
           </div>
@@ -154,10 +154,10 @@ function Home() {
         <div className="home-cta-overlay" />
         <div className="container home-cta-inner">
           <div className="home-cta-badge">Limited Spots Available</div>
-          <h2 className="home-cta-title">Ready to Plan Your World Cup Trip?</h2>
-          <p className="home-cta-sub">Save hotels, restaurants, and stadiums all in one place.</p>
-          <Link to="/trip" className="btn btn-primary home-cta-btn">
-            Start Planning <FaArrowRight />
+          <h2 className="home-cta-title">Don't Miss the Action</h2>
+          <p className="home-cta-sub">Check out the full match schedule and plan your stadium visits.</p>
+          <Link to="/matches" className="btn btn-primary home-cta-btn">
+            Explore Matches <FaArrowRight />
           </Link>
         </div>
       </section>

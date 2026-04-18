@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { FaHeart, FaStar, FaWifi, FaDumbbell, FaSwimmingPool, FaCoffee, FaParking, FaBus, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
+import React from 'react';
+import { FaStar, FaWifi, FaDumbbell, FaSwimmingPool, FaCoffee, FaParking, FaBus, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
 import './CardComponents.css';
 
 function HotelCard({ hotel }) {
-  const [liked, setLiked] = useState(false);
 
   const getAmenityIcon = (amenity) => {
     if (!amenity) return null;
@@ -40,14 +39,6 @@ function HotelCard({ hotel }) {
           )}
         </div>
 
-        {/* Like button */}
-        <button
-          className={`hotel-v2-like-btn ${liked ? 'liked' : ''}`}
-          onClick={() => setLiked(!liked)}
-          aria-label="Save hotel"
-        >
-          <FaHeart />
-        </button>
 
         {/* Price on image */}
         <div className="hotel-card-v2-price-overlay">

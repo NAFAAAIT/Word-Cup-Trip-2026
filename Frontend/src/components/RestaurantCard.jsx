@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { FaHeart, FaStar, FaMapMarkerAlt, FaUtensils, FaMap } from 'react-icons/fa';
+import React from 'react';
+import { FaStar, FaMapMarkerAlt, FaUtensils, FaMap } from 'react-icons/fa';
 import './CardComponents.css';
 
 function RestaurantCard({ restaurant }) {
-  const [liked, setLiked] = useState(false);
 
   return (
     <div className="rest-card-v2">
@@ -12,14 +11,6 @@ function RestaurantCard({ restaurant }) {
         <img src={restaurant.image} alt={restaurant.name} className="rest-card-v2-img" />
         <div className="rest-card-v2-gradient" />
 
-        {/* Like btn */}
-        <button
-          className={`rest-v2-like-btn ${liked ? 'liked' : ''}`}
-          onClick={() => setLiked(!liked)}
-          aria-label="Save restaurant"
-        >
-          <FaHeart />
-        </button>
 
         {/* Cuisine badge on image */}
         <div className="rest-card-v2-cuisine-badge">

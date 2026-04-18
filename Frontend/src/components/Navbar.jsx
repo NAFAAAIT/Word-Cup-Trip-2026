@@ -31,7 +31,7 @@ function Navbar() {
           <Link to="/stadiums" className={`nav-link ${isActive('/stadiums')}`}>Stadiums</Link>
           <Link to="/transport" className={`nav-link ${isActive('/transport')}`}>Transport</Link>
           <Link to="/emergency" className={`nav-link ${isActive('/emergency')}`}>Emergency</Link>
-          <Link to="/trip" className={`nav-link ${isActive('/trip')} text-gradient`}>My Trip</Link>
+          <Link to="/matches" className={`nav-link ${isActive('/matches')}`}>Matches</Link>
         </div>
 
         {/* User Actions */}
@@ -60,7 +60,7 @@ function Navbar() {
           <Link to="/stadiums" className="mobile-link" onClick={toggleMenu}>Stadiums</Link>
           <Link to="/transport" className="mobile-link" onClick={toggleMenu}>Transport</Link>
           <Link to="/emergency" className="mobile-link" onClick={toggleMenu}>Emergency</Link>
-          <Link to="/trip" className="mobile-link" onClick={toggleMenu}>My Trip</Link>
+          <Link to="/matches" className="mobile-link" onClick={toggleMenu}>Matches</Link>
           <div className="mobile-divider"></div>
           <Link to="/login" className="mobile-link" onClick={toggleMenu}>Login</Link>
           <Link to="/signup" className="mobile-link" onClick={toggleMenu}>Sign Up</Link>

@@ -3,7 +3,9 @@
 /* ===================================
    HERO
    =================================== */
-.transport-page { min-height: 100vh; }
+.transport-page {
+  min-height: 100vh;
+}
 
 .transport-hero {
   position: relative;
@@ -18,7 +20,7 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to bottom, rgba(7,9,15,0.3) 0%, rgba(7,9,15,0.75) 65%, rgba(7,9,15,1) 100%),
+    linear-gradient(to bottom, rgba(7, 9, 15, 0.3) 0%, rgba(7, 9, 15, 0.75) 65%, rgba(7, 9, 15, 1) 100%),
     url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1920&q=80');
   background-size: cover;
   background-position: center;
@@ -36,8 +38,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(16,185,129,0.15);
-  border: 1px solid rgba(16,185,129,0.35);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
   color: var(--success-color);
   padding: 0.4rem 1rem;
   border-radius: 9999px;
@@ -66,6 +68,41 @@
   margin-bottom: 2rem;
 }
 
+.transport-match-banner {
+  margin: 0 auto 1rem;
+  width: fit-content;
+  max-width: 90%;
+  padding: 0.45rem 0.8rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 238, 255, 0.35);
+  background: rgba(0, 238, 255, 0.08);
+  color: var(--primary-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.transport-search-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: min(760px, 100%);
+  margin: 0 auto 1.2rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: rgba(20, 24, 36, 0.75);
+  color: var(--text-muted);
+}
+
+.transport-search-wrap input {
+  width: 100%;
+  background: transparent;
+  color: var(--text-primary);
+  border: 0;
+  outline: 0;
+  font-size: 0.9rem;
+}
+
 /* City Tabs */
 .transport-city-tabs {
   display: flex;
@@ -78,7 +115,7 @@
   padding: 0.55rem 1.1rem;
   border-radius: 9999px;
   border: 1px solid var(--border-color);
-  background: rgba(20,24,36,0.6);
+  background: rgba(20, 24, 36, 0.6);
   backdrop-filter: blur(8px);
   color: var(--text-secondary);
   font-size: 0.85rem;
@@ -93,7 +130,7 @@
 }
 
 .transport-city-tab.active {
-  background: rgba(16,185,129,0.1);
+  background: rgba(16, 185, 129, 0.1);
   border-color: var(--success-color);
   color: var(--success-color);
   font-weight: 800;
@@ -107,6 +144,78 @@
   padding-bottom: 5rem;
 }
 
+.transport-controls {
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.transport-type-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.transport-type-tab {
+  padding: 0.45rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.transport-type-tab.active {
+  border-color: var(--primary-accent);
+  color: var(--primary-accent);
+  background: rgba(0, 238, 255, 0.08);
+}
+
+.transport-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.transport-filter-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.transport-filter-grid select,
+.transport-filter-grid input[type='range'] {
+  width: 100%;
+}
+
+.transport-filter-grid select {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  padding: 0.5rem 0.6rem;
+}
+
+.transport-reset-btn {
+  align-self: end;
+  height: 2.2rem;
+}
+
+.transport-results-bar {
+  margin-bottom: 1.2rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.transport-results-bar strong {
+  color: var(--text-primary);
+}
+
 .transport-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -115,7 +224,9 @@
 }
 
 @media (max-width: 900px) {
-  .transport-layout { grid-template-columns: 1fr; }
+  .transport-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Cards list */
@@ -131,6 +242,8 @@
 .transport-card-v2 {
   display: flex;
   gap: 0;
+  width: 100%;
+  text-align: left;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 1.25rem;
@@ -138,9 +251,14 @@
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
+.transport-card-v2.selected {
+  border-color: var(--primary-accent);
+  box-shadow: 0 8px 24px rgba(0, 238, 255, 0.18);
+}
+
 .transport-card-v2:hover {
   transform: translateX(6px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border-color: var(--t-color, var(--border-color));
 }
 
@@ -152,7 +270,7 @@
   gap: 0.4rem;
   width: 90px;
   flex-shrink: 0;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   border-right: 1px solid var(--border-color);
   padding: 1.25rem 0.75rem;
 }
@@ -208,14 +326,14 @@
 }
 
 .transport-status-badge.ok {
-  background: rgba(16,185,129,0.1);
-  border: 1px solid rgba(16,185,129,0.25);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   color: var(--success-color);
 }
 
 .transport-status-badge.warn {
-  background: rgba(239,68,68,0.1);
-  border: 1px solid rgba(239,68,68,0.25);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
   color: var(--danger-color);
 }
 
@@ -262,4 +380,58 @@
   border-radius: 50%;
   margin-right: 0.35rem;
   flex-shrink: 0;
+}
+
+.transport-map-shell {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.transport-leaflet-map {
+  width: 100%;
+  height: 480px;
+}
+
+.transport-map-fallback {
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-secondary);
+}
+
+.transport-empty-state {
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 1rem;
+}
+
+@media (max-width: 1150px) {
+  .transport-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .transport-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .transport-leaflet-map,
+  .transport-map-fallback {
+    height: 360px;
+  }
 }

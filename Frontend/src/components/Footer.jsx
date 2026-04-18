@@ -14,9 +14,9 @@ function Footer() {
           </div>
           <p className="footer-desc">Your ultimate travel companion for the FIFA World Cup 2026 across USA, Canada, and Mexico.</p>
           <div className="social-links">
-            <a href="#" className="social-icon"><FaTwitter /></a>
-            <a href="#" className="social-icon"><FaInstagram /></a>
-            <a href="#" className="social-icon"><FaFacebook /></a>
+            <a href="https://twitter.com/" className="social-icon"><FaTwitter /></a>
+            <a href="https://www.instagram.com/" className="social-icon"><FaInstagram /></a>
+            <a href="https://www.facebook.com/" className="social-icon"><FaFacebook /></a>
           </div>
         </div>
 
@@ -28,9 +28,9 @@ function Footer() {
             <Link to="/stadiums">Stadiums</Link>
           </div>
           <div className="link-group">
-            <h4>Plan Trip</h4>
+            <h4>Plan</h4>
             <Link to="/transport">Transport</Link>
-            <Link to="/trip">My Trip</Link>
+            <Link to="/matches">Matches</Link>
             <Link to="/emergency">Emergency Info</Link>
           </div>
           <div className="link-group">
