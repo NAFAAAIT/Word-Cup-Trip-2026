@@ -35,16 +35,19 @@ function Emergency() {
   return (
     <div className="emergency-page">
       {/* Hero */}
-      <div className="emergency-hero">
-        <div className="emergency-hero-overlay" />
-        <div className="container emergency-hero-content">
-          <div className="emergency-hero-badge pulsing">
+      <section className="page-hero">
+        <div className="page-hero-bg">
+          <img src="https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1920&q=80" alt="Safety" />
+        </div>
+        <div className="page-hero-overlay" />
+        <div className="container page-hero-content">
+          <div className="page-hero-badge pulsing">
             ⚠️ Emergency Assistance
           </div>
-          <h1 className="emergency-hero-title">Help & Safety</h1>
-          <p className="emergency-hero-sub">Quick access to emergency services and safe zones across all host cities</p>
+          <h1 className="page-hero-title">Help & <span className="text-gradient">Safety</span></h1>
+          <p className="page-hero-desc">Quick access to emergency services and safe zones across all host cities</p>
         </div>
-      </div>
+      </section>
 
       {/* Priority cards */}
       <div className="container emergency-body">

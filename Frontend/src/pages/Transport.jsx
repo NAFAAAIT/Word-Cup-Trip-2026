@@ -157,22 +157,25 @@ function Transport() {
 
   return (
     <div className="transport-page">
-      <div className="transport-hero">
-        <div className="transport-hero-overlay" />
-        <div className="container transport-hero-content">
-          <div className="transport-hero-badge">
+      <section className="page-hero">
+        <div className="page-hero-bg">
+          <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1920&q=80" alt="Transit" />
+        </div>
+        <div className="page-hero-overlay" />
+        <div className="container page-hero-content">
+          <div className="page-hero-badge">
             <FaBus /> Fan Transit Guide
           </div>
-          <h1 className="transport-hero-title">Getting Around</h1>
-          <p className="transport-hero-sub">Navigate host cities with real-time transit options straight to the stadiums</p>
+          <h1 className="page-hero-title">Getting <span className="text-gradient">Around</span></h1>
+          <p className="page-hero-desc">Navigate host cities with real-time transit options straight to the stadiums</p>
 
           {fromMatchLabel && (
-            <div className="transport-match-banner" role="status">
+            <div className="transport-match-banner mt-6" role="status">
               Planning route from match context: {fromMatchLabel}
             </div>
           )}
 
-          <label className="transport-search-wrap" htmlFor="transport-search">
+          <label className="transport-search-wrap mt-8" htmlFor="transport-search">
             <FaSearch />
             <input
               id="transport-search"
@@ -183,7 +186,7 @@ function Transport() {
             />
           </label>
 
-          <div className="transport-city-tabs">
+          <div className="transport-city-tabs mt-6">
             {cities.map(c => (
               <button
                 key={c}
@@ -195,7 +198,7 @@ function Transport() {
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="container transport-body">
         <div className="transport-controls glass-panel">

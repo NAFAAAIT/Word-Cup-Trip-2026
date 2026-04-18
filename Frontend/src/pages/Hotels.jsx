@@ -31,17 +31,20 @@ function Hotels() {
   return (
     <div className="hotels-page">
       {/* Page Hero Banner */}
-      <div className="hotels-hero">
-        <div className="hotels-hero-overlay" />
-        <div className="container hotels-hero-content">
-          <div className="hotels-hero-badge">
+      <section className="page-hero">
+        <div className="page-hero-bg">
+          <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80" alt="Hotels" />
+        </div>
+        <div className="page-hero-overlay" />
+        <div className="container page-hero-content">
+          <div className="page-hero-badge">
             <FaMapMarkerAlt /> USA · Canada · Mexico
           </div>
-          <h1 className="hotels-hero-title">Find Your Perfect Stay</h1>
-          <p className="hotels-hero-sub">Curated accommodations steps away from every World Cup venue</p>
+          <h1 className="page-hero-title">Find Your <span className="text-gradient">Perfect Stay</span></h1>
+          <p className="page-hero-desc">Curated accommodations steps away from every World Cup venue</p>
 
           {/* Search bar inside hero */}
-          <div className="hotels-hero-search">
+          <div className="hotels-hero-search mt-8">
             <FaSearch className="hotels-search-icon" />
             <input
               type="text"
@@ -57,7 +60,7 @@ function Hotels() {
             )}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main content */}
       <div className="container hotels-body">

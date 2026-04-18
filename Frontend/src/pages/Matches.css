@@ -3,28 +3,8 @@
   padding-bottom: 4rem;
 }
 
-.matches-hero {
-  padding: 6rem 0 4rem;
-  background: radial-gradient(circle at top right, rgba(0, 238, 255, 0.05), transparent 40%),
-    radial-gradient(circle at bottom left, rgba(13, 89, 242, 0.05), transparent 40%);
-  text-align: center;
-}
-
-.hero-title {
-  font-size: 3.5rem;
-  margin: 1rem 0;
-  letter-spacing: -0.02em;
-}
-
-.hero-desc {
-  color: var(--text-secondary);
-  font-size: 1.25rem;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
 .matches-filters {
-  margin-top: -2rem;
+  margin-top: -3rem;
   margin-bottom: 3rem;
   position: relative;
   z-index: 10;

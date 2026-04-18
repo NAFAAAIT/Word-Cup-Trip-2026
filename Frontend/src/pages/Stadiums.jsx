@@ -171,19 +171,21 @@ function Stadiums() {
   return (
     <div className="stadiums-page">
       {/* Hero */}
-      <div className="stadiums-hero">
-        <div className="stadiums-hero-overlay" />
-        <div className="stadiums-hero-particles" />
-        <div className="container stadiums-hero-content">
-          <div className="stadiums-hero-badge">
+      <section className="page-hero">
+        <div className="page-hero-bg">
+          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1920&q=80" alt="Stadium" />
+        </div>
+        <div className="page-hero-overlay" />
+        <div className="container page-hero-content">
+          <div className="page-hero-badge">
             <FaFutbol /> FIFA World Cup 2026™ — Venues
           </div>
-          <h1 className="stadiums-hero-title">The Arenas</h1>
-          <p className="stadiums-hero-sub">
+          <h1 className="page-hero-title">The <span className="text-gradient">Arenas</span></h1>
+          <p className="page-hero-desc">
             Discover the iconic venues across North America where football history will be written in 2026
           </p>
           {/* Country filter */}
-          <div className="stadiums-country-tabs">
+          <div className="stadiums-country-tabs mt-8">
             {countries.map(c => (
               <button
                 key={c}
@@ -195,7 +197,7 @@ function Stadiums() {
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Stadium cards */}
       <div className="container stadiums-body">

@@ -7,65 +7,15 @@
   min-height: 100vh;
 }
 
-.transport-hero {
-  position: relative;
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  padding-top: 4.5rem;
+/* ===================================
+   BODY CONTENT UTILS
+   =================================== */
+.mt-6 {
+  margin-top: 1.5rem;
 }
 
-.transport-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to bottom, rgba(7, 9, 15, 0.3) 0%, rgba(7, 9, 15, 0.75) 65%, rgba(7, 9, 15, 1) 100%),
-    url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1920&q=80');
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
-}
-
-.transport-hero-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 3rem 1.5rem 4rem;
-}
-
-.transport-hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  color: var(--success-color);
-  padding: 0.4rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 1.25rem;
-}
-
-.transport-hero-title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  margin-bottom: 0.75rem;
-  background: linear-gradient(135deg, #fff 40%, var(--success-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.transport-hero-sub {
-  color: var(--text-secondary);
-  font-size: 1rem;
-  margin-bottom: 2rem;
+.mt-8 {
+  margin-top: 2rem;
 }
 
 .transport-match-banner {

@@ -26,17 +26,20 @@ function Restaurants() {
   return (
     <div className="dining-page">
       {/* Hero Banner */}
-      <div className="dining-hero">
-        <div className="dining-hero-overlay" />
-        <div className="container dining-hero-content">
-          <div className="dining-hero-badge">
+      <section className="page-hero">
+        <div className="page-hero-bg">
+          <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1920&q=80" alt="Restaurant interior" />
+        </div>
+        <div className="page-hero-overlay" />
+        <div className="container page-hero-content">
+          <div className="page-hero-badge">
             <FaUtensils /> World Cup Fan Dining
           </div>
-          <h1 className="dining-hero-title">Taste the World</h1>
-          <p className="dining-hero-sub">Discover the best restaurants, street food & nightlife near every host stadium</p>
+          <h1 className="page-hero-title">Taste the <span className="text-gradient">World</span></h1>
+          <p className="page-hero-desc">Discover the best restaurants & street food near every host stadium</p>
 
           {/* Search */}
-          <div className="dining-hero-search">
+          <div className="dining-hero-search mt-8">
             <FaSearch className="dining-search-icon" />
             <input
               type="text"
@@ -52,7 +55,7 @@ function Restaurants() {
             )}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Content */}
       <div className="container dining-body">

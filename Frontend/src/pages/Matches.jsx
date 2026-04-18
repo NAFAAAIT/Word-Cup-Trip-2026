@@ -46,15 +46,19 @@ function Matches() {
   return (
     <div className="matches-page">
       {/* ─── Hero Section ─────────────────────────── */}
-      <section className="matches-hero">
-        <div className="container">
-          <div className="hero-content">
-            <div className="badge badge-primary">Match Schedule</div>
-            <h1 className="hero-title">FIFA World Cup 2026™ <span className="text-gradient">Fixtures</span></h1>
-            <p className="hero-desc">
-              Stay up to date with the complete match schedule across the USA, Canada, and Mexico.
-            </p>
+      <section className="page-hero">
+        <div className="page-hero-bg">
+          <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1920&q=80" alt="Matches" />
+        </div>
+        <div className="page-hero-overlay" />
+        <div className="container page-hero-content">
+          <div className="page-hero-badge">
+            <FaTrophy /> Match Schedule
           </div>
+          <h1 className="page-hero-title">FIFA World Cup 2026™ <span className="text-gradient">Fixtures</span></h1>
+          <p className="page-hero-desc">
+            Stay up to date with the complete match schedule across the USA, Canada, and Mexico.
+          </p>
         </div>
       </section>
 
