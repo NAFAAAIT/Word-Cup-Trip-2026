@@ -529,6 +529,13 @@
 
   .section-title-wrap {
     width: 100%;
+    text-align: left;
+    padding-left: 0.45rem;
+  }
+
+  .section-title-wrap .section-title,
+  .section-title-wrap .section-subtitle {
+    text-align: left;
   }
 
   .view-all-link {
