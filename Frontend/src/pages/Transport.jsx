@@ -10,10 +10,9 @@ import {
   FaClock,
   FaMoneyBillAlt,
   FaSyncAlt,
-  FaSearch,
   FaUndoAlt,
 } from 'react-icons/fa';
-import { mockTransports } from '../data/mockData';
+import { mockTransports, mockStadiums } from '../data/mockData';
 import './Transport.css';
 
 const typeIcon = {
@@ -159,7 +158,7 @@ function Transport() {
     <div className="transport-page">
       <section className="page-hero">
         <div className="page-hero-bg">
-          <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1920&q=80" alt="Transit" />
+          <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1920&q=80" alt="Transport" />
         </div>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">
@@ -170,106 +169,110 @@ function Transport() {
           <p className="page-hero-desc">Navigate host cities with real-time transit options straight to the stadiums</p>
 
           {fromMatchLabel && (
-            <div className="transport-match-banner mt-6" role="status">
+            <div className="transport-match-banner" role="status">
               Planning route from match context: {fromMatchLabel}
             </div>
           )}
 
-          <label className="transport-search-wrap mt-8" htmlFor="transport-search">
-            <FaSearch />
-            <input
-              id="transport-search"
-              type="text"
-              value={searchText}
-              onChange={(event) => setSearchText(event.target.value)}
-              placeholder="Search by line, stadium, start, or destination"
-            />
-          </label>
-
-          <div className="transport-city-tabs mt-6">
-            {cities.map(c => (
-              <button
-                key={c}
-                className={`transport-city-tab ${activeCity === c ? 'active' : ''}`}
-                onClick={() => setActiveCity(c)}
-              >
-                {c}
-              </button>
-            ))}
+          <div className="transport-city-tabs mt-8">
+            {cities.map((c) => {
+              const stadium = mockStadiums.find((s) => s.city === c || s.city.includes(c));
+              const flag = stadium?.country === 'USA' ? '🇺🇸' : stadium?.country === 'Mexico' ? '🇲🇽' : stadium?.country === 'Canada' ? '🇨🇦' : '🏙️';
+              
+              return (
+                <button
+                  key={c}
+                  className={`transport-city-tab ${activeCity === c ? 'active' : ''}`}
+                  onClick={() => setActiveCity(c)}
+                >
+                  {flag} {c}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
 
       <div className="container transport-body">
-        <div className="transport-controls glass-panel">
-          <div className="transport-type-tabs" role="tablist" aria-label="Transport type filter">
-            {routeTypes.map((type) => (
-              <button
-                type="button"
-                key={type}
-                className={`transport-type-tab ${activeType === type ? 'active' : ''}`}
-                onClick={() => setActiveType(type)}
-                role="tab"
-                aria-selected={activeType === type}
-              >
-                {type}
-              </button>
-            ))}
+        <div className="filter-panel">
+          <div className="filter-panel-row">
+            <div className="filter-pills" role="tablist" aria-label="Transport type filter">
+              {routeTypes.map((type) => (
+                <button
+                  type="button"
+                  key={type}
+                  className={`filter-pill ${activeType === type ? 'active' : ''}`}
+                  onClick={() => setActiveType(type)}
+                  role="tab"
+                  aria-selected={activeType === type}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="transport-filter-grid">
-            <label>
-              Sort
-              <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <div className="filter-panel-row">
+            <div className="filter-group-labeled">
+              <span className="filter-label">Sort</span>
+              <select className="filter-select" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
                 <option value="fastest">Fastest</option>
                 <option value="cheapest">Cheapest</option>
                 <option value="frequent">Most Frequent</option>
               </select>
-            </label>
+            </div>
 
-            <label>
-              Status
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+            <div className="filter-divider" />
+
+            <div className="filter-group-labeled">
+              <span className="filter-label">Status</span>
+              <select className="filter-select" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
                 <option value="All">All</option>
                 <option value="On Time">On Time</option>
                 <option value="Frequent">Frequent</option>
                 <option value="High Demand">High Demand</option>
               </select>
-            </label>
+            </div>
 
-            <label>
-              Max Duration ({durationMax} mins)
+            <div className="filter-divider" />
+
+            <div className="filter-range-wrap">
+              <span className="filter-range-label">Max Duration (<span>{durationMax} mins</span>)</span>
               <input
                 type="range"
+                className="filter-range"
                 min="10"
                 max="60"
                 step="5"
                 value={durationMax}
                 onChange={(event) => setDurationMax(Number(event.target.value))}
               />
-            </label>
+            </div>
 
-            <label>
-              Max Cost (${costMax})
+            <div className="filter-range-wrap">
+              <span className="filter-range-label">Max Cost (<span>${costMax}</span>)</span>
               <input
                 type="range"
+                className="filter-range"
                 min="0"
                 max="40"
                 step="1"
                 value={costMax}
                 onChange={(event) => setCostMax(Number(event.target.value))}
               />
-            </label>
+            </div>
 
-            <button type="button" className="btn btn-secondary transport-reset-btn" onClick={resetFilters}>
+            <button type="button" className="filter-reset-btn" onClick={resetFilters}>
               <FaUndoAlt /> Reset Filters
             </button>
           </div>
         </div>
 
-        <div className="transport-results-bar">
-          Showing <strong>{filteredRoutes.length}</strong> of{' '}
-          <strong>{mockTransports.filter((route) => route.city === activeCity).length}</strong> routes in {activeCity}
+        <div className="filter-results-bar">
+          <p className="filter-results-count">
+            Showing <strong>{filteredRoutes.length}</strong> of{' '}
+            <strong>{mockTransports.filter((route) => route.city === activeCity).length}</strong> routes in {activeCity}
+          </p>
         </div>
 
         <div className="transport-layout">

@@ -1,30 +1,53 @@
 import React, { useState } from 'react';
 import { mockHotels } from '../data/mockData';
 import HotelCard from '../components/HotelCard';
-import { FaStar, FaFilter, FaSearch, FaTimesCircle, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaSearch, FaTimesCircle, FaMapMarkerAlt } from 'react-icons/fa';
 import './Hotels.css';
 
 function Hotels() {
-  const [filterPrice, setFilterPrice] = useState(900);
-  const [filterStars, setFilterStars] = useState({ 5: true, 4: true, 3: true });
-  const [filterDistance, setFilterDistance] = useState('all');
+  const [maxPrice, setMaxPrice] = useState('all');
+  const [minRating, setMinRating] = useState('all');
+  const [distanceBand, setDistanceBand] = useState('all');
+  const [sortBy, setSortBy] = useState('recommended');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredHotels = mockHotels.filter(hotel => {
-    const hitsPrice = hotel.price <= filterPrice;
-    const ratingFloor = Math.floor(hotel.rating);
-    const hitsStars = filterStars[ratingFloor] || (ratingFloor > 5 && filterStars[5]);
-    let hitsDistance = true;
-    if (filterDistance === 'under_1' && parseFloat(hotel.distance) >= 1) hitsDistance = false;
-    if (filterDistance === '1_to_3' && (parseFloat(hotel.distance) < 1 || parseFloat(hotel.distance) > 3)) hitsDistance = false;
-    const hitsSearch = !searchQuery || hotel.name.toLowerCase().includes(searchQuery.toLowerCase()) || hotel.city?.toLowerCase().includes(searchQuery.toLowerCase());
-    return hitsPrice && hitsStars && hitsDistance && hitsSearch;
-  });
+  const filteredHotels = mockHotels
+    .filter(hotel => {
+      const normalizedQuery = searchQuery.trim().toLowerCase();
+      const hitsSearch =
+        !normalizedQuery ||
+        hotel.name.toLowerCase().includes(normalizedQuery) ||
+        hotel.city?.toLowerCase().includes(normalizedQuery);
+
+      const hitsPrice = maxPrice === 'all' || hotel.price <= Number(maxPrice);
+      const hitsRating = minRating === 'all' || hotel.rating >= Number(minRating);
+
+      const numericDistance = parseFloat(hotel.distance);
+      const hasDistanceValue = Number.isFinite(numericDistance);
+
+      let hitsDistance = true;
+      if (distanceBand === 'under_1') {
+        hitsDistance = hasDistanceValue && numericDistance < 1;
+      } else if (distanceBand === '1_to_3') {
+        hitsDistance = hasDistanceValue && numericDistance >= 1 && numericDistance <= 3;
+      } else if (distanceBand === 'over_3') {
+        hitsDistance = hasDistanceValue && numericDistance > 3;
+      }
+
+      return hitsSearch && hitsPrice && hitsRating && hitsDistance;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'price_low') return a.price - b.price;
+      if (sortBy === 'price_high') return b.price - a.price;
+      if (sortBy === 'rating_high') return b.rating - a.rating;
+      return 0;
+    });
 
   const resetFilters = () => {
-    setFilterPrice(900);
-    setFilterStars({ 5: true, 4: true, 3: true });
-    setFilterDistance('all');
+    setMaxPrice('all');
+    setMinRating('all');
+    setDistanceBand('all');
+    setSortBy('recommended');
     setSearchQuery('');
   };
 
@@ -65,94 +88,76 @@ function Hotels() {
       {/* Main content */}
       <div className="container hotels-body">
         {/* Results bar */}
-        <div className="hotels-results-bar">
-          <p className="hotels-results-count">
+        <div className="filter-results-bar">
+          <p className="filter-results-count">
             Showing <strong>{filteredHotels.length}</strong> of {mockHotels.length} hotels
           </p>
-          <div className="flex items-center gap-2">
-            <span className="text-secondary text-sm">Sort by:</span>
-            <select className="hotels-sort-select">
-              <option>Recommended</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Top Rated</option>
-            </select>
+
+          <div className="filter-controls-wrap">
+            <div className="filter-group-labeled">
+              <span className="filter-label">Max price</span>
+              <select
+                className="filter-select"
+                value={maxPrice}
+                onChange={e => setMaxPrice(e.target.value)}
+              >
+                <option value="all">Any</option>
+                <option value="200">Up to $200</option>
+                <option value="300">Up to $300</option>
+                <option value="500">Up to $500</option>
+              </select>
+            </div>
+
+            <div className="filter-group-labeled">
+              <span className="filter-label">Rating</span>
+              <select
+                className="filter-select"
+                value={minRating}
+                onChange={e => setMinRating(e.target.value)}
+              >
+                <option value="all">Any</option>
+                <option value="4">4.0+</option>
+                <option value="4.5">4.5+</option>
+                <option value="4.8">4.8+</option>
+              </select>
+            </div>
+
+            <div className="filter-group-labeled">
+              <span className="filter-label">Distance</span>
+              <select
+                className="filter-select"
+                value={distanceBand}
+                onChange={e => setDistanceBand(e.target.value)}
+              >
+                <option value="all">Any</option>
+                <option value="under_1">&lt; 1 mile</option>
+                <option value="1_to_3">1 - 3 miles</option>
+                <option value="over_3">3+ miles</option>
+              </select>
+            </div>
+
+            <div className="filter-group-labeled">
+              <span className="filter-label">Sort by:</span>
+              <select
+                className="filter-select"
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+              >
+                <option value="recommended">Recommended</option>
+                <option value="price_low">Price: Low to High</option>
+                <option value="price_high">Price: High to Low</option>
+                <option value="rating_high">Top Rated</option>
+              </select>
+            </div>
+
+            <button className="filter-reset-btn" onClick={resetFilters} type="button">
+              Reset
+            </button>
           </div>
         </div>
 
-        {/* Sidebar + Grid */}
+        {/* Grid */}
         <div className="hotels-layout">
-
-          {/* Sidebar */}
-          <aside className="hotels-sidebar">
-            <div className="hotels-sidebar-inner">
-              <div className="sidebar-header">
-                <FaFilter className="text-primary-accent" />
-                <span>Filters</span>
-                <button className="sidebar-reset-btn" onClick={resetFilters}>Reset</button>
-              </div>
-
-              {/* Price */}
-              <div className="sidebar-section">
-                <p className="sidebar-section-title">Price per Night</p>
-                <div className="price-range-display">
-                  <span>$50</span>
-                  <span className="price-range-active">${filterPrice}</span>
-                  <span>$900+</span>
-                </div>
-                <input
-                  type="range"
-                  min="50" max="900" step="10"
-                  className="hotels-range-slider"
-                  value={filterPrice}
-                  onChange={e => setFilterPrice(Number(e.target.value))}
-                />
-                <div className="price-track-fill" style={{ width: `${((filterPrice - 50) / 850) * 100}%` }} />
-              </div>
-
-              {/* Stars */}
-              <div className="sidebar-section">
-                <p className="sidebar-section-title">Star Rating</p>
-                <div className="star-filter-group">
-                  {[5, 4, 3].map(star => (
-                    <label key={star} className={`star-filter-chip ${filterStars[star] ? 'active' : ''}`}>
-                      <input
-                        type="checkbox"
-                        className="sr-only"
-                        checked={filterStars[star]}
-                        onChange={() => setFilterStars({ ...filterStars, [star]: !filterStars[star] })}
-                      />
-                      {[...Array(star)].map((_, i) => <FaStar key={i} />)}
-                      <span className="sr-only">{star} stars</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Distance */}
-              <div className="sidebar-section">
-                <p className="sidebar-section-title">Distance to Stadium</p>
-                <div className="distance-filter-group">
-                  {[
-                    { value: 'under_1', label: '< 1 mile' },
-                    { value: '1_to_3', label: '1 – 3 miles' },
-                    { value: 'all', label: 'Any distance' },
-                  ].map(opt => (
-                    <label key={opt.value} className={`distance-chip ${filterDistance === opt.value ? 'active' : ''}`}>
-                      <input
-                        type="radio"
-                        name="dist"
-                        className="sr-only"
-                        checked={filterDistance === opt.value}
-                        onChange={() => setFilterDistance(opt.value)}
-                      />
-                      {opt.label}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </aside>
 
           {/* Hotel Grid */}
           <main className="hotels-grid">

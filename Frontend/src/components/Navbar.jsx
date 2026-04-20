@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaFutbol, FaBars, FaTimes, FaUserCircle, FaBell } from 'react-icons/fa';
+import { FaFutbol, FaBars, FaTimes, FaUserCircle } from 'react-icons/fa';
 import './Navbar.css';
 
 function Navbar() {
@@ -36,7 +36,6 @@ function Navbar() {
 
         {/* User Actions */}
         <div className="nav-actions flex items-center gap-4">
-          <button className="icon-btn"><FaBell /></button>
           <div className="user-profile">
             <FaUserCircle className="profile-icon" />
             <div className="profile-menu">

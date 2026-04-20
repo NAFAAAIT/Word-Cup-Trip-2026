@@ -3,7 +3,9 @@
 /* ===================================
    HERO
    =================================== */
-.emergency-page { min-height: 100vh; }
+.emergency-page {
+  min-height: 100vh;
+}
 
 /* ===================================
    HERO ANIMATIONS
@@ -13,8 +15,15 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
 }
 
 /* ===================================
@@ -34,15 +43,17 @@
 }
 
 @media (max-width: 768px) {
-  .emrg-priority-grid { grid-template-columns: 1fr; }
+  .emrg-priority-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .emrg-card {
   display: flex;
   align-items: stretch;
   gap: 0;
-  background: var(--e-bg, rgba(59,130,246,0.08));
-  border: 1px solid var(--e-border, rgba(59,130,246,0.25));
+  background: var(--e-bg, rgba(59, 130, 246, 0.08));
+  border: 1px solid var(--e-border, rgba(59, 130, 246, 0.25));
   border-radius: 1.25rem;
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -50,7 +61,7 @@
 
 .emrg-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
 .emrg-card-icon-col {
@@ -121,15 +132,21 @@
 }
 
 @media (max-width: 900px) {
-  .emrg-main-grid { grid-template-columns: 1fr; }
+  .emrg-main-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* SOS button */
 .emrg-sos-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
   padding: 0.85rem;
-  background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05));
-  border: 1px solid rgba(239,68,68,0.4);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05));
+  border: 1px solid rgba(239, 68, 68, 0.4);
   color: var(--danger-color);
   border-radius: 0.75rem;
   font-weight: 800;
@@ -140,20 +157,81 @@
   animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
+.emrg-sos-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.emrg-sos-status {
+  margin-top: 0.65rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+/* Emergency map */
+.emrg-map-shell {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+
+.emrg-leaflet-map {
+  width: 100%;
+  height: 440px;
+}
+
 /* Hospital row */
 .emrg-hospital-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
   gap: 1rem;
-  flex-wrap: wrap;
 }
 
 .emrg-hospital-row:last-child {
   border-bottom: none;
   padding-bottom: 0;
+}
+
+.emrg-hospital-meta {
+  min-width: 0;
+}
+
+.emrg-hospital-name {
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.3rem;
+}
+
+.emrg-hospital-sub {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.emrg-hospital-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .emrg-hospital-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .emrg-hospital-actions {
+    width: 100%;
+  }
 }
 
 .emrg-btn-sm {

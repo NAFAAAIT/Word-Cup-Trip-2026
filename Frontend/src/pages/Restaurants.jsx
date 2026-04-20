@@ -1,27 +1,55 @@
 import React, { useState } from 'react';
 import { mockRestaurants } from '../data/mockData';
 import RestaurantCard from '../components/RestaurantCard';
-import { FaStar, FaSearch, FaTimesCircle, FaUtensils } from 'react-icons/fa';
+import { FaSearch, FaTimesCircle, FaUtensils } from 'react-icons/fa';
 import './Restaurants.css';
-
-const CUISINE_EMOJIS = {
-  All: '🌍', Mexican: '🌮', American: '🍔', Canadian: '🍁', Seafood: '🦞',
-  Italian: '🍝', Japanese: '🍣', Indian: '🍛',
-};
 
 function Restaurants() {
   const [activeCuisine, setActiveCuisine] = useState('All');
   const [minRating, setMinRating] = useState('Any');
+  const [distanceBand, setDistanceBand] = useState('Any');
+  const [sortBy, setSortBy] = useState('recommended');
   const [searchQuery, setSearchQuery] = useState('');
 
   const cuisines = ['All', ...new Set(mockRestaurants.map(r => r.cuisine))];
 
-  const filtered = mockRestaurants.filter(r => {
-    const matchCuisine = activeCuisine === 'All' || r.cuisine === activeCuisine;
-    const matchRating = minRating === 'Any' || r.rating >= parseFloat(minRating);
-    const matchSearch = !searchQuery || r.name.toLowerCase().includes(searchQuery.toLowerCase()) || r.cuisine.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCuisine && matchRating && matchSearch;
-  });
+  const filtered = mockRestaurants
+    .filter(r => {
+      const normalizedQuery = searchQuery.trim().toLowerCase();
+      const matchCuisine = activeCuisine === 'All' || r.cuisine === activeCuisine;
+      const matchRating = minRating === 'Any' || r.rating >= parseFloat(minRating);
+      const matchSearch =
+        !normalizedQuery ||
+        r.name.toLowerCase().includes(normalizedQuery) ||
+        r.cuisine.toLowerCase().includes(normalizedQuery);
+
+      const numericDistance = parseFloat(r.distance);
+      const hasDistanceValue = Number.isFinite(numericDistance);
+      let matchDistance = true;
+      if (distanceBand === 'under_1') {
+        matchDistance = hasDistanceValue && numericDistance < 1;
+      } else if (distanceBand === '1_to_3') {
+        matchDistance = hasDistanceValue && numericDistance >= 1 && numericDistance <= 3;
+      } else if (distanceBand === 'over_3') {
+        matchDistance = hasDistanceValue && numericDistance > 3;
+      }
+
+      return matchCuisine && matchRating && matchDistance && matchSearch;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'rating_high') return b.rating - a.rating;
+      if (sortBy === 'rating_low') return a.rating - b.rating;
+      if (sortBy === 'distance_near') return parseFloat(a.distance) - parseFloat(b.distance);
+      return 0;
+    });
+
+  const resetFilters = () => {
+    setActiveCuisine('All');
+    setMinRating('Any');
+    setDistanceBand('Any');
+    setSortBy('recommended');
+    setSearchQuery('');
+  };
 
   return (
     <div className="dining-page">
@@ -60,37 +88,71 @@ function Restaurants() {
       {/* Content */}
       <div className="container dining-body">
 
-        {/* Cuisine Tabs */}
-        <div className="dining-cuisine-tabs">
-          {cuisines.map(c => (
-            <button
-              key={c}
-              onClick={() => setActiveCuisine(c)}
-              className={`dining-cuisine-tab ${activeCuisine === c ? 'active' : ''}`}
-            >
-              <span className="dining-tab-emoji">{CUISINE_EMOJIS[c] || '🍽️'}</span>
-              {c}
-            </button>
-          ))}
-        </div>
-
         {/* Results bar */}
-        <div className="dining-results-bar">
-          <p className="dining-results-count">
+        <div className="filter-results-bar">
+          <p className="filter-results-count">
             Showing <strong>{filtered.length}</strong> of {mockRestaurants.length} places
           </p>
-          <div className="flex items-center gap-2">
-            <span className="text-secondary text-sm">Min rating:</span>
-            <select
-              className="dining-rating-select"
-              value={minRating}
-              onChange={e => setMinRating(e.target.value)}
-            >
-              <option value="Any">Any</option>
-              <option value="4.8">4.8+</option>
-              <option value="4.5">4.5+</option>
-              <option value="4.0">4.0+</option>
-            </select>
+
+          <div className="filter-controls-wrap">
+            <div className="filter-group-labeled">
+              <span className="filter-label">Cuisine</span>
+              <select
+                className="filter-select"
+                value={activeCuisine}
+                onChange={e => setActiveCuisine(e.target.value)}
+              >
+                {cuisines.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group-labeled">
+              <span className="filter-label">Rating</span>
+              <select
+                className="filter-select"
+                value={minRating}
+                onChange={e => setMinRating(e.target.value)}
+              >
+                <option value="Any">Any</option>
+                <option value="4.8">4.8+</option>
+                <option value="4.5">4.5+</option>
+                <option value="4.0">4.0+</option>
+              </select>
+            </div>
+
+            <div className="filter-group-labeled">
+              <span className="filter-label">Distance</span>
+              <select
+                className="filter-select"
+                value={distanceBand}
+                onChange={e => setDistanceBand(e.target.value)}
+              >
+                <option value="Any">Any</option>
+                <option value="under_1">&lt; 1 mile</option>
+                <option value="1_to_3">1 - 3 miles</option>
+                <option value="over_3">3+ miles</option>
+              </select>
+            </div>
+
+            <div className="filter-group-labeled filter-group-sort">
+              <span className="filter-label">Sort by</span>
+              <select
+                className="filter-select"
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+              >
+                <option value="recommended">Recommended</option>
+                <option value="rating_high">Rating: High to Low</option>
+                <option value="rating_low">Rating: Low to High</option>
+                <option value="distance_near">Nearest</option>
+              </select>
+            </div>
+
+            <button className="filter-reset-btn" onClick={resetFilters} type="button">
+              Reset
+            </button>
           </div>
         </div>
 
@@ -105,7 +167,7 @@ function Restaurants() {
               <p className="text-secondary">Try adjusting your filters or search query.</p>
               <button
                 className="btn btn-secondary mt-6"
-                onClick={() => { setActiveCuisine('All'); setMinRating('Any'); setSearchQuery(''); }}
+                onClick={resetFilters}
               >
                 Reset Filters
               </button>

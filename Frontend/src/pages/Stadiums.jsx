@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StadiumLocationMap from '../components/StadiumLocationMap';
 import HotelCard from '../components/HotelCard';
@@ -11,6 +11,10 @@ import './Stadiums.css';
 function StadiumDetailView({ stadium, onBack }) {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [stadium]);
+
   const relatedMatches = useMemo(
     () => mockMatches.filter((match) => match.stadium === stadium.name),
     [stadium.name]
@@ -19,18 +23,29 @@ function StadiumDetailView({ stadium, onBack }) {
   const transportCity = relatedMatches[0]?.city || stadium.city;
 
   const nearbyHotels = useMemo(() => {
-    const cityToken = (transportCity || '').split('/')[0].trim().toLowerCase();
-    const scoped = mockHotels.filter((hotel) =>
-      (hotel.city || '').toLowerCase().includes(cityToken)
-    );
-
-    return (scoped.length ? scoped : mockHotels).slice(0, 2);
-  }, [transportCity]);
+    // Filter by exact city first
+    const inCity = mockHotels.filter((hotel) => hotel.city === stadium.city);
+    return inCity.length ? inCity : mockHotels.slice(0, 4);
+  }, [stadium.city]);
 
   const nearbyRestaurants = useMemo(() => {
-    const scoped = mockRestaurants.filter((restaurant) => restaurant.country === stadium.country);
-    return (scoped.length ? scoped : mockRestaurants).slice(0, 2);
-  }, [stadium.country]);
+    const nameLower = stadium.name.toLowerCase();
+    const cityLower = stadium.city.toLowerCase();
+    
+    // Filter by stadium name in distance or city match
+    const scoped = mockRestaurants.filter((r) => {
+      const distLower = r.distance.toLowerCase();
+      return distLower.includes(nameLower) || 
+             distLower.includes(stadium.name.split(' ')[0].toLowerCase()) ||
+             r.description.toLowerCase().includes(nameLower) ||
+             (r.country === stadium.country && cityLower.includes(r.distance.toLowerCase().split(' to ')[1] || ''));
+    });
+
+    // If no direct matches, fall back to city or country scoped
+    if (scoped.length) return scoped;
+    
+    return mockRestaurants.filter(r => r.city === stadium.city || r.country === stadium.country).slice(0, 4);
+  }, [stadium.name, stadium.city, stadium.country]);
 
   const openTransport = () => {
     const params = new URLSearchParams({

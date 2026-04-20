@@ -63,27 +63,29 @@ function Matches() {
       </section>
 
       {/* ─── Filters Section ──────────────────────── */}
-      <section className="matches-filters container">
-        <div className="filters-glass glass-panel">
-          <div className="search-box">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search teams or cities..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="input-field"
-            />
-          </div>
-          <div className="filter-group">
-            <FaFilter className="filter-icon" />
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="input-field select-field"
-            >
-              {stadiums.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+      <section className="container" style={{ marginTop: '-3rem', position: 'relative', zIndex: 10, marginBottom: '2rem' }}>
+        <div className="filter-panel">
+          <div className="filter-panel-row">
+            <div className="filter-search">
+              <FaSearch className="filter-search-icon" />
+              <input
+                type="text"
+                placeholder="Search teams or cities..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="filter-divider" />
+            <div className="filter-group-labeled">
+              <FaFilter className="filter-search-icon" />
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="filter-select"
+              >
+                {stadiums.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
           </div>
         </div>
       </section>
