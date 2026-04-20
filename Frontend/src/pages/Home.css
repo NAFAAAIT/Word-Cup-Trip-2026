@@ -219,93 +219,268 @@
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  text-align: center;
+  gap: 2rem;
+  text-align: left;
+}
+
+.home-stat {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.5rem;
+}
+
+.home-stat-icon-wrap {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 238, 255, 0.08);
+  border: 1px solid rgba(0, 238, 255, 0.2);
+  border-radius: 1rem;
+  font-size: 1.5rem;
+  color: var(--primary-accent);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .home-stat-value {
   display: block;
   font-size: 1.75rem;
-  font-weight: 900;
-  color: var(--primary-accent);
+  font-weight: 950;
+  color: var(--text-primary);
+  line-height: 1;
   letter-spacing: -0.02em;
 }
 
 .home-stat-label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-top: 0.15rem;
+  letter-spacing: 0.12em;
+  margin-top: 0.35rem;
 }
 
 /* ================================================
    SECTIONS
    ================================================ */
 .home-section {
-  padding: 5rem 0;
+  padding: 6rem 0;
+}
+
+.section-title-wrap {
+  flex: 1;
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-top: 0.35rem;
 }
 
 .home-section-dark {
-  background: rgba(14, 18, 28, 0.6);
+  background: linear-gradient(180deg, rgba(14, 18, 28, 0.8) 0%, rgba(7, 11, 22, 1) 100%);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
 }
 
 .home-section-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 3.5rem;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1.5rem;
 }
 
-/* Cities */
-.home-cities-grid {
+/* Host Cities Cards */
+.home-cities-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
 }
 
-.home-city-chip {
+@media (max-width: 992px) {
+  .home-cities-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .home-cities-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-city-card {
+  position: relative;
+  height: 280px;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.home-city-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary-accent);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.home-city-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.home-city-card:hover .home-city-card-img {
+  transform: scale(1.1);
+}
+
+.home-city-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(7, 11, 22, 0.95) 10%, rgba(7, 11, 22, 0.2) 60%, transparent 100%);
+}
+
+.home-city-card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.75rem;
+}
+
+.city-card-country {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--primary-accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
+}
+
+.city-card-name {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+.city-card-meta {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
-  background: rgba(20, 24, 36, 0.7);
-  border: 1px solid var(--border-color);
-  border-radius: 1rem;
-  transition: all 0.2s;
-  cursor: default;
-}
-
-.home-city-chip:hover {
-  border-color: var(--primary-accent);
-  background: rgba(0, 238, 255, 0.05);
-  transform: translateY(-2px);
-}
-
-.home-city-emoji {
-  font-size: 1.5rem;
-}
-
-.home-city-flag {
-  font-size: 1.25rem;
-}
-
-.home-city-name {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.home-city-matches {
-  font-size: 0.7rem;
+  gap: 0.5rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
   font-weight: 600;
+}
+
+.city-card-meta svg {
+  font-size: 0.9rem;
+}
+
+/* ================================================
+   TOURNAMENT EXPERIENCE Section
+   ================================================ */
+.home-experience-section {
+  padding: 8rem 0;
+  background: radial-gradient(circle at 80% 20%, rgba(0, 238, 255, 0.04), transparent 50%);
+}
+
+.experience-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.experience-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 600px;
+  margin-bottom: 3rem;
+}
+
+.experience-features {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.exp-feature {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.exp-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 238, 255, 0.1);
+  border: 1px solid rgba(0, 238, 255, 0.2);
+  border-radius: 0.85rem;
+  color: var(--primary-accent);
+  font-size: 1.15rem;
+}
+
+.exp-feature h4 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.exp-feature p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.exp-img-grid {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.exp-img-main {
+  width: 80%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  transform: rotate(-2deg);
+}
+
+.exp-img-sub {
+  position: absolute;
+  bottom: -15%;
+  right: -2%;
+  width: 50%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border-radius: 1.25rem;
+  border: 4px solid var(--bg-dark);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+  transform: rotate(3deg);
+}
+
+@media (max-width: 1024px) {
+  .exp-img-grid {
+    margin-top: 4rem;
+  }
 }
 
 /* Grids */
@@ -317,22 +492,18 @@
 
 .home-dining-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
 
 @media (max-width: 1024px) {
-  .home-hotels-grid {
+  .home-hotels-grid, .home-dining-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 640px) {
-  .home-hotels-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-dining-grid {
+@media (max-width: 768px) {
+  .home-hotels-grid, .home-dining-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -342,20 +513,22 @@
    ================================================ */
 .home-cta-banner {
   position: relative;
-  padding: 6rem 0;
+  padding: 8rem 0;
   overflow: hidden;
   text-align: center;
+  background: var(--bg-dark);
 }
 
 .home-cta-overlay {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(7, 9, 15, 0.85), rgba(7, 9, 15, 0.85)),
-    url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1920&q=80');
+    linear-gradient(to top, rgba(7, 11, 22, 1) 0%, rgba(7, 11, 22, 0.7) 40%, rgba(7, 11, 22, 0.7) 100%),
+    url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1920&q=80');
   background-size: cover;
-  background-position: center;
+  background-position: center 30%;
   z-index: 0;
+  opacity: 0.6;
 }
 
 .home-cta-inner {
@@ -365,32 +538,37 @@
 
 .home-cta-badge {
   display: inline-block;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  color: var(--warning-color);
-  padding: 0.35rem 0.9rem;
+  background: rgba(0, 238, 255, 0.1);
+  border: 1px solid rgba(0, 238, 255, 0.3);
+  color: var(--primary-accent);
+  padding: 0.5rem 1.25rem;
   border-radius: 9999px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  margin-bottom: 1.25rem;
+  margin-bottom: 2rem;
 }
 
 .home-cta-title {
-  font-size: clamp(1.75rem, 4vw, 3rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  margin-bottom: 1rem;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 950;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  line-height: 1;
 }
 
 .home-cta-sub {
   color: var(--text-secondary);
-  font-size: 1rem;
-  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .home-cta-btn {
   font-size: 1rem;
-  padding: 0.9rem 2rem;
-}
+  padding: 1rem 2.5rem;
+  font-weight: 800;
+}

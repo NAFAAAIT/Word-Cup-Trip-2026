@@ -151,9 +151,15 @@ function Matches() {
               </div>
 
               <div className="match-actions">
-                <button className="match-cta btn btn-outline">
-                  Match Details
-                </button>
+                <a
+                  href="https://www.fifa.com/en/tickets"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="match-cta btn btn-outline"
+                  style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  Get Tickets
+                </a>
                 <button
                   className="match-cta btn btn-secondary"
                   onClick={() => planTransportForMatch(match)}

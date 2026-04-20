@@ -16,6 +16,11 @@ function HotelCard({ hotel }) {
     return null;
   };
 
+  const handleBookNow = () => {
+    const query = encodeURIComponent(`${hotel.name} ${hotel.city}`);
+    window.open(`https://www.booking.com/searchresults.html?ss=${query}`, '_blank');
+  };
+
   return (
     <div className="hotel-card-v2">
       {/* Image Section */}
@@ -77,7 +82,7 @@ function HotelCard({ hotel }) {
           ))}
         </div>
 
-        <button className="hotel-v2-cta">
+        <button className="hotel-v2-cta" onClick={handleBookNow}>
           View Details & Book
         </button>
       </div>

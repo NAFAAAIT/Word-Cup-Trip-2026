@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   FaSearch, FaBed, FaUtensils, FaMapMarkedAlt, FaPhoneAlt,
   FaFutbol, FaGlobeAmericas, FaStar, FaArrowRight, FaShieldAlt,
+  FaHotel, FaCity, FaUsers, FaTicketAlt, FaPlay
 } from 'react-icons/fa';
 import HotelCard from '../components/HotelCard';
 import RestaurantCard from '../components/RestaurantCard';
@@ -11,19 +12,19 @@ import { mockHotels, mockRestaurants, mockStadiums } from '../data/mockData';
 import './Home.css';
 
 const HOST_CITIES = [
-  { name: 'New York/NJ', flag: '🇺🇸', matches: 8, emoji: '🏟️' },
-  { name: 'Los Angeles', flag: '🇺🇸', matches: 8, emoji: '🌴' },
-  { name: 'Mexico City', flag: '🇲🇽', matches: 5, emoji: '⚽' },
-  { name: 'Toronto', flag: '🇨🇦', matches: 6, emoji: '🍁' },
-  { name: 'Miami', flag: '🇺🇸', matches: 6, emoji: '🏖️' },
-  { name: 'Vancouver', flag: '🇨🇦', matches: 6, emoji: '🏔️' },
+  { name: 'New York/NJ', country: 'USA', matches: 8, image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Los Angeles', country: 'USA', matches: 8, image: 'https://thumbs.dreamstime.com/b/sunset-over-los-angeles-downtown-city-center-california-165474416.jpg' },
+  { name: 'Mexico City', country: 'Mexico', matches: 5, image: 'https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Toronto', country: 'Canada', matches: 6, image: 'https://images.unsplash.com/photo-1517090504586-fde19ea6066f?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Miami', country: 'USA', matches: 6, image: 'https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Vancouver', country: 'Canada', matches: 6, image: 'https://images.unsplash.com/photo-1559511260-66a654ae982a?auto=format&fit=crop&w=800&q=80' },
 ];
 
 const STATS = [
-  { value: '48', label: 'Host Cities' },
-  { value: '104', label: 'Total Matches' },
-  { value: '3', label: 'Countries' },
-  { value: '5M+', label: 'Expected Fans' },
+  { value: '48', label: 'Host Cities', icon: <FaCity /> },
+  { value: '104', label: 'Total Matches', icon: <FaTicketAlt /> },
+  { value: '3', label: 'Countries', icon: <FaGlobeAmericas /> },
+  { value: '5M+', label: 'Expected Fans', icon: <FaUsers /> },
 ];
 
 function Home() {
@@ -87,8 +88,11 @@ function Home() {
         <div className="container home-stats-inner">
           {STATS.map(s => (
             <div key={s.label} className="home-stat">
-              <span className="home-stat-value">{s.value}</span>
-              <span className="home-stat-label">{s.label}</span>
+              <div className="home-stat-icon-wrap">{s.icon}</div>
+              <div>
+                <span className="home-stat-value">{s.value}</span>
+                <span className="home-stat-label">{s.label}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -97,27 +101,71 @@ function Home() {
       {/* ─── HOST CITIES ──────────────────────────── */}
       <section className="home-section container">
         <div className="home-section-header">
-          <h2 className="section-title">Host Cities</h2>
-          <Link to="/stadiums" className="view-all-link">View Stadiums <FaArrowRight /></Link>
+          <div className="section-title-wrap">
+            <h2 className="section-title">Iconic Host Cities</h2>
+            <p className="section-subtitle">Discover the vibrant metropolises hosting the matches</p>
+          </div>
+          <Link to="/stadiums" className="view-all-link">View All Venues <FaArrowRight /></Link>
         </div>
-        <div className="home-cities-grid">
+        <div className="home-cities-cards">
           {HOST_CITIES.map(city => (
-            <div key={city.name} className="home-city-chip">
-              <span className="home-city-emoji">{city.emoji}</span>
-              <span className="home-city-flag">{city.flag}</span>
-              <div>
-                <p className="home-city-name">{city.name}</p>
-                <p className="home-city-matches">{city.matches} matches</p>
+            <div key={city.name} className="home-city-card">
+              <img src={city.image} alt={city.name} className="home-city-card-img" />
+              <div className="home-city-card-overlay" />
+              <div className="home-city-card-content">
+                <span className="city-card-country">{city.country}</span>
+                <h3 className="city-card-name">{city.name}</h3>
+                <div className="city-card-meta">
+                  <FaTicketAlt /> {city.matches} matches
+                </div>
               </div>
             </div>
           ))}
         </div>
       </section>
 
+      {/* ─── TOURNAMENT EXPERIENCE Section ────────── */}
+      <section className="home-experience-section">
+        <div className="container grid lg:grid-cols-2 gap-12 items-center">
+          <div className="experience-content">
+            <h2 className="experience-title">A Journey Beyond <span className="text-gradient">Football</span></h2>
+            <p className="experience-desc">
+              The 2026 World Cup is more than just matches. It's an opportunity to explore the diverse cultures, 
+              stunning landscapes, and world-class hospitality of North America.
+            </p>
+            <div className="experience-features">
+              <div className="exp-feature">
+                <div className="exp-icon"><FaPlay /></div>
+                <div>
+                  <h4>Immersive Atmosphere</h4>
+                  <p>Join millions of fans in vibrant fan zones across 16 cities.</p>
+                </div>
+              </div>
+              <div className="exp-feature">
+                <div className="exp-icon"><FaHotel /></div>
+                <div>
+                  <h4>Premium Luxury</h4>
+                  <p>Hand-picked accommodations steps away from the action.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="experience-visual">
+            <div className="exp-img-grid">
+              <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80" alt="Modern City" className="exp-img-main" />
+              <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=2069&auto=format&fit=crop" alt="Fan Celebration" className="exp-img-sub" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── FEATURED STADIUMS ────────────────────── */}
       <section className="home-section container">
         <div className="home-section-header">
-          <h2 className="section-title">🏟️ Host Stadiums</h2>
+          <div className="section-title-wrap">
+            <h2 className="section-title">World-Class Arenas</h2>
+            <p className="section-subtitle">The legendary stages for the 2026 tournament</p>
+          </div>
           <Link to="/stadiums" className="view-all-link">View All <FaArrowRight /></Link>
         </div>
         <div className="grid lg:grid-cols-2 gap-6">
@@ -129,7 +177,10 @@ function Home() {
       <section className="home-section home-section-dark">
         <div className="container">
           <div className="home-section-header">
-            <h2 className="section-title">🏨 Top Rated Hotels</h2>
+            <div className="section-title-wrap">
+              <h2 className="section-title">Premium Stays</h2>
+              <p className="section-subtitle">Luxury hotels curated for visiting fans</p>
+            </div>
             <Link to="/hotels" className="view-all-link">View All <FaArrowRight /></Link>
           </div>
           <div className="home-hotels-grid">
@@ -141,7 +192,10 @@ function Home() {
       {/* ─── FAN DINING ───────────────────────────── */}
       <section className="home-section container">
         <div className="home-section-header">
-          <h2 className="section-title">🍽️ Fan Favorites: Dining</h2>
+          <div className="section-title-wrap">
+            <h2 className="section-title">Culinary Scenes</h2>
+            <p className="section-subtitle">The best restaurants nearby host venues</p>
+          </div>
           <Link to="/restaurants" className="view-all-link">View All <FaArrowRight /></Link>
         </div>
         <div className="home-dining-grid">
@@ -153,12 +207,17 @@ function Home() {
       <section className="home-cta-banner">
         <div className="home-cta-overlay" />
         <div className="container home-cta-inner">
-          <div className="home-cta-badge">Limited Spots Available</div>
-          <h2 className="home-cta-title">Don't Miss the Action</h2>
-          <p className="home-cta-sub">Check out the full match schedule and plan your stadium visits.</p>
-          <Link to="/matches" className="btn btn-primary home-cta-btn">
-            Explore Matches <FaArrowRight />
-          </Link>
+          <div className="home-cta-badge">Tournament Launch 2026</div>
+          <h2 className="home-cta-title">Your Ultimate World Cup Guide</h2>
+          <p className="home-cta-sub">Start planning your cross-continental journey today. Every stadium, every city, one premium platform.</p>
+          <div className="flex justify-center gap-4 mt-8 flex-wrap">
+             <Link to="/matches" className="btn btn-primary home-cta-btn">
+              Explore Matches <FaArrowRight />
+            </Link>
+             <Link to="/stadiums" className="btn btn-secondary home-cta-btn">
+              Browse Venues
+            </Link>
+          </div>
         </div>
       </section>
     </div>

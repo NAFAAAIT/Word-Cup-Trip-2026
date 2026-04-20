@@ -4,6 +4,11 @@ import './CardComponents.css';
 
 function RestaurantCard({ restaurant }) {
 
+  const handleViewOnMap = () => {
+    const query = encodeURIComponent(`${restaurant.name}, ${restaurant.distance.split('to ')[1] || ''} ${restaurant.country}`);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+  };
+
   return (
     <div className="rest-card-v2">
       {/* Image */}
@@ -49,7 +54,7 @@ function RestaurantCard({ restaurant }) {
           </div>
         )}
 
-        <button className="rest-v2-cta">
+        <button className="rest-v2-cta" onClick={handleViewOnMap}>
           <FaMap /> View on Map
         </button>
       </div>
