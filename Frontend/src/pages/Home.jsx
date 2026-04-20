@@ -32,7 +32,7 @@ function Home() {
   return (
     <div className="home-page">
 
-      {/* ─── HERO ─────────────────────────────────── */}
+      {/* ─── HERO ─── */}
       <section className="home-hero">
         <div className="home-hero-bg" />
         <div className="home-hero-particles" aria-hidden />
@@ -83,7 +83,7 @@ function Home() {
         </div>
       </section>
 
-      {/* ─── STATS BAR ────────────────────────────── */}
+      {/* ─── STATS BAR ─── */}
       <div className="home-stats-bar">
         <div className="container home-stats-inner">
           {STATS.map(s => (
@@ -98,7 +98,7 @@ function Home() {
         </div>
       </div>
 
-      {/* ─── HOST CITIES ──────────────────────────── */}
+      {/* ─── HOST CITIES ─── */}
       <section className="home-section container">
         <div className="home-section-header">
           <div className="section-title-wrap">
@@ -124,13 +124,13 @@ function Home() {
         </div>
       </section>
 
-      {/* ─── TOURNAMENT EXPERIENCE Section ────────── */}
+      {/* ─── TOURNAMENT EXPERIENCE Section ─── */}
       <section className="home-experience-section">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
           <div className="experience-content">
             <h2 className="experience-title">A Journey Beyond <span className="text-gradient">Football</span></h2>
             <p className="experience-desc">
-              The 2026 World Cup is more than just matches. It's an opportunity to explore the diverse cultures, 
+              The 2026 World Cup is more than just matches. It's an opportunity to explore the diverse cultures,
               stunning landscapes, and world-class hospitality of North America.
             </p>
             <div className="experience-features">
@@ -159,7 +159,7 @@ function Home() {
         </div>
       </section>
 
-      {/* ─── FEATURED STADIUMS ────────────────────── */}
+      {/* ─── FEATURED STADIUMS ─── */}
       <section className="home-section container">
         <div className="home-section-header">
           <div className="section-title-wrap">
@@ -168,12 +168,12 @@ function Home() {
           </div>
           <Link to="/stadiums" className="view-all-link">View All <FaArrowRight /></Link>
         </div>
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="home-stadiums-grid">
           {mockStadiums.slice(0, 2).map(s => <StadiumCard key={s.id} stadium={s} />)}
         </div>
       </section>
 
-      {/* ─── TOP HOTELS ───────────────────────────── */}
+      {/* ─── TOP HOTELS ─── */}
       <section className="home-section home-section-dark">
         <div className="container">
           <div className="home-section-header">
@@ -189,7 +189,7 @@ function Home() {
         </div>
       </section>
 
-      {/* ─── FAN DINING ───────────────────────────── */}
+      {/* ─── FAN DINING ─── */}
       <section className="home-section container">
         <div className="home-section-header">
           <div className="section-title-wrap">
@@ -199,11 +199,11 @@ function Home() {
           <Link to="/restaurants" className="view-all-link">View All <FaArrowRight /></Link>
         </div>
         <div className="home-dining-grid">
-          {mockRestaurants.slice(0, 4).map(r => <RestaurantCard key={r.id} restaurant={r} />)}
+          {mockRestaurants.slice(0, 3).map(r => <RestaurantCard key={r.id} restaurant={r} />)}
         </div>
       </section>
 
-      {/* ─── CTA BANNER ───────────────────────────── */}
+      {/* ─── CTA BANNER ─── */}
       <section className="home-cta-banner">
         <div className="home-cta-overlay" />
         <div className="container home-cta-inner">
@@ -211,10 +211,10 @@ function Home() {
           <h2 className="home-cta-title">Your Ultimate World Cup Guide</h2>
           <p className="home-cta-sub">Start planning your cross-continental journey today. Every stadium, every city, one premium platform.</p>
           <div className="flex justify-center gap-4 mt-8 flex-wrap">
-             <Link to="/matches" className="btn btn-primary home-cta-btn">
+            <Link to="/matches" className="btn btn-primary home-cta-btn">
               Explore Matches <FaArrowRight />
             </Link>
-             <Link to="/stadiums" className="btn btn-secondary home-cta-btn">
+            <Link to="/stadiums" className="btn btn-secondary home-cta-btn">
               Browse Venues
             </Link>
           </div>
