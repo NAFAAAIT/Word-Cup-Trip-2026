@@ -104,6 +104,12 @@
   height: 100%;
 }
 
+@media (max-width: 480px) {
+  .stadium-v2-body {
+    padding: 1.25rem;
+  }
+}
+
 .stadium-v2-country-tag {
   font-size: 0.65rem;
   font-weight: 800;
@@ -349,6 +355,12 @@
   flex-direction: column;
   flex: 1;
   gap: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .hotel-card-v2-body {
+    padding: 1.25rem;
+  }
 }
 
 .hotel-v2-header {
