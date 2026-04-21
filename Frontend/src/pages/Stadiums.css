@@ -81,9 +81,15 @@
 }
 
 .stadiums-cards-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2rem;
+}
+
+@media (max-width: 600px) {
+  .stadiums-cards-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ===================================
@@ -104,18 +110,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform-origin: center;
-  animation: slow-zoom 20s ease-in-out infinite alternate;
-}
-
-@keyframes slow-zoom {
-  from {
-    transform: scale(1);
-  }
-
-  to {
-    transform: scale(1.1);
-  }
+  transform: none;
 }
 
 .stadium-detail-hero-overlay {

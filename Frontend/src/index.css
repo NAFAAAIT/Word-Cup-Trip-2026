@@ -40,8 +40,14 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+
 body {
   font-family: var(--font-main);
+
   background-color: var(--bg-dark);
   color: var(--text-primary);
   line-height: 1.5;
@@ -138,6 +144,38 @@ button {
 
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.p-4 { padding: 1rem; }
+.p-5 { padding: 1.25rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
+.p-10 { padding: 2.5rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-8 { padding-left: 2rem; padding-right: 2rem; }
+.px-10 { padding-left: 2.5rem; padding-right: 2.5rem; }
+
+.pt-8 { padding-top: 2rem; }
+.pb-8 { padding-bottom: 2rem; }
+.mt-8 { margin-top: 2rem; }
+.mb-8 { margin-bottom: 2rem; }
+.mr-2 { margin-right: 0.5rem; }
+.ml-2 { margin-left: 0.5rem; }
+
+.space-y-2 > * + * { margin-top: 0.5rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+.space-y-8 > * + * { margin-top: 2rem; }
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 @media (max-width: 1024px) {
@@ -305,6 +343,170 @@ button {
   min-height: calc(100vh - 4rem);
 }
 
+/* Page entrance animations (content only, no hero image motion) */
+:is(.home-page,
+  .hotels-page,
+  .dining-page,
+  .stadiums-page,
+  .stadium-detail-page,
+  .transport-page,
+  .emergency-page,
+  .matches-page,
+  .auth-container,
+  .fade-in) {
+  animation: page-fade-in 0.45s ease both;
+}
+
+.page-hero-content>* {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: content-rise-in 0.6s cubic-bezier(0.2, 0.65, 0.3, 1) both;
+}
+
+.page-hero-content> :nth-child(1) {
+  animation-delay: 0.04s;
+}
+
+.page-hero-content> :nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.page-hero-content> :nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+.page-hero-content> :nth-child(4) {
+  animation-delay: 0.22s;
+}
+
+.home-hero-inner>* {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: content-rise-in 0.65s ease both;
+}
+
+.home-hero-inner> :first-child {
+  animation-delay: 0.08s;
+}
+
+.home-hero-inner> :last-child {
+  animation-delay: 0.2s;
+}
+
+:is(.home-section,
+  .home-stats-bar,
+  .filter-panel,
+  .filter-results-bar,
+  .section-title,
+  .auth-card,
+  .card,
+  .match-card,
+  .home-city-card,
+  .home-stat,
+  .emrg-card,
+  .transport-card-v2,
+  .stadiums-country-tabs,
+  .transport-city-tabs,
+  .home-cta-inner) {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: content-rise-in 0.55s ease both;
+}
+
+:is(.home-city-card,
+  .home-stat,
+  .emrg-card,
+  .transport-card-v2,
+  .match-card,
+  .card):nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+:is(.home-city-card,
+  .home-stat,
+  .emrg-card,
+  .transport-card-v2,
+  .match-card,
+  .card):nth-child(2) {
+  animation-delay: 0.11s;
+}
+
+:is(.home-city-card,
+  .home-stat,
+  .emrg-card,
+  .transport-card-v2,
+  .match-card,
+  .card):nth-child(3) {
+  animation-delay: 0.17s;
+}
+
+:is(.home-city-card,
+  .home-stat,
+  .emrg-card,
+  .transport-card-v2,
+  .match-card,
+  .card):nth-child(4) {
+  animation-delay: 0.23s;
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes content-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  :is(.home-page,
+    .hotels-page,
+    .dining-page,
+    .stadiums-page,
+    .stadium-detail-page,
+    .transport-page,
+    .emergency-page,
+    .matches-page,
+    .auth-container,
+    .fade-in,
+    .page-hero-content > *,
+    .home-hero-inner > *,
+    .home-section,
+    .home-stats-bar,
+    .filter-panel,
+    .filter-results-bar,
+    .section-title,
+    .auth-card,
+    .card,
+    .match-card,
+    .home-city-card,
+    .home-stat,
+    .emrg-card,
+    .transport-card-v2,
+    .stadiums-country-tabs,
+    .transport-city-tabs,
+    .home-cta-inner) {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
 /* Shared Page Hero */
 .page-hero {
   position: relative;
@@ -400,6 +602,32 @@ button {
   max-width: 1000px;
   line-height: 1.6;
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .page-hero {
+    min-height: 84svh;
+    padding: 6.25rem 0 2.5rem;
+  }
+
+  .page-hero-bg img {
+    opacity: 0.56;
+    object-position: center 26%;
+  }
+
+  .page-hero-overlay {
+    background: linear-gradient(to bottom, rgba(7, 9, 15, 0.32) 0%, rgba(7, 9, 15, 0.84) 75%, var(--bg-dark) 100%);
+  }
+
+  .matches-page .page-hero-bg img {
+    object-position: center 20%;
+    opacity: 0.62;
+  }
+
+  .emergency-page .page-hero-bg img {
+    object-position: center 24%;
+    opacity: 0.6;
+  }
 }
 
 /* ===================================

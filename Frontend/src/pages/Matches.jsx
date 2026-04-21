@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FaFutbol, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaFilter, FaSearch, FaTrophy } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import { mockMatches } from '../data/mockData';
 import './Matches.css';
 
@@ -94,7 +95,14 @@ function Matches() {
       <main className="matches-grid container">
         {filteredMatches.length > 0 ? (
           filteredMatches.map(match => (
-            <div key={match.id} className="match-card glass-panel">
+            <motion.div
+              key={match.id}
+              className="match-card glass-panel"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
               <div className="match-header">
                 <span className={`match-type ${match.type === 'Grand Final' ? 'final' : ''}`}>
                   {match.type === 'Grand Final' ? <FaTrophy /> : <FaFutbol />}
@@ -167,7 +175,7 @@ function Matches() {
                   Plan Transport
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))
         ) : (
           <div className="no-matches">
@@ -180,3 +188,4 @@ function Matches() {
 }
 
 export default Matches;
+

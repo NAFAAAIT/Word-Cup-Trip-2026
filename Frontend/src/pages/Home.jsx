@@ -5,9 +5,11 @@ import {
   FaFutbol, FaGlobeAmericas, FaStar, FaArrowRight, FaShieldAlt,
   FaHotel, FaCity, FaUsers, FaTicketAlt, FaPlay
 } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import HotelCard from '../components/HotelCard';
 import RestaurantCard from '../components/RestaurantCard';
 import StadiumCard from '../components/StadiumCard';
+import ScrollReveal from '../components/ScrollReveal';
 import { mockHotels, mockRestaurants, mockStadiums } from '../data/mockData';
 import './Home.css';
 
@@ -29,6 +31,23 @@ const STATS = [
 
 function Home() {
   const [search, setSearch] = useState('');
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  };
+
+
   return (
     <div className="home-page">
 
@@ -37,7 +56,12 @@ function Home() {
         <div className="home-hero-bg" />
         <div className="home-hero-particles" aria-hidden />
         <div className="container home-hero-inner">
-          <div className="home-hero-left">
+          <motion.div 
+            className="home-hero-left"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
             <div className="home-hero-eyebrow">
               <FaFutbol className="spinning-ball" />
               FIFA World Cup 2026™
@@ -56,9 +80,15 @@ function Home() {
                 View Matches <FaArrowRight />
               </Link>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="home-hero-search-card glass-panel">
+          <motion.div 
+            className="home-hero-search-card glass-panel"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+          >
+
             <h3 className="home-search-title">
               <FaSearch /> Quick Search
             </h3>
@@ -79,110 +109,138 @@ function Home() {
               <Link to="/transport" className="home-quick-link"><FaMapMarkedAlt /> Transport</Link>
               <Link to="/emergency" className="home-quick-link home-quick-link-danger"><FaShieldAlt /> Help</Link>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ─── STATS BAR ─── */}
       <div className="home-stats-bar">
-        <div className="container home-stats-inner">
+        <motion.div 
+          className="container home-stats-inner"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           {STATS.map(s => (
-            <div key={s.label} className="home-stat">
+            <motion.div key={s.label} className="home-stat" variants={itemVariants}>
               <div className="home-stat-icon-wrap">{s.icon}</div>
               <div>
                 <span className="home-stat-value">{s.value}</span>
                 <span className="home-stat-label">{s.label}</span>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* ─── HOST CITIES ─── */}
-      <section className="home-section container">
-        <div className="home-section-header">
-          <div className="section-title-wrap">
-            <h2 className="section-title">Iconic Host Cities</h2>
-            <p className="section-subtitle">Discover the vibrant metropolises hosting the matches</p>
-          </div>
-          <Link to="/stadiums" className="view-all-link">View All Venues <FaArrowRight /></Link>
-        </div>
-        <div className="home-cities-cards">
-          {HOST_CITIES.map(city => (
-            <div key={city.name} className="home-city-card">
-              <img src={city.image} alt={city.name} className="home-city-card-img" />
-              <div className="home-city-card-overlay" />
-              <div className="home-city-card-content">
-                <span className="city-card-country">{city.country}</span>
-                <h3 className="city-card-name">{city.name}</h3>
-                <div className="city-card-meta">
-                  <FaTicketAlt /> {city.matches} matches
-                </div>
+      <section className="home-section">
+        <div className="container">
+          <ScrollReveal>
+            <div className="home-section-header">
+              <div className="section-title-wrap">
+                <h2 className="section-title">Iconic Host Cities</h2>
+                <p className="section-subtitle">Discover the vibrant metropolises hosting the matches</p>
               </div>
+              <Link to="/stadiums" className="view-all-link">View All Venues <FaArrowRight /></Link>
             </div>
-          ))}
+          </ScrollReveal>
+          
+          <motion.div 
+            className="home-cities-cards"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            {HOST_CITIES.map(city => (
+              <motion.div key={city.name} className="home-city-card" variants={itemVariants}>
+                <img src={city.image} alt={city.name} className="home-city-card-img" />
+                <div className="home-city-card-overlay" />
+                <div className="home-city-card-content">
+                  <span className="city-card-country">{city.country}</span>
+                  <h3 className="city-card-name">{city.name}</h3>
+                  <div className="city-card-meta">
+                    <FaTicketAlt /> {city.matches} matches
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
       {/* ─── TOURNAMENT EXPERIENCE Section ─── */}
       <section className="home-experience-section">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
-          <div className="experience-content">
-            <h2 className="experience-title">A Journey Beyond <span className="text-gradient">Football</span></h2>
-            <p className="experience-desc">
-              The 2026 World Cup is more than just matches. It's an opportunity to explore the diverse cultures,
-              stunning landscapes, and world-class hospitality of North America.
-            </p>
-            <div className="experience-features">
-              <div className="exp-feature">
-                <div className="exp-icon"><FaPlay /></div>
-                <div>
-                  <h4>Immersive Atmosphere</h4>
-                  <p>Join millions of fans in vibrant fan zones across 16 cities.</p>
+          <ScrollReveal direction="right">
+            <div className="experience-content">
+              <h2 className="experience-title">A Journey Beyond <span className="text-gradient">Football</span></h2>
+              <p className="experience-desc">
+                The 2026 World Cup is more than just matches. It's an opportunity to explore the diverse cultures,
+                stunning landscapes, and world-class hospitality of North America.
+              </p>
+              <div className="experience-features">
+                <div className="exp-feature">
+                  <div className="exp-icon"><FaPlay /></div>
+                  <div>
+                    <h4>Immersive Atmosphere</h4>
+                    <p>Join millions of fans in vibrant fan zones across 16 cities.</p>
+                  </div>
                 </div>
-              </div>
-              <div className="exp-feature">
-                <div className="exp-icon"><FaHotel /></div>
-                <div>
-                  <h4>Premium Luxury</h4>
-                  <p>Hand-picked accommodations steps away from the action.</p>
+                <div className="exp-feature">
+                  <div className="exp-icon"><FaHotel /></div>
+                  <div>
+                    <h4>Premium Luxury</h4>
+                    <p>Hand-picked accommodations steps away from the action.</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="experience-visual">
-            <div className="exp-img-grid">
-              <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80" alt="Modern City" className="exp-img-main" />
-              <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=2069&auto=format&fit=crop" alt="Fan Celebration" className="exp-img-sub" />
+          </ScrollReveal>
+          
+          <ScrollReveal direction="left">
+            <div className="experience-visual">
+              <div className="exp-img-grid">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80" alt="Modern City" className="exp-img-main" />
+                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=2069&auto=format&fit=crop" alt="Fan Celebration" className="exp-img-sub" />
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ─── FEATURED STADIUMS ─── */}
-      <section className="home-section container">
-        <div className="home-section-header">
-          <div className="section-title-wrap">
-            <h2 className="section-title">World-Class Arenas</h2>
-            <p className="section-subtitle">The legendary stages for the 2026 tournament</p>
+      <section className="home-section">
+        <div className="container">
+          <ScrollReveal>
+            <div className="home-section-header">
+              <div className="section-title-wrap">
+                <h2 className="section-title">Premier Stadium Venues</h2>
+                <p className="section-subtitle">Iconic World Cup arenas across USA, Canada, and Mexico</p>
+              </div>
+              <Link to="/stadiums" className="view-all-link">View All <FaArrowRight /></Link>
+            </div>
+          </ScrollReveal>
+          <div className="home-stadiums-grid">
+            {mockStadiums.slice(0, 2).map(s => <StadiumCard key={s.id} stadium={s} />)}
           </div>
-          <Link to="/stadiums" className="view-all-link">View All <FaArrowRight /></Link>
-        </div>
-        <div className="home-stadiums-grid">
-          {mockStadiums.slice(0, 2).map(s => <StadiumCard key={s.id} stadium={s} />)}
         </div>
       </section>
 
       {/* ─── TOP HOTELS ─── */}
       <section className="home-section home-section-dark">
         <div className="container">
-          <div className="home-section-header">
-            <div className="section-title-wrap">
-              <h2 className="section-title">Premium Stays</h2>
-              <p className="section-subtitle">Luxury hotels curated for visiting fans</p>
+          <ScrollReveal>
+            <div className="home-section-header">
+              <div className="section-title-wrap">
+                <h2 className="section-title">Luxury Hotel Stays</h2>
+                <p className="section-subtitle">Top-rated stays near World Cup host venues</p>
+              </div>
+              <Link to="/hotels" className="view-all-link">View All <FaArrowRight /></Link>
             </div>
-            <Link to="/hotels" className="view-all-link">View All <FaArrowRight /></Link>
-          </div>
+          </ScrollReveal>
           <div className="home-hotels-grid">
             {mockHotels.slice(0, 3).map(h => <HotelCard key={h.id} hotel={h} />)}
           </div>
@@ -190,38 +248,45 @@ function Home() {
       </section>
 
       {/* ─── FAN DINING ─── */}
-      <section className="home-section container">
-        <div className="home-section-header">
-          <div className="section-title-wrap">
-            <h2 className="section-title">Culinary Scenes</h2>
-            <p className="section-subtitle">The best restaurants nearby host venues</p>
+      <section className="home-section">
+        <div className="container">
+          <ScrollReveal>
+            <div className="home-section-header">
+              <div className="section-title-wrap">
+                <h2 className="section-title">Fan Dining Spots</h2>
+                <p className="section-subtitle">Top-rated restaurants close to stadiums and fan zones</p>
+              </div>
+              <Link to="/restaurants" className="view-all-link">View All <FaArrowRight /></Link>
+            </div>
+          </ScrollReveal>
+          <div className="home-dining-grid">
+            {mockRestaurants.slice(0, 3).map(r => <RestaurantCard key={r.id} restaurant={r} />)}
           </div>
-          <Link to="/restaurants" className="view-all-link">View All <FaArrowRight /></Link>
-        </div>
-        <div className="home-dining-grid">
-          {mockRestaurants.slice(0, 3).map(r => <RestaurantCard key={r.id} restaurant={r} />)}
         </div>
       </section>
 
       {/* ─── CTA BANNER ─── */}
       <section className="home-cta-banner">
         <div className="home-cta-overlay" />
-        <div className="container home-cta-inner">
-          <div className="home-cta-badge">Tournament Launch 2026</div>
-          <h2 className="home-cta-title">Your Ultimate World Cup Guide</h2>
-          <p className="home-cta-sub">Start planning your cross-continental journey today. Every stadium, every city, one premium platform.</p>
-          <div className="flex justify-center gap-4 mt-8 flex-wrap">
-            <Link to="/matches" className="btn btn-primary home-cta-btn">
-              Explore Matches <FaArrowRight />
-            </Link>
-            <Link to="/stadiums" className="btn btn-secondary home-cta-btn">
-              Browse Venues
-            </Link>
+        <ScrollReveal duration={1.2}>
+          <div className="container home-cta-inner">
+            <div className="home-cta-badge">Tournament Launch 2026</div>
+            <h2 className="home-cta-title">Your Premium World Cup 2026 Guide</h2>
+            <p className="home-cta-sub">Plan your full trip in one place: matches, stadiums, hotels, dining, and transport across all host cities.</p>
+            <div className="flex justify-center gap-4 mt-8 flex-wrap">
+              <Link to="/matches" className="btn btn-primary home-cta-btn">
+                Explore Matches <FaArrowRight />
+              </Link>
+              <Link to="/stadiums" className="btn btn-secondary home-cta-btn">
+                Browse Venues
+              </Link>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
     </div>
   );
 }
 
 export default Home;
+

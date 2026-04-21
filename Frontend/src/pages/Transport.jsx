@@ -11,9 +11,13 @@ import {
   FaMoneyBillAlt,
   FaSyncAlt,
   FaUndoAlt,
+  FaGlobe,
+  FaMapMarkedAlt,
 } from 'react-icons/fa';
 import { mockTransports, mockStadiums } from '../data/mockData';
 import './Transport.css';
+
+import { motion } from 'framer-motion';
 
 const typeIcon = {
   Subway: FaSubway,
@@ -35,11 +39,15 @@ function TransportCard({ option, isSelected, onSelect }) {
   const Icon = typeIcon[option.type] || FaBus;
 
   return (
-    <button
+    <motion.button
       type="button"
       className={`transport-card-v2 ${isSelected ? 'selected' : ''}`}
       onClick={() => onSelect(option.id)}
       aria-pressed={isSelected}
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <div className="transport-card-icon-col" style={{ '--t-color': option.color }}>
         <Icon className="transport-icon-v2" />
@@ -61,15 +69,16 @@ function TransportCard({ option, isSelected, onSelect }) {
           <span className="transport-freq-v2">{option.frequencyLabel}</span>
         </div>
       </div>
-    </button>
+    </motion.button>
   );
 }
 
+
 function Transport() {
   const [searchParams] = useSearchParams();
-  const cities = useMemo(() => [...new Set(mockTransports.map((route) => route.city))], []);
+  const countries = ['All', 'USA', 'Mexico', 'Canada'];
 
-  const [activeCity, setActiveCity] = useState(cities[0] || 'New York/NJ');
+  const [activeCountry, setActiveCountry] = useState('All');
   const [activeType, setActiveType] = useState(DEFAULT_FILTERS.activeType);
   const [sortBy, setSortBy] = useState(DEFAULT_FILTERS.sortBy);
   const [statusFilter, setStatusFilter] = useState(DEFAULT_FILTERS.statusFilter);
@@ -81,26 +90,42 @@ function Transport() {
 
   const routeTypes = useMemo(() => ['All', ...new Set(mockTransports.map((route) => route.type))], []);
 
+  // Helper to map cities to countries
+  const cityToCountryMap = useMemo(() => {
+    const map = {};
+    mockStadiums.forEach(s => {
+      map[s.city] = s.country;
+      // Handle variations like "New York/NJ" vs "New York/New Jersey"
+      if (s.city.includes('/')) {
+        const parts = s.city.split('/');
+        parts.forEach(p => map[p.trim()] = s.country);
+      }
+    });
+    return map;
+  }, []);
+
   useEffect(() => {
     const city = searchParams.get('city');
     const stadium = searchParams.get('stadium');
     const kickoff = searchParams.get('kickoff');
 
-    if (city && cities.includes(city)) {
-      setActiveCity(city);
+    if (city) {
+      const country = cityToCountryMap[city] || (city.includes('York') ? 'USA' : null);
+      if (country) setActiveCountry(country);
     }
 
     if (stadium) {
       setSearchText(stadium);
       setFromMatchLabel(`${stadium}${kickoff ? ` - ${kickoff}` : ''}`);
     }
-  }, [cities, searchParams]);
+  }, [cityToCountryMap, searchParams]);
 
   const filteredRoutes = useMemo(() => {
     const loweredSearch = searchText.trim().toLowerCase();
 
     const list = mockTransports.filter((route) => {
-      const matchesCity = route.city === activeCity;
+      const routeCountry = cityToCountryMap[route.city] || (route.city.includes('York') ? 'USA' : 'USA'); 
+      const matchesCountry = activeCountry === 'All' || routeCountry === activeCountry;
       const matchesType = activeType === 'All' || route.type === activeType;
       const matchesStatus = statusFilter === 'All' || route.status === statusFilter;
       const matchesDuration = route.durationMin <= durationMax;
@@ -112,7 +137,7 @@ function Transport() {
         route.to.toLowerCase().includes(loweredSearch) ||
         route.stadium.toLowerCase().includes(loweredSearch);
 
-      return matchesCity && matchesType && matchesStatus && matchesDuration && matchesCost && matchesSearch;
+      return matchesCountry && matchesType && matchesStatus && matchesDuration && matchesCost && matchesSearch;
     });
 
     const sorted = [...list];
@@ -131,7 +156,7 @@ function Transport() {
     });
 
     return sorted;
-  }, [activeCity, activeType, costMax, durationMax, searchText, sortBy, statusFilter]);
+  }, [activeCountry, activeType, cityToCountryMap, costMax, durationMax, searchText, sortBy, statusFilter]);
 
   useEffect(() => {
     if (!filteredRoutes.length) {
@@ -175,20 +200,25 @@ function Transport() {
           )}
 
           <div className="transport-city-tabs mt-8">
-            {cities.map((c) => {
-              const stadium = mockStadiums.find((s) => s.city === c || s.city.includes(c));
-              const flag = stadium?.country === 'USA' ? '🇺🇸' : stadium?.country === 'Mexico' ? '🇲🇽' : stadium?.country === 'Canada' ? '🇨🇦' : '🏙️';
-              
-              return (
-                <button
-                  key={c}
-                  className={`transport-city-tab ${activeCity === c ? 'active' : ''}`}
-                  onClick={() => setActiveCity(c)}
-                >
-                  {flag} {c}
-                </button>
-              );
-            })}
+            {countries.map((c) => (
+              <button
+                key={c}
+                className={`transport-city-tab ${activeCountry === c ? 'active' : ''}`}
+                onClick={() => setActiveCountry(c)}
+              >
+                {c === 'All' ? (
+                  <FaGlobe className="mr-2" />
+                ) : (
+                  <img
+                    src={`https://flagcdn.com/w40/${c === 'USA' ? 'us' : c === 'Mexico' ? 'mx' : 'ca'}.png`}
+                    alt={c}
+                    className="emrg-city-flag mr-2"
+                    style={{ width: '20px', height: 'auto', borderRadius: '2px' }}
+                  />
+                )}
+                <span style={{ marginLeft: '4px' }}>{c}</span>
+              </button>
+            ))}
           </div>
         </div>
       </section>
@@ -271,13 +301,19 @@ function Transport() {
         <div className="filter-results-bar">
           <p className="filter-results-count">
             Showing <strong>{filteredRoutes.length}</strong> of{' '}
-            <strong>{mockTransports.filter((route) => route.city === activeCity).length}</strong> routes in {activeCity}
+            <strong>{mockTransports.filter((route) => {
+              const country = cityToCountryMap[route.city] || (route.city.includes('York') ? 'USA' : 'USA');
+              return activeCountry === 'All' || country === activeCountry;
+            }).length}</strong> routes in {activeCountry === 'All' ? 'World Cup Hubs' : activeCountry}
           </p>
         </div>
 
         <div className="transport-layout">
           <div>
-            <h2 className="section-title mb-6">🚌 Recommended Routes — {activeCity}</h2>
+            <h2 className="section-title mb-6">
+              <FaBus className="text-secondary" /> Recommended Routes — {activeCountry === 'All' ? 'All Regions' : activeCountry}
+            </h2>
+
 
             {!filteredRoutes.length ? (
               <div className="transport-empty-state">
@@ -302,7 +338,9 @@ function Transport() {
           </div>
 
           <div>
-            <h2 className="section-title mb-6">🗺️ Live Transit Map</h2>
+            <h2 className="section-title mb-6">
+              <FaMapMarkedAlt className="text-primary-accent" /> Live Transit Map
+            </h2>
             <TransportMap
               routes={filteredRoutes}
               selectedRouteId={selectedRouteId}

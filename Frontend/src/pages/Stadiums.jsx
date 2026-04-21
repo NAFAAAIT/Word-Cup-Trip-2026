@@ -5,8 +5,10 @@ import HotelCard from '../components/HotelCard';
 import RestaurantCard from '../components/RestaurantCard';
 import { mockMatches, mockStadiums, mockHotels, mockRestaurants } from '../data/mockData';
 import StadiumCard from '../components/StadiumCard';
-import { FaArrowLeft, FaUsers, FaFutbol, FaMapMarkerAlt, FaBus, FaParking, FaSubway, FaRoute, FaCalendarAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaUsers, FaFutbol, FaMapMarkerAlt, FaBus, FaParking, FaSubway, FaRoute, FaCalendarAlt, FaGlobe, FaHotel, FaUtensils } from 'react-icons/fa';
 import './Stadiums.css';
+
+import ScrollReveal from '../components/ScrollReveal';
 
 function StadiumDetailView({ stadium, onBack }) {
   const navigate = useNavigate();
@@ -113,62 +115,78 @@ function StadiumDetailView({ stadium, onBack }) {
         <div className="stadium-detail-grid">
           {/* Main column */}
           <div>
-            <section className="card p-8 mb-8">
-              <h2 className="section-title">About the Venue</h2>
-              <p className="text-secondary leading-relaxed text-lg">{stadium.description}</p>
-            </section>
+            <ScrollReveal>
+              <section className="card p-4 mb-8">
+                <h2 className="section-title">About the Venue</h2>
+                <p className="text-secondary leading-relaxed text-lg">{stadium.description}</p>
+              </section>
+            </ScrollReveal>
 
-            <section className="mb-8">
-              <h2 className="section-title">🏨 Nearby Hotels</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                {nearbyHotels.map(h => <HotelCard key={h.id} hotel={h} />)}
-              </div>
-            </section>
+            <ScrollReveal>
+              <section className="mb-8">
+                <h2 className="section-title flex items-center gap-3">
+                  <FaHotel className="text-primary-accent" /> Nearby Hotels
+                </h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {nearbyHotels.map(h => <HotelCard key={h.id} hotel={h} />)}
+                </div>
+              </section>
+            </ScrollReveal>
 
-            <section>
-              <h2 className="section-title">🍽️ Nearby Dining</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                {nearbyRestaurants.map(r => <RestaurantCard key={r.id} restaurant={r} />)}
-              </div>
-            </section>
+            <ScrollReveal>
+              <section>
+                <h2 className="section-title flex items-center gap-3">
+                  <FaUtensils className="text-warning-color" /> Nearby Dining
+                </h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {nearbyRestaurants.map(r => <RestaurantCard key={r.id} restaurant={r} />)}
+                </div>
+              </section>
+            </ScrollReveal>
           </div>
 
           {/* Sidebar */}
           <div className="stadium-detail-sidebar">
-            <div className="card p-6 mb-6">
-              <h3 className="font-bold mb-4 flex items-center gap-2">
-                <FaMapMarkerAlt className="text-primary-accent" /> Stadium Location
-              </h3>
-              <StadiumLocationMap stadiumName={stadium.name} city={`${stadium.city}, ${stadium.country}`} />
-            </div>
-            <div className="card p-6">
-              <h3 className="font-bold mb-4 flex items-center gap-2">
-                <FaBus className="text-success-color" /> Transport Options
-              </h3>
-              <ul className="stadium-transport-list">
-                <li className="stadium-transport-item">
-                  <FaSubway className="text-primary-accent" />
-                  <span className="flex-1">Nearest Metro</span>
-                  <span className="text-white font-bold text-sm">0.5 mi</span>
-                </li>
-                <li className="stadium-transport-item">
-                  <FaBus className="text-warning" />
-                  <span className="flex-1">Fan Shuttle</span>
-                  <span className="text-white font-bold text-sm">Every 15 min</span>
-                </li>
-                <li className="stadium-transport-item border-b-0">
-                  <FaParking className="text-danger" />
-                  <span className="flex-1">Parking</span>
-                  <span className="font-bold text-sm" style={{ color: 'var(--warning-color)' }}>Pre-book only</span>
-                </li>
-              </ul>
-            </div>
+            <ScrollReveal direction="left">
+              <div className="card p-4 mb-6">
+                <h3 className="font-bold mb-4 flex items-center gap-2">
+                  <FaMapMarkerAlt className="text-primary-accent" /> Stadium Location
+                </h3>
+                <StadiumLocationMap stadiumName={stadium.name} city={`${stadium.city}, ${stadium.country}`} />
+              </div>
+            </ScrollReveal>
+            
+            <ScrollReveal direction="left" delay={0.2}>
+              <div className="card p-4">
+                <h3 className="font-bold mb-4 flex items-center gap-2">
+                  <FaBus className="text-success-color" /> Transport Options
+                </h3>
+                <ul className="stadium-transport-list">
+                  <li className="stadium-transport-item">
+                    <FaSubway className="text-primary-accent" />
+                    <span className="flex-1">Nearest Metro</span>
+                    <span className="text-white font-bold text-sm">0.5 mi</span>
+                  </li>
+                  <li className="stadium-transport-item">
+                    <FaBus className="text-warning" />
+                    <span className="flex-1">Fan Shuttle</span>
+                    <span className="text-white font-bold text-sm">Every 15 min</span>
+                  </li>
+                  <li className="stadium-transport-item border-b-0">
+                    <FaParking className="text-danger" />
+                    <span className="flex-1">Parking</span>
+                    <span className="font-bold text-sm" style={{ color: 'var(--warning-color)' }}>Pre-book only</span>
+                  </li>
+                </ul>
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 function Stadiums() {
   const [selectedStadium, setSelectedStadium] = useState(null);
@@ -207,7 +225,17 @@ function Stadiums() {
                 className={`stadiums-country-tab ${activeCountry === c ? 'active' : ''}`}
                 onClick={() => setActiveCountry(c)}
               >
-                {c === 'USA' ? '🇺🇸' : c === 'Mexico' ? '🇲🇽' : c === 'Canada' ? '🇨🇦' : '🌍'} {c}
+                {c === 'All' ? (
+                  <FaGlobe className="mr-2" />
+                ) : (
+                  <img
+                    src={`https://flagcdn.com/w40/${c === 'USA' ? 'us' : c === 'Mexico' ? 'mx' : 'ca'}.png`}
+                    alt={c}
+                    className="emrg-city-flag mr-2"
+                    style={{ width: '20px', height: 'auto', borderRadius: '2px' }}
+                  />
+                )}
+                <span style={{ marginLeft: '4px' }}>{c}</span>
               </button>
             ))}
           </div>

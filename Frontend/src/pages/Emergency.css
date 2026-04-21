@@ -7,6 +7,80 @@
   min-height: 100vh;
 }
 
+.emergency-hero-badge {
+  opacity: 1;
+  transform: none;
+  animation: pulse-cyan 2s ease-in-out infinite;
+  background: rgba(0, 238, 255, 0.14);
+  border: 1px solid rgba(0, 238, 255, 0.35);
+  color: #9cf8ff;
+}
+
+@keyframes pulse-cyan {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 238, 255, 0.35);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 238, 255, 0);
+  }
+}
+
+.emrg-city-tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.emrg-city-tab {
+  padding: 0.55rem 1.1rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  background: rgba(20, 24, 36, 0.6);
+  backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.emrg-city-code {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-right: 0.2rem;
+}
+
+.emrg-city-flag {
+  width: 16px;
+  height: 12px;
+  border-radius: 2px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.emrg-city-tab:hover {
+  border-color: var(--primary-accent);
+  color: var(--text-primary);
+}
+
+.emrg-city-tab.active {
+  background: rgba(0, 238, 255, 0.1);
+  border-color: var(--primary-accent);
+  color: var(--primary-accent);
+  box-shadow: 0 0 0 1px rgba(0, 238, 255, 0.15), 0 0 20px rgba(0, 238, 255, 0.16);
+}
+
+.emrg-city-tab.active .emrg-city-code {
+  color: #b9f6fb;
+}
+
 /* ===================================
    HERO ANIMATIONS
    =================================== */
@@ -144,7 +218,7 @@
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 0.85rem;
+  padding: 0.7rem;
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05));
   border: 1px solid rgba(239, 68, 68, 0.4);
   color: var(--danger-color);
@@ -257,4 +331,18 @@
   height: 10px;
   border-radius: 50%;
   margin-right: 0.35rem;
+}
+
+@media (max-width: 768px) {
+  .emrg-city-tabs {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+    scrollbar-width: thin;
+  }
+
+  .emrg-city-tab {
+    flex-shrink: 0;
+  }
 }

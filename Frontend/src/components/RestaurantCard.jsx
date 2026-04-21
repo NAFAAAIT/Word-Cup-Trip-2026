@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaStar, FaMapMarkerAlt, FaUtensils, FaMap } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import './CardComponents.css';
 
 function RestaurantCard({ restaurant }) {
@@ -10,7 +11,14 @@ function RestaurantCard({ restaurant }) {
   };
 
   return (
-    <div className="rest-card-v2">
+    <motion.div 
+      className="rest-card-v2"
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+
       {/* Image */}
       <div className="rest-card-v2-img-wrap">
         <img src={restaurant.image} alt={restaurant.name} className="rest-card-v2-img" />
@@ -58,8 +66,9 @@ function RestaurantCard({ restaurant }) {
           <FaMap /> View on Map
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default RestaurantCard;
+

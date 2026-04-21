@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaStar, FaWifi, FaDumbbell, FaSwimmingPool, FaCoffee, FaParking, FaBus, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import './CardComponents.css';
 
 function HotelCard({ hotel }) {
@@ -22,7 +23,14 @@ function HotelCard({ hotel }) {
   };
 
   return (
-    <div className="hotel-card-v2">
+    <motion.div 
+      className="hotel-card-v2"
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+
       {/* Image Section */}
       <div className="hotel-card-v2-img-wrap">
         <img src={hotel.image} alt={hotel.name} className="hotel-card-v2-img" />
@@ -86,8 +94,9 @@ function HotelCard({ hotel }) {
           View Details & Book
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default HotelCard;
+

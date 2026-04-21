@@ -4,35 +4,42 @@
    STADIUM CARD V2 (Premium horizontal layout)
    ========================================================================== */
 .stadium-card-v2 {
-  display: grid;
-  grid-template-columns: 45% 55%;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 1.5rem;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  min-height: 520px;
+  height: 100%;
 }
 
 .stadium-card-v2:hover {
   transform: translateY(-6px);
-  box-shadow: 0 25px 60px rgba(0,0,0,0.65);
-  border-color: rgba(0,238,255,0.3);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+  border-color: rgba(0, 238, 255, 0.3);
 }
 
 @media (max-width: 768px) {
-  .stadium-card-v2 { grid-template-columns: 1fr; }
+  .stadium-card-v2 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Image */
 .stadium-v2-img-wrap {
   position: relative;
   overflow: hidden;
-  min-height: 320px;
+  height: 240px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
-  .stadium-v2-img-wrap { min-height: 220px; }
+  .stadium-v2-img-wrap {
+    min-height: 220px;
+  }
 }
 
 .stadium-v2-img {
@@ -45,11 +52,9 @@
 .stadium-v2-img-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    transparent 50%,
-    rgba(20,24,36,0.7) 100%
-  );
+  background: linear-gradient(to right,
+      transparent 50%,
+      rgba(20, 24, 36, 0.7) 100%);
 }
 
 /* Badges on image */
@@ -69,7 +74,7 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .stadium-v2-location-badge {
@@ -80,10 +85,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: rgba(7,9,15,0.7);
+  background: rgba(7, 9, 15, 0.7);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.7rem;
@@ -92,14 +97,11 @@
 
 /* Body */
 .stadium-v2-body {
-  padding: 2.5rem 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-}
-
-@media (max-width: 768px) {
-  .stadium-v2-body { padding: 1.5rem; }
+  gap: 0.6rem;
+  height: 100%;
 }
 
 .stadium-v2-country-tag {
@@ -119,7 +121,9 @@
 }
 
 @media (max-width: 768px) {
-  .stadium-v2-title { font-size: 1.35rem; }
+  .stadium-v2-title {
+    font-size: 1.35rem;
+  }
 }
 
 .stadium-v2-desc {
@@ -208,7 +212,7 @@
 
 .hotel-card-v2:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
   border-color: rgba(0, 238, 255, 0.25);
 }
 
@@ -232,12 +236,10 @@
 .hotel-card-v2-img-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(7, 9, 15, 0.95) 0%,
-    rgba(7, 9, 15, 0.4) 45%,
-    transparent 100%
-  );
+  background: linear-gradient(to top,
+      rgba(7, 9, 15, 0.95) 0%,
+      rgba(7, 9, 15, 0.4) 45%,
+      transparent 100%);
   pointer-events: none;
 }
 
@@ -272,8 +274,8 @@
 
 .hotel-v2-badge-dist {
   background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .hotel-v2-like-btn {
@@ -284,20 +286,20 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.85rem;
   transition: all 0.2s;
   cursor: pointer;
 }
 
 .hotel-v2-like-btn:hover {
-  background: rgba(239,68,68,0.2);
+  background: rgba(239, 68, 68, 0.2);
   border-color: var(--danger-color);
   color: var(--danger-color);
 }
@@ -320,7 +322,7 @@
 .hotel-v2-from {
   display: block;
   font-size: 0.65rem;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.5);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -335,7 +337,7 @@
 
 .hotel-v2-per {
   font-size: 0.7rem;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 255, 255, 0.55);
   font-weight: 700;
   margin-left: 0.15rem;
 }
@@ -380,8 +382,15 @@
   gap: 2px;
 }
 
-.hotel-v2-stars .star-on { color: var(--warning-color); font-size: 0.75rem; }
-.hotel-v2-stars .star-off { color: var(--border-color); font-size: 0.75rem; }
+.hotel-v2-stars .star-on {
+  color: var(--warning-color);
+  font-size: 0.75rem;
+}
+
+.hotel-v2-stars .star-off {
+  color: var(--border-color);
+  font-size: 0.75rem;
+}
 
 .hotel-v2-reviews {
   font-size: 0.75rem;
@@ -413,8 +422,8 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.6rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 0.4rem;
   font-size: 0.65rem;
   font-weight: 700;
@@ -460,7 +469,7 @@
 
 .rest-card-v2:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
   border-color: rgba(245, 158, 11, 0.25);
 }
 
@@ -484,12 +493,10 @@
 .rest-card-v2-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(7, 9, 15, 0.9) 0%,
-    rgba(7, 9, 15, 0.3) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(to top,
+      rgba(7, 9, 15, 0.9) 0%,
+      rgba(7, 9, 15, 0.3) 50%,
+      transparent 100%);
   pointer-events: none;
 }
 
@@ -502,8 +509,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: rgba(245,158,11,0.15);
-  border: 1px solid rgba(245,158,11,0.35);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   color: var(--warning-color);
   padding: 0.3rem 0.7rem;
   border-radius: 9999px;
@@ -540,20 +547,20 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .rest-v2-like-btn:hover {
-  background: rgba(239,68,68,0.2);
+  background: rgba(239, 68, 68, 0.2);
   border-color: var(--danger-color);
   color: var(--danger-color);
 }
@@ -621,8 +628,8 @@
 
 .rest-v2-tag {
   padding: 0.25rem 0.6rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 0.4rem;
   font-size: 0.65rem;
   font-weight: 700;
@@ -639,8 +646,8 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.8rem 1rem;
-  background: rgba(245,158,11,0.1);
-  border: 1px solid rgba(245,158,11,0.3);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   color: var(--warning-color);
   font-weight: 800;
   font-size: 0.875rem;
@@ -673,7 +680,7 @@
 
 .hotel-refactored-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 .hotel-card-image-container {
@@ -705,13 +712,13 @@
   letter-spacing: 0.05em;
   backdrop-filter: blur(8px);
   z-index: 2;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .badge-deal {
   background-color: rgba(20, 24, 36, 0.85);
   color: var(--text-primary);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .badge-deal::before {
@@ -771,8 +778,15 @@
   gap: 2px;
 }
 
-.star-filled { color: var(--warning-color); font-size: 0.8rem; }
-.star-empty { color: var(--border-color); font-size: 0.8rem; }
+.star-filled {
+  color: var(--warning-color);
+  font-size: 0.8rem;
+}
+
+.star-empty {
+  color: var(--border-color);
+  font-size: 0.8rem;
+}
 
 .hotel-rating-text {
   font-size: 0.75rem;
@@ -813,8 +827,8 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.3rem 0.6rem;
-  background-color: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-sm);
   font-size: 0.6rem;
   font-weight: 700;
@@ -852,8 +866,8 @@
 
 .rest-square-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .rest-image-box {
@@ -880,7 +894,7 @@
   right: 1rem;
   width: 36px;
   height: 36px;
-  background: rgba(20,24,36,0.6);
+  background: rgba(20, 24, 36, 0.6);
   backdrop-filter: blur(4px);
   border-radius: 50%;
   display: flex;
@@ -927,7 +941,7 @@
 .rest-tag-pill {
   font-size: 0.65rem;
   padding: 0.2rem 0.5rem;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
 }
@@ -949,7 +963,7 @@
 }
 
 .rest-map-btn:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--text-secondary);
 }
 
@@ -967,7 +981,7 @@
 
 .stadium-horiz-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
   border-color: rgba(0, 238, 255, 0.2);
 }
 
@@ -995,7 +1009,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .stadium-horiz-content {
@@ -1037,18 +1051,21 @@
 
 @media (max-width: 900px) {
   .stadium-horiz-card {
-      flex-direction: column;
+    flex-direction: column;
   }
+
   .stadium-horiz-image-box {
-      width: 100%;
-      height: 250px;
-      min-height: auto;
+    width: 100%;
+    height: 250px;
+    min-height: auto;
   }
+
   .stadium-horiz-content {
-      width: 100%;
-      padding: 1.5rem;
+    width: 100%;
+    padding: 1.5rem;
   }
+
   .stadium-horiz-title {
-      font-size: 1.5rem;
+    font-size: 1.5rem;
   }
 }

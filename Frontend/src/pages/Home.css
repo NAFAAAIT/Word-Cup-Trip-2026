@@ -58,6 +58,31 @@
   }
 }
 
+@media (max-width: 768px) {
+  .home-hero {
+    min-height: 86svh;
+  }
+
+  .home-hero-bg {
+    background-image:
+      linear-gradient(145deg,
+        rgba(7, 9, 15, 0.88) 0%,
+        rgba(7, 9, 15, 0.74) 44%,
+        rgba(7, 9, 15, 0.48) 100%),
+      url('https://images.unsplash.com/photo-1521731978332-9e9e714bdd20?auto=format&fit=crop&w=1920&q=80');
+    background-position: 62% center;
+  }
+
+  .home-hero-particles {
+    opacity: 0.55;
+  }
+
+  .home-hero-inner {
+    padding: 6.4rem 1.25rem 3.2rem;
+    gap: 2.25rem;
+  }
+}
+
 .home-hero-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -267,7 +292,7 @@
    SECTIONS
    ================================================ */
 .home-section {
-  padding: 6rem 0;
+  padding: 4rem;
 }
 
 .section-title-wrap {
@@ -522,15 +547,18 @@
   }
 
   .home-section-header {
-    justify-content: center;
-    text-align: center;
-    gap: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 0.7rem;
+    margin-bottom: 2rem;
   }
 
   .section-title-wrap {
     width: 100%;
     text-align: left;
-    padding-left: 0.45rem;
+    padding-left: 0;
   }
 
   .section-title-wrap .section-title,
@@ -538,8 +566,14 @@
     text-align: left;
   }
 
+  .section-title-wrap .section-subtitle {
+    line-height: 1.45;
+    max-width: 32ch;
+  }
+
   .view-all-link {
-    margin: 0 auto;
+    margin: 0;
+    align-self: flex-start;
   }
 
   .home-dining-grid,

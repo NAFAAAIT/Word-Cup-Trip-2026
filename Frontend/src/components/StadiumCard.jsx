@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaUsers, FaFutbol, FaArrowRight } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import './CardComponents.css';
 
 function StadiumCard({ stadium, onClick }) {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div
+    <motion.div
       className="stadium-card-v2"
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={onClick}
@@ -64,8 +70,9 @@ function StadiumCard({ stadium, onClick }) {
           </button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default StadiumCard;
+

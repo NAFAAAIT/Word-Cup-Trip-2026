@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from 'react-leaflet';
 
-const SAFE_ZONES = [
+const DEFAULT_SAFE_ZONES = [
     {
         id: 'sz-medical',
         name: 'Medical Tent - Fan Zone East',
@@ -28,6 +28,12 @@ const SAFE_ZONES = [
 export const HOSPITAL_COORDS = {
     'Holy Name Medical Center': [40.8869, -74.0073],
     'Hackensack University Medical Center': [40.8842, -74.0558],
+    'UCLA Ronald Reagan Medical Center': [34.0655, -118.4455],
+    'Cedars-Sinai Medical Center': [34.0752, -118.3804],
+    'Toronto General Hospital': [43.6584, -79.3889],
+    'Mount Sinai Hospital Toronto': [43.6455, -79.3934],
+    'Hospital General de Mexico': [19.4109, -99.1529],
+    'Centro Medico Nacional Siglo XXI': [19.4081, -99.1535],
 };
 
 const POINT_STYLE = {
@@ -53,7 +59,7 @@ function FitAllPoints({ points }) {
     return null;
 }
 
-function EmergencySafetyMap({ hospitals, userPosition }) {
+function EmergencySafetyMap({ hospitals, userPosition, safeZones = DEFAULT_SAFE_ZONES }) {
     const mapPoints = useMemo(() => {
         const userPoint = userPosition
             ? [
@@ -78,8 +84,8 @@ function EmergencySafetyMap({ hospitals, userPosition }) {
                 position: HOSPITAL_COORDS[hospital.name],
             }));
 
-        return [...userPoint, ...SAFE_ZONES, ...hospitalPoints];
-    }, [hospitals, userPosition]);
+        return [...userPoint, ...safeZones, ...hospitalPoints];
+    }, [hospitals, safeZones, userPosition]);
 
     const fallbackCenter = mapPoints[0]?.position || [40.8128, -74.0742];
 
