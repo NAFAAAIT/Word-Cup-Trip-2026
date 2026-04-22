@@ -64,7 +64,7 @@ export const mockHotels = [
   {
     id: "h5",
     name: "Azteca Fan Lodge",
-    image: "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "https://x.cdrst.com/foto/hotel-sf/120321e7/granderesp/foto-hotel-1203173d.jpg",
     price: 150,
     rating: 4.6,
     reviews: 512,
@@ -391,19 +391,19 @@ export const mockHotels = [
 export const mockRestaurants = [
   {
     id: "r1",
-    name: "El Pastor VIP",
-    image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=2094&auto=format&fit=crop",
-    cuisine: "Mexican",
-    country: "Mexico",
-    rating: 4.9,
-    distance: "0.3 mi to Azteca",
-    description: "The absolute best tacos near the stadium. Vibrant fan atmosphere.",
-    tags: ["Halal", "Spicy"]
+    name: "CBS Sports House",
+    image: "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    cuisine: "American",
+    country: "USA",
+    rating: 4.3,
+    distance: "0.3 mi to Gillette Stadium",
+    description: "High-energy spot for burgers and beer at Patriot Place.",
+    tags: ["Burgers", "Patriots"]
   },
   {
     id: "r2",
     name: "Liberty Steakhouse",
-    image: "https://images.unsplash.com/photo-1558030006-450675393462?q=80&w=1931&auto=format&fit=crop",
+    image: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1600/900/75/vision-dam/digital/parks-platform/parks-global-assets/disney-springs/dining/stk/IMG_7240-stk-16x9.jpg?2023-01-26T18:37:00+00:00",
     cuisine: "American",
     country: "USA",
     rating: 4.7,
@@ -413,14 +413,14 @@ export const mockRestaurants = [
   },
   {
     id: "r3",
-    name: "Poutine Central",
-    image: "https://images.unsplash.com/photo-1626082896492-766af4eb6501?q=80&w=2070&auto=format&fit=crop",
-    cuisine: "Canadian",
-    country: "Canada",
-    rating: 4.5,
-    distance: "0.5 mi to BMO Field",
-    description: "Authentic Canadian poutine, perfect post-match comfort food.",
-    tags: ["Vegetarian Options"]
+    name: "Azteca Grill House",
+    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    cuisine: "Mexican",
+    country: "Mexico",
+    rating: 4.6,
+    distance: "0.7 mi to Azteca",
+    description: "Wood-fired meats and matchday platters for big groups.",
+    tags: ["Grill", "Family Friendly"]
   },
   {
     id: "r4",
@@ -435,19 +435,19 @@ export const mockRestaurants = [
   },
   {
     id: "r5",
-    name: "Azteca Grill House",
-    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    cuisine: "Mexican",
-    country: "Mexico",
-    rating: 4.6,
-    distance: "0.7 mi to Azteca",
-    description: "Wood-fired meats and matchday platters for big groups.",
-    tags: ["Grill", "Family Friendly"]
+    name: "Poutine Central",
+    image: "https://images.unsplash.com/photo-1626082896492-766af4eb6501?q=80&w=2070&auto=format&fit=crop",
+    cuisine: "Canadian",
+    country: "Canada",
+    rating: 4.5,
+    distance: "0.5 mi to BMO Field",
+    description: "Authentic Canadian poutine, perfect post-match comfort food.",
+    tags: ["Vegetarian Options"]
   },
   {
     id: "r6",
     name: "Maple Leaf Kitchen",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     cuisine: "Canadian",
     country: "Canada",
     rating: 4.4,
@@ -568,7 +568,7 @@ export const mockRestaurants = [
   {
     id: "r17",
     name: "Texas Live!",
-    image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     cuisine: "American",
     country: "USA",
     rating: 4.6,
@@ -612,7 +612,7 @@ export const mockRestaurants = [
   {
     id: "r21",
     name: "Chickie's & Pete's",
-    image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     cuisine: "American",
     country: "USA",
     rating: 4.5,
@@ -622,19 +622,19 @@ export const mockRestaurants = [
   },
   {
     id: "r22",
-    name: "CBS Sports House",
-    image: "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    cuisine: "American",
-    country: "USA",
-    rating: 4.3,
-    distance: "0.3 mi to Gillette Stadium",
-    description: "High-energy spot for burgers and beer at Patriot Place.",
-    tags: ["Burgers", "Patriots"]
+    name: "El Pastor VIP",
+    image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=2094&auto=format&fit=crop",
+    cuisine: "Mexican",
+    country: "Mexico",
+    rating: 4.9,
+    distance: "0.3 mi to Azteca",
+    description: "The absolute best tacos near the stadium. Vibrant fan atmosphere.",
+    tags: ["Halal", "Spicy"]
   },
   {
     id: "r23",
     name: "Pappasito's Cantina",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     cuisine: "Mexican",
     country: "USA",
     rating: 4.6,
@@ -678,7 +678,7 @@ export const mockRestaurants = [
   {
     id: "r27",
     name: "Le Valois",
-    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1974&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     cuisine: "French",
     country: "Canada",
     rating: 4.6,

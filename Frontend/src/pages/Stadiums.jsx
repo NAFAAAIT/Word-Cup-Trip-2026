@@ -6,6 +6,7 @@ import RestaurantCard from '../components/RestaurantCard';
 import { mockMatches, mockStadiums, mockHotels, mockRestaurants } from '../data/mockData';
 import StadiumCard from '../components/StadiumCard';
 import { FaArrowLeft, FaUsers, FaFutbol, FaMapMarkerAlt, FaBus, FaParking, FaSubway, FaRoute, FaCalendarAlt, FaGlobe, FaHotel, FaUtensils } from 'react-icons/fa';
+import stadiumHeroImage from '../assets/Stadium.avif';
 import './Stadiums.css';
 
 import ScrollReveal from '../components/ScrollReveal';
@@ -33,19 +34,19 @@ function StadiumDetailView({ stadium, onBack }) {
   const nearbyRestaurants = useMemo(() => {
     const nameLower = stadium.name.toLowerCase();
     const cityLower = stadium.city.toLowerCase();
-    
+
     // Filter by stadium name in distance or city match
     const scoped = mockRestaurants.filter((r) => {
       const distLower = r.distance.toLowerCase();
-      return distLower.includes(nameLower) || 
-             distLower.includes(stadium.name.split(' ')[0].toLowerCase()) ||
-             r.description.toLowerCase().includes(nameLower) ||
-             (r.country === stadium.country && cityLower.includes(r.distance.toLowerCase().split(' to ')[1] || ''));
+      return distLower.includes(nameLower) ||
+        distLower.includes(stadium.name.split(' ')[0].toLowerCase()) ||
+        r.description.toLowerCase().includes(nameLower) ||
+        (r.country === stadium.country && cityLower.includes(r.distance.toLowerCase().split(' to ')[1] || ''));
     });
 
     // If no direct matches, fall back to city or country scoped
     if (scoped.length) return scoped;
-    
+
     return mockRestaurants.filter(r => r.city === stadium.city || r.country === stadium.country).slice(0, 4);
   }, [stadium.name, stadium.city, stadium.country]);
 
@@ -155,7 +156,7 @@ function StadiumDetailView({ stadium, onBack }) {
                 <StadiumLocationMap stadiumName={stadium.name} city={`${stadium.city}, ${stadium.country}`} />
               </div>
             </ScrollReveal>
-            
+
             <ScrollReveal direction="left" delay={0.2}>
               <div className="card p-4">
                 <h3 className="font-bold mb-4 flex items-center gap-2">
@@ -191,6 +192,7 @@ function StadiumDetailView({ stadium, onBack }) {
 function Stadiums() {
   const [selectedStadium, setSelectedStadium] = useState(null);
   const [activeCountry, setActiveCountry] = useState('All');
+  const [stadiums] = useState(mockStadiums);
 
   if (selectedStadium) {
     return <StadiumDetailView stadium={selectedStadium} onBack={() => setSelectedStadium(null)} />;
@@ -198,15 +200,15 @@ function Stadiums() {
 
   const countries = ['All', 'USA', 'Mexico', 'Canada'];
   const filtered = activeCountry === 'All'
-    ? mockStadiums
-    : mockStadiums.filter(s => s.country === activeCountry);
+    ? stadiums
+    : stadiums.filter(s => s.country === activeCountry);
 
   return (
     <div className="stadiums-page">
       {/* Hero */}
       <section className="page-hero">
         <div className="page-hero-bg">
-          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1920&q=80" alt="Stadium" />
+          <img src={stadiumHeroImage} alt="Stadium" />
         </div>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { mockRestaurants } from '../data/mockData';
 import RestaurantCard from '../components/RestaurantCard';
 import { FaSearch, FaTimesCircle, FaUtensils } from 'react-icons/fa';
+import restaurantHeroImage from '../assets/Restaurant.avif';
 import './Restaurants.css';
 
 function Restaurants() {
@@ -56,7 +57,7 @@ function Restaurants() {
       {/* Hero Banner */}
       <section className="page-hero">
         <div className="page-hero-bg">
-          <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1920&q=80" alt="Restaurant interior" />
+          <img src={restaurantHeroImage} alt="Restaurant interior" />
         </div>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">

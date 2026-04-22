@@ -3,6 +3,7 @@ import EmergencySafetyMap from '../components/EmergencySafetyMap';
 import { HOSPITAL_COORDS } from '../components/EmergencySafetyMap';
 import { mockEmergency } from '../data/mockData';
 import { FaPhoneAlt, FaHospital, FaShieldAlt, FaMapMarkerAlt, FaExclamationTriangle, FaAmbulance, FaLocationArrow, FaGlobe, FaMapMarkedAlt } from 'react-icons/fa';
+import emergencyHeroImage from '../assets/Emergency.avif';
 
 import './Emergency.css';
 
@@ -238,7 +239,7 @@ function Emergency() {
       {/* Hero */}
       <section className="page-hero">
         <div className="page-hero-bg">
-          <img src="https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1920&q=80" alt="Safety" />
+          <img src={emergencyHeroImage} alt="Safety" />
         </div>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">

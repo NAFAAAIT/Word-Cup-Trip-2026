@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { mockHotels } from '../data/mockData';
 import HotelCard from '../components/HotelCard';
 import { FaSearch, FaTimesCircle, FaMapMarkerAlt } from 'react-icons/fa';
+import hotelHeroImage from '../assets/Hotel.avif';
 import './Hotels.css';
 
 function Hotels() {
@@ -56,7 +57,7 @@ function Hotels() {
       {/* Page Hero Banner */}
       <section className="page-hero">
         <div className="page-hero-bg">
-          <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80" alt="Hotels" />
+          <img src={hotelHeroImage} alt="Hotels" />
         </div>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">

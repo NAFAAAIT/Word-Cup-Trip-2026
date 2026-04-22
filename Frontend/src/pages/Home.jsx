@@ -56,7 +56,7 @@ function Home() {
         <div className="home-hero-bg" />
         <div className="home-hero-particles" aria-hidden />
         <div className="container home-hero-inner">
-          <motion.div 
+          <motion.div
             className="home-hero-left"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -82,7 +82,7 @@ function Home() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="home-hero-search-card glass-panel"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -115,7 +115,7 @@ function Home() {
 
       {/* ─── STATS BAR ─── */}
       <div className="home-stats-bar">
-        <motion.div 
+        <motion.div
           className="container home-stats-inner"
           variants={containerVariants}
           initial="hidden"
@@ -146,8 +146,8 @@ function Home() {
               <Link to="/stadiums" className="view-all-link">View All Venues <FaArrowRight /></Link>
             </div>
           </ScrollReveal>
-          
-          <motion.div 
+
+          <motion.div
             className="home-cities-cards"
             variants={containerVariants}
             initial="hidden"
@@ -199,7 +199,7 @@ function Home() {
               </div>
             </div>
           </ScrollReveal>
-          
+
           <ScrollReveal direction="left">
             <div className="experience-visual">
               <div className="exp-img-grid">

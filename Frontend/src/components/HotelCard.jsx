@@ -23,7 +23,7 @@ function HotelCard({ hotel }) {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="hotel-card-v2"
       initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}

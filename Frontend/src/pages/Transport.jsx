@@ -124,7 +124,7 @@ function Transport() {
     const loweredSearch = searchText.trim().toLowerCase();
 
     const list = mockTransports.filter((route) => {
-      const routeCountry = cityToCountryMap[route.city] || (route.city.includes('York') ? 'USA' : 'USA'); 
+      const routeCountry = cityToCountryMap[route.city] || (route.city.includes('York') ? 'USA' : 'USA');
       const matchesCountry = activeCountry === 'All' || routeCountry === activeCountry;
       const matchesType = activeType === 'All' || route.type === activeType;
       const matchesStatus = statusFilter === 'All' || route.status === statusFilter;
