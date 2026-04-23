@@ -36,7 +36,9 @@ const EMERGENCY_DATA = {
       { id: 'all-medical', name: 'Global Medical Hub', type: 'medical', note: 'Central coordination.', position: [40.8141, -74.0734] },
     ],
     hospitals: [
-      { id: 'hosp-all-1', name: 'International Relief Center', distance: '0 mi', time: 'Immediate', phone: '911' },
+      { id: 'hosp-all-us', name: 'MetLife Medical Stadium Hub', distance: '0.5 mi', time: 'Immediate', phone: '911' },
+      { id: 'hosp-all-mx', name: 'Centro Medico Azteca', distance: '0.8 mi', time: 'Immediate', phone: '911' },
+      { id: 'hosp-all-ca', name: 'BMO Field Medical Center', distance: '0.3 mi', time: 'Immediate', phone: '911' },
     ],
   },
   USA: {
@@ -60,6 +62,9 @@ const EMERGENCY_DATA = {
     hospitals: [
       { id: 'hosp-ny-1', name: 'Holy Name Medical Center', distance: '2.5 mi', time: '10 min drive', phone: '201-833-3000' },
       { id: 'hosp-ny-2', name: 'Hackensack University Medical Center', distance: '4.1 mi', time: '14 min drive', phone: '551-996-2000' },
+      { id: 'hosp-la-1', name: 'Cedars-Sinai Medical Center', distance: '1.2 mi', time: '5 min drive', phone: '310-423-3277' },
+      { id: 'hosp-miami-1', name: 'Jackson Memorial Hospital', distance: '3.5 mi', time: '12 min drive', phone: '305-585-1111' },
+      { id: 'hosp-miami-2', name: 'Mount Sinai Medical Center Miami', distance: '5.2 mi', time: '15 min drive', phone: '305-674-2121' },
     ],
   },
   Mexico: {
@@ -83,6 +88,8 @@ const EMERGENCY_DATA = {
     hospitals: [
       { id: 'hosp-mx-1', name: 'Hospital General de Mexico', distance: '6.3 mi', time: '19 min drive', phone: '55-2789-2000' },
       { id: 'hosp-mx-2', name: 'Centro Medico Nacional Siglo XXI', distance: '5.9 mi', time: '17 min drive', phone: '55-5627-6900' },
+      { id: 'hosp-mx-3', name: 'Hospital Angeles Pedregal', distance: '4.1 mi', time: '12 min drive', phone: '55-5449-7000' },
+      { id: 'hosp-mx-4', name: 'Hospital Civil de Guadalajara', distance: '3.8 mi', time: '11 min drive', phone: '33-3613-9488' },
     ],
   },
   Canada: {
@@ -106,6 +113,8 @@ const EMERGENCY_DATA = {
     hospitals: [
       { id: 'hosp-to-1', name: 'Toronto General Hospital', distance: '3.8 mi', time: '16 min drive', phone: '416-340-4800' },
       { id: 'hosp-to-2', name: 'Mount Sinai Hospital Toronto', distance: '3.9 mi', time: '15 min drive', phone: '416-586-4800' },
+      { id: 'hosp-va-1', name: 'St. Paul\'s Hospital Vancouver', distance: '0.9 mi', time: '4 min drive', phone: '604-682-2344' },
+      { id: 'hosp-va-2', name: 'Vancouver General Hospital', distance: '1.5 mi', time: '8 min drive', phone: '604-875-4111' },
     ],
   },
 };

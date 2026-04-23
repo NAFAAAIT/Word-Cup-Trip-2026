@@ -8,10 +8,13 @@ import './Matches.css';
 function Matches() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [filter, setFilter] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
+  
+  const stadiums = ['All Stadiums', ...new Set(mockMatches.map(m => m.stadium))];
+  const groups = ['All Groups', ...new Set(mockMatches.map(m => m.group))].sort();
 
-  const stadiums = ['All', ...new Set(mockMatches.map(m => m.stadium))];
+  const [filter, setFilter] = useState('All Stadiums');
+  const [groupFilter, setGroupFilter] = useState('All Groups');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const stadiumParam = searchParams.get('stadium');
@@ -27,11 +30,12 @@ function Matches() {
   }, [searchParams, stadiums]);
 
   const filteredMatches = mockMatches.filter(match => {
-    const matchesFilter = filter === 'All' || match.stadium === filter;
+    const matchesStadium = filter === 'All Stadiums' || match.stadium === filter;
+    const matchesGroup = groupFilter === 'All Groups' || match.group === groupFilter;
     const matchesSearch = match.teamA.toLowerCase().includes(searchTerm.toLowerCase()) ||
       match.teamB.toLowerCase().includes(searchTerm.toLowerCase()) ||
       match.city.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
+    return matchesStadium && matchesGroup && matchesSearch;
   });
 
   const planTransportForMatch = (match) => {
@@ -67,7 +71,7 @@ function Matches() {
       <section className="container" style={{ marginTop: '-3rem', position: 'relative', zIndex: 10, marginBottom: '2rem' }}>
         <div className="filter-panel">
           <div className="filter-panel-row">
-            <div className="filter-search">
+            <div className="filter-search" style={{ flex: 2 }}>
               <FaSearch className="filter-search-icon" />
               <input
                 type="text"
@@ -78,7 +82,18 @@ function Matches() {
             </div>
             <div className="filter-divider" />
             <div className="filter-group-labeled">
-              <FaFilter className="filter-search-icon" />
+              <span className="filter-label">Group:</span>
+              <select
+                value={groupFilter}
+                onChange={(e) => setGroupFilter(e.target.value)}
+                className="filter-select"
+              >
+                {groups.map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+            <div className="filter-divider" />
+            <div className="filter-group-labeled">
+              <span className="filter-label">Stadium:</span>
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}

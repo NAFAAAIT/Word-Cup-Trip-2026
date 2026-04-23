@@ -16,11 +16,17 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to bottom, rgba(7, 9, 15, 0.3) 0%, rgba(7, 9, 15, 0.75) 60%, rgba(7, 9, 15, 1) 100%),
+    linear-gradient(to bottom, transparent 0%, rgba(7, 9, 15, 0.75) 60%, var(--bg-dark) 100%),
     url('/hotel-hero-new.png');
   background-size: cover;
   background-position: center 40%;
   z-index: 0;
+}
+
+.light-theme .hotels-hero-overlay {
+  background-image:
+    linear-gradient(to bottom, rgba(248, 250, 252, 0.3) 0%, rgba(248, 250, 252, 0.5) 60%, var(--bg-dark) 100%),
+    url('/hotel-hero-new.png');
 }
 
 .hotels-hero-content {
@@ -58,6 +64,13 @@
   background-clip: text;
 }
 
+.light-theme .hotels-hero-title {
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--primary-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .hotels-hero-sub {
   color: var(--text-secondary);
   font-size: 1rem;
@@ -69,14 +82,19 @@
   align-items: center;
   width: 400px;
   margin: 0 auto;
-  background: rgba(20, 24, 36, 0.75);
+  background: var(--glass-bg);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: 9999px;
   padding: 0.5rem 1.25rem;
   gap: 0.75rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  transition: border-color 0.2s;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
+}
+
+.light-theme .hotels-hero-search {
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 768px) {
@@ -139,13 +157,15 @@
   margin-bottom: 1.8rem;
   flex-wrap: wrap;
   gap: 1.15rem;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(0, 238, 255, 0.1), transparent 42%),
-    linear-gradient(165deg, rgba(8, 14, 30, 0.96), rgba(7, 11, 24, 0.92));
-  border: 1px solid rgba(87, 121, 178, 0.35);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 1.15rem;
   padding: 0.95rem 1.15rem;
-  box-shadow: 0 18px 35px rgba(2, 8, 24, 0.45);
+  box-shadow: var(--shadow-md);
+}
+
+.light-theme .filter-results-bar {
+  background: white;
 }
 
 .filter-results-bar::before {
@@ -188,8 +208,8 @@
   gap: 0.5rem;
   padding: 0.25rem 0.3rem;
   border-radius: 0.7rem;
-  background: rgba(9, 16, 34, 0.55);
-  border: 1px solid rgba(89, 121, 176, 0.2);
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
 }
 
 .filter-label {
@@ -203,12 +223,10 @@
 
 .filter-select {
   appearance: none;
-  color-scheme: dark;
-  background:
-    linear-gradient(135deg, rgba(17, 28, 53, 0.95), rgba(11, 20, 41, 0.95));
-  border: 1px solid rgba(104, 141, 204, 0.4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   color: var(--text-primary);
-  padding: 0.5rem 2.2rem 0.5rem 0.8rem;
+  padding: 0.5rem 2.22rem 0.5rem 0.8rem;
   border-radius: 0.62rem;
   font-family: inherit;
   font-size: 0.84rem;
@@ -217,15 +235,11 @@
   line-height: 1;
   cursor: pointer;
   outline: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, #73b4ff 50%),
-    linear-gradient(135deg, #73b4ff 50%, transparent 50%);
-  background-position:
-    calc(100% - 14px) calc(50% - 2px),
-    calc(100% - 9px) calc(50% - 2px);
-  background-size: 5px 5px, 5px 5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  background-position: right 0.65rem center;
+  background-size: 1rem;
+  transition: all 0.2s ease;
 }
 
 .filter-select option {

@@ -83,12 +83,18 @@
 .user-profile {
   position: relative;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
 }
 
 .profile-icon {
-  font-size: 1.75rem;
+  font-size: 1.65rem;
   color: var(--text-secondary);
   transition: color 0.2s;
+  display: block;
 }
 
 .user-profile:hover .profile-icon {
@@ -127,8 +133,59 @@
 }
 
 .menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-card-hover);
   color: var(--text-primary);
+}
+
+.theme-toggle-btn {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--primary-accent);
+  border-color: var(--primary-accent);
+  transform: rotate(15deg) scale(1.1);
+  box-shadow: 0 0 15px rgba(0, 238, 255, 0.2);
+}
+
+.sun-icon {
+  font-size: 0.95rem;
+  color: #ffb800;
+  filter: drop-shadow(0 0 3px rgba(255, 184, 0, 0.4));
+}
+
+.moon-icon {
+  font-size: 0.9rem;
+  color: #6366f1;
+  filter: drop-shadow(0 0 3px rgba(99, 102, 241, 0.4));
+}
+
+.toggle-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--primary-accent) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.theme-toggle-btn:hover .toggle-glow {
+  opacity: 0.1;
 }
 
 .mobile-toggle {
@@ -159,7 +216,7 @@
 }
 
 .mobile-link:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-card-hover);
 }
 
 .mobile-divider {

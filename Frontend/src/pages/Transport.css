@@ -17,11 +17,16 @@
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   border: 1px solid rgba(0, 238, 255, 0.35);
-  background: rgba(0, 238, 255, 0.08);
+  background: var(--glass-bg);
   color: var(--primary-accent);
   font-size: 0.8rem;
   font-weight: 700;
   backdrop-filter: blur(8px);
+}
+
+.light-theme .transport-match-banner {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .transport-search-wrap {
@@ -63,8 +68,14 @@
   padding: 0.7rem 0.9rem;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color);
-  background: rgba(20, 24, 36, 0.75);
+  background: var(--glass-bg);
   color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.light-theme .transport-search-wrap {
+  background: white;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
 }
 
 .transport-search-wrap input {
@@ -88,13 +99,18 @@
   padding: 0.55rem 1.1rem;
   border-radius: 9999px;
   border: 1px solid var(--border-color);
-  background: rgba(20, 24, 36, 0.6);
+  background: var(--glass-bg);
   backdrop-filter: blur(8px);
   color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.light-theme .transport-city-tab {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .transport-city-tab:hover {

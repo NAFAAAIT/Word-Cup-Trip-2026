@@ -11,9 +11,15 @@
   opacity: 1;
   transform: none;
   animation: pulse-cyan 2s ease-in-out infinite;
-  background: rgba(0, 238, 255, 0.14);
-  border: 1px solid rgba(0, 238, 255, 0.35);
-  color: #9cf8ff;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--primary-accent);
+}
+
+.light-theme .emergency-hero-badge {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: var(--border-color);
 }
 
 @keyframes pulse-cyan {
@@ -39,7 +45,7 @@
   padding: 0.55rem 1.1rem;
   border-radius: 9999px;
   border: 1px solid var(--border-color);
-  background: rgba(20, 24, 36, 0.6);
+  background: var(--glass-bg);
   backdrop-filter: blur(8px);
   color: var(--text-secondary);
   font-size: 0.85rem;
@@ -74,7 +80,12 @@
   background: rgba(0, 238, 255, 0.1);
   border-color: var(--primary-accent);
   color: var(--primary-accent);
-  box-shadow: 0 0 0 1px rgba(0, 238, 255, 0.15), 0 0 20px rgba(0, 238, 255, 0.16);
+  box-shadow: 0 0 20px rgba(0, 238, 255, 0.16);
+}
+
+.light-theme .emrg-city-tab {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .emrg-city-tab.active .emrg-city-code {

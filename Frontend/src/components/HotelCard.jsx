@@ -45,11 +45,6 @@ function HotelCard({ hotel }) {
               <FaCheckCircle /> {hotel.deal}
             </span>
           )}
-          {hotel.distance && (
-            <span className="hotel-v2-badge hotel-v2-badge-dist">
-              <FaMapMarkerAlt /> {hotel.distance}
-            </span>
-          )}
         </div>
 
 
@@ -64,18 +59,30 @@ function HotelCard({ hotel }) {
       {/* Content */}
       <div className="hotel-card-v2-body">
         <div className="hotel-v2-header">
-          <h3 className="hotel-v2-name">{hotel.name}</h3>
+          <div className="hotel-v2-name-wrap">
+            <h3 className="hotel-v2-name">{hotel.name}</h3>
+            <div className="hotel-v2-location-meta">
+              <span className="hotel-v2-country">
+                {hotel.country || (
+                  hotel.city.includes('Toronto') || hotel.city.includes('Vancouver') || hotel.city.includes('Montreal') || hotel.city.includes('Edmonton') ? 'Canada' :
+                  hotel.city.includes('Mexico') || hotel.city.includes('Monterrey') || hotel.city.includes('Guadalajara') ? 'Mexico' : 'USA'
+                )}
+              </span>
+              {hotel.distance && (
+                <>
+                  <span className="hotel-v2-city-sep">•</span>
+                  <span className="hotel-v2-distance">
+                    <FaMapMarkerAlt /> {hotel.distance}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
           <div className="hotel-v2-score">
             {hotel.rating.toFixed(1)}
           </div>
         </div>
 
-        <div className="hotel-v2-stars">
-          {[1, 2, 3, 4, 5].map(s => (
-            <FaStar key={s} className={s <= Math.floor(hotel.rating) ? 'star-on' : 'star-off'} />
-          ))}
-          <span className="hotel-v2-reviews">({hotel.reviews || 0} reviews)</span>
-        </div>
 
         {hotel.description && (
           <p className="hotel-v2-desc">{hotel.description}</p>

@@ -34,13 +34,18 @@
   padding: 0.6rem 1.25rem;
   border-radius: 9999px;
   border: 1px solid var(--border-color);
-  background: rgba(20, 24, 36, 0.6);
+  background: var(--glass-bg);
   backdrop-filter: blur(8px);
   color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.light-theme .stadiums-country-tab {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .stadiums-country-tab:hover {
@@ -117,9 +122,16 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(to top,
-      rgba(7, 9, 15, 1) 0%,
+      var(--bg-dark) 0%,
       rgba(7, 9, 15, 0.7) 40%,
-      rgba(7, 9, 15, 0.2) 100%);
+      transparent 100%);
+}
+
+.light-theme .stadium-detail-hero-overlay {
+  background: linear-gradient(to top,
+      var(--bg-dark) 0%,
+      rgba(248, 250, 252, 0.8) 40%,
+      rgba(248, 250, 252, 0.2) 100%);
 }
 
 .stadium-detail-hero-content {
@@ -136,9 +148,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.55rem 1.25rem;
-  background: rgba(20, 24, 36, 0.7);
+  background: var(--glass-bg);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: 9999px;
   color: var(--text-secondary);
   font-size: 0.85rem;
@@ -191,8 +203,7 @@
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 900;
   letter-spacing: -0.025em;
-  color: #fff;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+  color: var(--text-primary);
   margin-bottom: 1.5rem;
 }
 
@@ -323,7 +334,7 @@
 }
 
 .stadium-detail-page .hotel-card-v2-img-wrap {
-  height: 170px;
+  height: 220px;
 }
 
 .stadium-detail-page .hotel-card-v2-body {
@@ -347,7 +358,7 @@
 }
 
 .stadium-detail-page .rest-card-v2-img-wrap {
-  height: 150px;
+  height: 220px;
 }
 
 .stadium-detail-page .rest-card-v2-body {

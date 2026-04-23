@@ -34,6 +34,15 @@ export const HOSPITAL_COORDS = {
     'Mount Sinai Hospital Toronto': [43.6455, -79.3934],
     'Hospital General de Mexico': [19.4109, -99.1529],
     'Centro Medico Nacional Siglo XXI': [19.4081, -99.1535],
+    'Jackson Memorial Hospital': [25.7901, -80.2093],
+    'Mount Sinai Medical Center Miami': [25.8130, -80.1332],
+    'St. Paul\'s Hospital Vancouver': [49.2811, -123.1287],
+    'Vancouver General Hospital': [49.2611, -123.1246],
+    'Hospital Angeles Pedregal': [19.3245, -99.2198],
+    'Hospital Civil de Guadalajara': [20.6791, -103.3411],
+    'MetLife Medical Stadium Hub': [40.8141, -74.0734],
+    'Centro Medico Azteca': [19.304, -99.1492],
+    'BMO Field Medical Center': [43.6317, -79.4211],
 };
 
 const POINT_STYLE = {

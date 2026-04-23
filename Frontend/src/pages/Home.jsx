@@ -32,6 +32,26 @@ const STATS = [
 function Home() {
   const [search, setSearch] = useState('');
 
+  const filteredCities = HOST_CITIES.filter(city =>
+    city.name.toLowerCase().includes(search.toLowerCase()) ||
+    city.country.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filteredHotels = mockHotels.filter(hotel =>
+    hotel.name.toLowerCase().includes(search.toLowerCase()) ||
+    hotel.city.toLowerCase().includes(search.toLowerCase())
+  ).slice(0, 3);
+
+  const filteredRestaurants = mockRestaurants.filter(rest =>
+    rest.name.toLowerCase().includes(search.toLowerCase()) ||
+    rest.cuisine.toLowerCase().includes(search.toLowerCase())
+  ).slice(0, 3);
+
+  const filteredStadiums = mockStadiums.filter(stadium =>
+    stadium.name.toLowerCase().includes(search.toLowerCase()) ||
+    stadium.city.toLowerCase().includes(search.toLowerCase())
+  ).slice(0, 2);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -154,19 +174,23 @@ function Home() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
-            {HOST_CITIES.map(city => (
-              <motion.div key={city.name} className="home-city-card" variants={itemVariants}>
-                <img src={city.image} alt={city.name} className="home-city-card-img" />
-                <div className="home-city-card-overlay" />
-                <div className="home-city-card-content">
-                  <span className="city-card-country">{city.country}</span>
-                  <h3 className="city-card-name">{city.name}</h3>
-                  <div className="city-card-meta">
-                    <FaTicketAlt /> {city.matches} matches
+            {filteredCities.length > 0 ? (
+              filteredCities.map(city => (
+                <motion.div key={city.name} className="home-city-card" variants={itemVariants}>
+                  <img src={city.image} alt={city.name} className="home-city-card-img" />
+                  <div className="home-city-card-overlay" />
+                  <div className="home-city-card-content">
+                    <span className="city-card-country">{city.country}</span>
+                    <h3 className="city-card-name">{city.name}</h3>
+                    <div className="city-card-meta">
+                      <FaTicketAlt /> {city.matches} matches
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))
+            ) : (
+              <div className="p-8 text-center w-full col-span-full opacity-60">No cities found matching your search...</div>
+            )}
           </motion.div>
         </div>
       </section>
@@ -224,7 +248,11 @@ function Home() {
             </div>
           </ScrollReveal>
           <div className="home-stadiums-grid">
-            {mockStadiums.slice(0, 2).map(s => <StadiumCard key={s.id} stadium={s} />)}
+            {filteredStadiums.length > 0 ? (
+              filteredStadiums.map(s => <StadiumCard key={s.id} stadium={s} />)
+            ) : (
+              <div className="p-8 text-center w-full col-span-full opacity-60">No stadiums found...</div>
+            )}
           </div>
         </div>
       </section>
@@ -242,7 +270,11 @@ function Home() {
             </div>
           </ScrollReveal>
           <div className="home-hotels-grid">
-            {mockHotels.slice(0, 3).map(h => <HotelCard key={h.id} hotel={h} />)}
+            {filteredHotels.length > 0 ? (
+              filteredHotels.map(h => <HotelCard key={h.id} hotel={h} />)
+            ) : (
+              <div className="p-8 text-center w-full col-span-full opacity-60">No hotels found...</div>
+            )}
           </div>
         </div>
       </section>
@@ -260,7 +292,11 @@ function Home() {
             </div>
           </ScrollReveal>
           <div className="home-dining-grid">
-            {mockRestaurants.slice(0, 3).map(r => <RestaurantCard key={r.id} restaurant={r} />)}
+            {filteredRestaurants.length > 0 ? (
+              filteredRestaurants.map(r => <RestaurantCard key={r.id} restaurant={r} />)
+            ) : (
+              <div className="p-8 text-center w-full col-span-full opacity-60">No dining spots found...</div>
+            )}
           </div>
         </div>
       </section>

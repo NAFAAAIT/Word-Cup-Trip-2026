@@ -44,9 +44,12 @@ function RestaurantCard({ restaurant }) {
         <div className="rest-v2-meta">
           <span className="rest-v2-country">{restaurant.country}</span>
           {restaurant.distance && (
-            <span className="rest-v2-distance">
-              <FaMapMarkerAlt /> {restaurant.distance}
-            </span>
+            <>
+              <span className="hotel-v2-city-sep">•</span>
+              <span className="rest-v2-distance">
+                <FaMapMarkerAlt /> {restaurant.distance}
+              </span>
+            </>
           )}
         </div>
 

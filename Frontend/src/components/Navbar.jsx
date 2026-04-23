@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaFutbol, FaBars, FaTimes, FaUserCircle } from 'react-icons/fa';
+import { FaFutbol, FaBars, FaTimes, FaUserCircle, FaSun, FaMoon } from 'react-icons/fa';
 import './Navbar.css';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme ? savedTheme === 'dark' : true;
+  });
   const location = useLocation();
 
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.remove('light-theme');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.add('light-theme');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
   const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   const isActive = (path) => location.pathname === path ? 'active-link' : '';
 
@@ -35,7 +50,17 @@ function Navbar() {
         </div>
 
         {/* User Actions */}
-        <div className="nav-actions flex items-center gap-4">
+        <div className="nav-actions flex items-center gap-3">
+          {/* Theme Toggle Button */}
+          <button 
+            className="theme-toggle-btn" 
+            onClick={toggleTheme} 
+            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {isDarkMode ? <FaSun className="sun-icon" /> : <FaMoon className="moon-icon" />}
+            <span className="toggle-glow"></span>
+          </button>
+
           <div className="user-profile">
             <FaUserCircle className="profile-icon" />
             <div className="profile-menu">
