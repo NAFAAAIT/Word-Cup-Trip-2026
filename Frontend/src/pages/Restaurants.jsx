@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { mockRestaurants } from '../data/mockData';
+import { getRestaurants } from '../services/api';
 import RestaurantCard from '../components/RestaurantCard';
 import { FaSearch, FaTimesCircle, FaUtensils } from 'react-icons/fa';
 import restaurantHeroImage from '../assets/Restaurant.avif';
@@ -12,9 +13,25 @@ function Restaurants() {
   const [sortBy, setSortBy] = useState('recommended');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const cuisines = ['All', ...new Set(mockRestaurants.map(r => r.cuisine))];
+  const [restaurants, setRestaurants] = useState(mockRestaurants);
 
-  const filtered = mockRestaurants
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await getRestaurants();
+        if (!mounted) return;
+        if (Array.isArray(res)) setRestaurants(res);
+      } catch (e) {
+        // fallback to mock
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  const cuisines = ['All', ...new Set(restaurants.map(r => r.cuisine))];
+
+  const filtered = restaurants
     .filter(r => {
       const normalizedQuery = searchQuery.trim().toLowerCase();
       const matchCuisine = activeCuisine === 'All' || r.cuisine === activeCuisine;
@@ -92,7 +109,7 @@ function Restaurants() {
         {/* Results bar */}
         <div className="filter-results-bar">
           <p className="filter-results-count">
-            Showing <strong>{filtered.length}</strong> of {mockRestaurants.length} places
+            Showing <strong>{filtered.length}</strong> of {restaurants.length} places
           </p>
 
           <div className="filter-controls-wrap">

@@ -4,6 +4,7 @@ import StadiumLocationMap from '../components/StadiumLocationMap';
 import HotelCard from '../components/HotelCard';
 import RestaurantCard from '../components/RestaurantCard';
 import { mockMatches, mockStadiums, mockHotels, mockRestaurants } from '../data/mockData';
+import { getStadiums, getMatches, getHotels, getRestaurants } from '../services/api';
 import StadiumCard from '../components/StadiumCard';
 import { FaArrowLeft, FaUsers, FaFutbol, FaMapMarkerAlt, FaBus, FaParking, FaSubway, FaRoute, FaCalendarAlt, FaGlobe, FaHotel, FaUtensils } from 'react-icons/fa';
 import stadiumHeroImage from '../assets/Stadium.avif';
@@ -11,7 +12,7 @@ import './Stadiums.css';
 
 import ScrollReveal from '../components/ScrollReveal';
 
-function StadiumDetailView({ stadium, onBack }) {
+function StadiumDetailView({ stadium, onBack, matches, hotels, restaurants }) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,36 +20,34 @@ function StadiumDetailView({ stadium, onBack }) {
   }, [stadium]);
 
   const relatedMatches = useMemo(
-    () => mockMatches.filter((match) => match.stadium === stadium.name),
-    [stadium.name]
+    () => (matches || []).filter((match) => match.stadium === stadium.name),
+    [stadium.name, matches]
   );
 
   const transportCity = relatedMatches[0]?.city || stadium.city;
 
   const nearbyHotels = useMemo(() => {
-    // Filter by exact city first
-    const inCity = mockHotels.filter((hotel) => hotel.city === stadium.city);
-    return inCity.length ? inCity : mockHotels.slice(0, 4);
-  }, [stadium.city]);
+    const inCity = (hotels || mockHotels).filter((hotel) => hotel.city === stadium.city);
+    return inCity.length ? inCity : (hotels || mockHotels).slice(0, 4);
+  }, [stadium.city, hotels]);
 
   const nearbyRestaurants = useMemo(() => {
+    const list = restaurants || mockRestaurants;
     const nameLower = stadium.name.toLowerCase();
     const cityLower = stadium.city.toLowerCase();
 
-    // Filter by stadium name in distance or city match
-    const scoped = mockRestaurants.filter((r) => {
-      const distLower = r.distance.toLowerCase();
+    const scoped = list.filter((r) => {
+      const distLower = (r.distance || '').toLowerCase();
       return distLower.includes(nameLower) ||
         distLower.includes(stadium.name.split(' ')[0].toLowerCase()) ||
-        r.description.toLowerCase().includes(nameLower) ||
-        (r.country === stadium.country && cityLower.includes(r.distance.toLowerCase().split(' to ')[1] || ''));
+        (r.description || '').toLowerCase().includes(nameLower) ||
+        (r.country === stadium.country && cityLower.includes((r.distance || '').toLowerCase().split(' to ')[1] || ''));
     });
 
-    // If no direct matches, fall back to city or country scoped
     if (scoped.length) return scoped;
 
-    return mockRestaurants.filter(r => r.city === stadium.city || r.country === stadium.country).slice(0, 4);
-  }, [stadium.name, stadium.city, stadium.country]);
+    return list.filter(r => r.city === stadium.city || r.country === stadium.country).slice(0, 4);
+  }, [stadium.name, stadium.city, stadium.country, restaurants]);
 
   const openTransport = () => {
     const params = new URLSearchParams({
@@ -192,10 +191,30 @@ function StadiumDetailView({ stadium, onBack }) {
 function Stadiums() {
   const [selectedStadium, setSelectedStadium] = useState(null);
   const [activeCountry, setActiveCountry] = useState('All');
-  const [stadiums] = useState(mockStadiums);
+  const [stadiums, setStadiums] = useState(mockStadiums);
+  const [matches, setMatches] = useState(mockMatches);
+  const [hotels, setHotels] = useState(mockHotels);
+  const [restaurants, setRestaurants] = useState(mockRestaurants);
+
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [sRes, mRes, hRes, rRes] = await Promise.all([getStadiums(), getMatches(), getHotels(), getRestaurants()]);
+        if (!mounted) return;
+        if (Array.isArray(sRes)) setStadiums(sRes);
+        if (Array.isArray(mRes)) setMatches(mRes);
+        if (Array.isArray(hRes)) setHotels(hRes);
+        if (Array.isArray(rRes)) setRestaurants(rRes);
+      } catch (e) {
+        // keep mock fallbacks
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   if (selectedStadium) {
-    return <StadiumDetailView stadium={selectedStadium} onBack={() => setSelectedStadium(null)} />;
+    return <StadiumDetailView stadium={selectedStadium} onBack={() => setSelectedStadium(null)} matches={matches} hotels={hotels} restaurants={restaurants} />;
   }
 
   const countries = ['All', 'USA', 'Mexico', 'Canada'];

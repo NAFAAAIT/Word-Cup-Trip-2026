@@ -14,6 +14,8 @@ import Emergency from './pages/Emergency';
 import Matches from './pages/Matches';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import AdminDashboard from './pages/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
           <Route path="/matches" element={<Matches />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
         </Routes>
       </div>
       <Footer />

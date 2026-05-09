@@ -3,8 +3,10 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const routes = require("./routes");
+const uploadRoutes = require("./routes/uploadRoutes");
 const notFound = require("./middleware/notFoundMiddleware");
 const errorHandler = require("./middleware/errorMiddleware");
 
@@ -26,6 +28,8 @@ app.get("/api/health", (req, res) => {
     res.status(200).json({ success: true, message: "API is healthy" });
 });
 
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+app.use("/api/uploads", uploadRoutes);
 app.use("/api", routes);
 app.use(notFound);
 app.use(errorHandler);

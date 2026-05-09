@@ -11,6 +11,7 @@ import RestaurantCard from '../components/RestaurantCard';
 import StadiumCard from '../components/StadiumCard';
 import ScrollReveal from '../components/ScrollReveal';
 import { mockHotels, mockRestaurants, mockStadiums } from '../data/mockData';
+import { getHotels, getRestaurants, getStadiums } from '../services/api';
 import './Home.css';
 
 const HOST_CITIES = [
@@ -31,23 +32,42 @@ const STATS = [
 
 function Home() {
   const [search, setSearch] = useState('');
+  const [hotels, setHotels] = useState(mockHotels);
+  const [restaurants, setRestaurants] = useState(mockRestaurants);
+  const [stadiums, setStadiums] = useState(mockStadiums);
+
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [hRes, rRes, sRes] = await Promise.all([getHotels(), getRestaurants(), getStadiums()]);
+        if (!mounted) return;
+        if (Array.isArray(hRes)) setHotels(hRes);
+        if (Array.isArray(rRes)) setRestaurants(rRes);
+        if (Array.isArray(sRes)) setStadiums(sRes);
+      } catch (e) {
+        // keep mock data as fallback
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   const filteredCities = HOST_CITIES.filter(city =>
     city.name.toLowerCase().includes(search.toLowerCase()) ||
     city.country.toLowerCase().includes(search.toLowerCase())
   );
 
-  const filteredHotels = mockHotels.filter(hotel =>
+  const filteredHotels = hotels.filter(hotel =>
     hotel.name.toLowerCase().includes(search.toLowerCase()) ||
     hotel.city.toLowerCase().includes(search.toLowerCase())
   ).slice(0, 3);
 
-  const filteredRestaurants = mockRestaurants.filter(rest =>
+  const filteredRestaurants = restaurants.filter(rest =>
     rest.name.toLowerCase().includes(search.toLowerCase()) ||
     rest.cuisine.toLowerCase().includes(search.toLowerCase())
   ).slice(0, 3);
 
-  const filteredStadiums = mockStadiums.filter(stadium =>
+  const filteredStadiums = stadiums.filter(stadium =>
     stadium.name.toLowerCase().includes(search.toLowerCase()) ||
     stadium.city.toLowerCase().includes(search.toLowerCase())
   ).slice(0, 2);

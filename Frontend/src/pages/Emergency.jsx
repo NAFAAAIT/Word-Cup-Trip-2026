@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import EmergencySafetyMap from '../components/EmergencySafetyMap';
 import { HOSPITAL_COORDS } from '../components/EmergencySafetyMap';
-import { mockEmergency } from '../data/mockData';
 import { FaPhoneAlt, FaHospital, FaShieldAlt, FaMapMarkerAlt, FaExclamationTriangle, FaAmbulance, FaLocationArrow, FaGlobe, FaMapMarkedAlt } from 'react-icons/fa';
 import emergencyHeroImage from '../assets/Emergency.avif';
 

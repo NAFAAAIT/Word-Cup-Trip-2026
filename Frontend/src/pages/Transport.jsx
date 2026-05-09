@@ -15,6 +15,7 @@ import {
   FaMapMarkedAlt,
 } from 'react-icons/fa';
 import { mockTransports, mockStadiums } from '../data/mockData';
+import { getStadiums } from '../services/api';
 import './Transport.css';
 
 import { motion } from 'framer-motion';
@@ -91,18 +92,19 @@ function Transport() {
   const routeTypes = useMemo(() => ['All', ...new Set(mockTransports.map((route) => route.type))], []);
 
   // Helper to map cities to countries
+  const [stadiums, setStadiums] = useState(mockStadiums);
+
   const cityToCountryMap = useMemo(() => {
     const map = {};
-    mockStadiums.forEach(s => {
+    (stadiums || mockStadiums).forEach(s => {
       map[s.city] = s.country;
-      // Handle variations like "New York/NJ" vs "New York/New Jersey"
       if (s.city.includes('/')) {
         const parts = s.city.split('/');
         parts.forEach(p => map[p.trim()] = s.country);
       }
     });
     return map;
-  }, []);
+  }, [stadiums]);
 
   useEffect(() => {
     const city = searchParams.get('city');
@@ -119,6 +121,20 @@ function Transport() {
       setFromMatchLabel(`${stadium}${kickoff ? ` - ${kickoff}` : ''}`);
     }
   }, [cityToCountryMap, searchParams]);
+
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const sRes = await getStadiums();
+        if (!mounted) return;
+        if (Array.isArray(sRes)) setStadiums(sRes);
+      } catch (e) {
+        // keep mock
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   const filteredRoutes = useMemo(() => {
     const loweredSearch = searchText.trim().toLowerCase();

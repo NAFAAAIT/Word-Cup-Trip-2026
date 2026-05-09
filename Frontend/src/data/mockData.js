@@ -886,7 +886,7 @@ export const mockStadiums = [
   {
     id: "s17",
     name: "Estadio Universitario",
-    image: "https://scontent.falg7-6.fna.fbcdn.net/v/t39.30808-6/660242451_860640573702462_7025515493428480090_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=7b2446&_nc_ohc=RpltJ488ojIQ7kNvwGI4ky_&_nc_oc=AdrSz7oGbp1vG5m73NCz24lu07Wr8uIrqLtdklgSvw-v9dHxrTDi1EAKvpBRJImbhCc&_nc_zt=23&_nc_ht=scontent.falg7-6.fna&_nc_gid=g5y8td4geMv_dXhq45sW7w&_nc_ss=7a389&oh=00_Af3a-pZV9vyhZ4xaHlNaTUNWIGM9xE_xQ87cUXeszjihyw&oe=69EB5D68",
+    image: "https://vidauniversitaria.uanl.mx/wp-content/uploads/2019/09/estadio-universitario-uanl-2.jpg",
     city: "Monterrey",
     country: "Mexico",
     capacity: "41,000",

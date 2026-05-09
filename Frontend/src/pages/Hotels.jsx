@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { mockHotels } from '../data/mockData';
+import { getHotels } from '../services/api';
 import HotelCard from '../components/HotelCard';
 import { FaSearch, FaTimesCircle, FaMapMarkerAlt } from 'react-icons/fa';
 import hotelHeroImage from '../assets/Hotel.avif';
@@ -12,7 +13,23 @@ function Hotels() {
   const [sortBy, setSortBy] = useState('recommended');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredHotels = mockHotels
+  const [hotels, setHotels] = useState(mockHotels);
+
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await getHotels();
+        if (!mounted) return;
+        if (Array.isArray(res)) setHotels(res);
+      } catch (e) {
+        // keep mock fallback
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  const filteredHotels = hotels
     .filter(hotel => {
       const normalizedQuery = searchQuery.trim().toLowerCase();
       const hitsSearch =
@@ -91,7 +108,7 @@ function Hotels() {
         {/* Results bar */}
         <div className="filter-results-bar">
           <p className="filter-results-count">
-            Showing <strong>{filteredHotels.length}</strong> of {mockHotels.length} hotels
+            Showing <strong>{filteredHotels.length}</strong> of {hotels.length} hotels
           </p>
 
           <div className="filter-controls-wrap">

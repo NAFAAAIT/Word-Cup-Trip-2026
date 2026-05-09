@@ -3,10 +3,26 @@ import { Link } from 'react-router-dom';
 import { FaFutbol, FaEnvelope, FaLock } from 'react-icons/fa';
 import './Auth.css';
 
+import { useNavigate } from 'react-router-dom';
+import { login as apiLogin } from '../services/api';
+
 function Login() {
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // frontend only
+    const form = e.target;
+    const email = form.querySelector('input[type="email"]').value;
+    const password = form.querySelector('input[type="password"]').value;
+    try {
+      const res = await apiLogin(email, password);
+      if (res && res.user && res.user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      alert(err.message || 'Login failed');
+    }
   };
 
   return (

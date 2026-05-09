@@ -3,15 +3,16 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FaFutbol, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaFilter, FaSearch, FaTrophy } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { mockMatches } from '../data/mockData';
+import { getMatches, getStadiums } from '../services/api';
 import './Matches.css';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 function Matches() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
-  const stadiums = ['All Stadiums', ...new Set(mockMatches.map(m => m.stadium))];
-  const groups = ['All Groups', ...new Set(mockMatches.map(m => m.group))].sort();
 
+  const [matches, setMatches] = useState(mockMatches);
+  const [stadiumsList, setStadiumsList] = useState(['All Stadiums']);
   const [filter, setFilter] = useState('All Stadiums');
   const [groupFilter, setGroupFilter] = useState('All Groups');
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,17 +20,34 @@ function Matches() {
   useEffect(() => {
     const stadiumParam = searchParams.get('stadium');
     const cityParam = searchParams.get('city');
-
-    if (stadiumParam && stadiums.includes(stadiumParam)) {
+    if (stadiumParam && stadiumsList.includes(stadiumParam)) {
       setFilter(stadiumParam);
     }
 
     if (cityParam) {
       setSearchTerm(cityParam);
     }
-  }, [searchParams, stadiums]);
+  }, [searchParams, stadiumsList]);
 
-  const filteredMatches = mockMatches.filter(match => {
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [mRes, sRes] = await Promise.all([getMatches({ limit: 100, page: 1 }), getStadiums()]);
+        if (!mounted) return;
+        if (Array.isArray(mRes)) setMatches(mRes);
+        if (Array.isArray(sRes)) setStadiumsList(['All Stadiums', ...new Set(sRes.map(s => s.name))]);
+      } catch (e) {
+        // fallback to mock
+        setStadiumsList(['All Stadiums', ...new Set(mockMatches.map(m => m.stadium))]);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  const groups = ['All Groups', ...new Set(matches.map(m => m.group))].sort();
+
+  const filteredMatches = matches.filter(match => {
     const matchesStadium = filter === 'All Stadiums' || match.stadium === filter;
     const matchesGroup = groupFilter === 'All Groups' || match.group === groupFilter;
     const matchesSearch = match.teamA.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -49,156 +67,158 @@ function Matches() {
   };
 
   return (
-    <div className="matches-page">
-      {/* ─── Hero Section ─────────────────────────── */}
-      <section className="page-hero">
-        <div className="page-hero-bg">
-          <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1920&q=80" alt="Matches" />
-        </div>
-        <div className="page-hero-overlay" />
-        <div className="container page-hero-content">
-          <div className="page-hero-badge">
-            <FaTrophy /> Match Schedule
+    <ErrorBoundary>
+      <div className="matches-page">
+        {/* ─── Hero Section ─────────────────────────── */}
+        <section className="page-hero">
+          <div className="page-hero-bg">
+            <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1920&q=80" alt="Matches" />
           </div>
-          <h1 className="page-hero-title">FIFA World Cup 2026™ <span className="text-gradient">Fixtures</span></h1>
-          <p className="page-hero-desc">
-            Stay up to date with the complete match schedule across the USA, Canada, and Mexico.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── Filters Section ──────────────────────── */}
-      <section className="container" style={{ marginTop: '-3rem', position: 'relative', zIndex: 10, marginBottom: '2rem' }}>
-        <div className="filter-panel">
-          <div className="filter-panel-row">
-            <div className="filter-search" style={{ flex: 2 }}>
-              <FaSearch className="filter-search-icon" />
-              <input
-                type="text"
-                placeholder="Search teams or cities..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+          <div className="page-hero-overlay" />
+          <div className="container page-hero-content">
+            <div className="page-hero-badge">
+              <FaTrophy /> Match Schedule
             </div>
-            <div className="filter-divider" />
-            <div className="filter-group-labeled">
-              <span className="filter-label">Group:</span>
-              <select
-                value={groupFilter}
-                onChange={(e) => setGroupFilter(e.target.value)}
-                className="filter-select"
-              >
-                {groups.map(g => <option key={g} value={g}>{g}</option>)}
-              </select>
-            </div>
-            <div className="filter-divider" />
-            <div className="filter-group-labeled">
-              <span className="filter-label">Stadium:</span>
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="filter-select"
-              >
-                {stadiums.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
+            <h1 className="page-hero-title">FIFA World Cup 2026™ <span className="text-gradient">Fixtures</span></h1>
+            <p className="page-hero-desc">
+              Stay up to date with the complete match schedule across the USA, Canada, and Mexico.
+            </p>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ─── Matches Grid ─────────────────────────── */}
-      <main className="matches-grid container">
-        {filteredMatches.length > 0 ? (
-          filteredMatches.map(match => (
-            <motion.div
-              key={match.id}
-              className="match-card glass-panel"
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              <div className="match-header">
-                <span className={`match-type ${match.type === 'Grand Final' ? 'final' : ''}`}>
-                  {match.type === 'Grand Final' ? <FaTrophy /> : <FaFutbol />}
-                  {match.type}
-                </span>
-                <span className="match-group">{match.group}</span>
+        {/* ─── Filters Section ──────────────────────── */}
+        <section className="container" style={{ marginTop: '-3rem', position: 'relative', zIndex: 10, marginBottom: '2rem' }}>
+          <div className="filter-panel">
+            <div className="filter-panel-row">
+              <div className="filter-search" style={{ flex: 2 }}>
+                <FaSearch className="filter-search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search teams or cities..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-
-              <div className="match-teams">
-                <div className="team">
-                  <div className="team-flag">
-                    {match.flagA === 'tbd' ? (
-                      <div className="flag-placeholder">?</div>
-                    ) : (
-                      <img
-                        src={`https://flagcdn.com/w160/${match.flagA}.png`}
-                        alt={`${match.teamA} flag`}
-                        loading="lazy"
-                      />
-                    )}
-                  </div>
-                  <span className="team-name">{match.teamA}</span>
-                </div>
-                <div className="match-vs">VS</div>
-                <div className="team">
-                  <span className="team-name">{match.teamB}</span>
-                  <div className="team-flag">
-                    {match.flagB === 'tbd' ? (
-                      <div className="flag-placeholder">?</div>
-                    ) : (
-                      <img
-                        src={`https://flagcdn.com/w160/${match.flagB}.png`}
-                        alt={`${match.teamB} flag`}
-                        loading="lazy"
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="match-info">
-                <div className="info-item">
-                  <FaCalendarAlt />
-                  <span>{match.date}</span>
-                </div>
-                <div className="info-item">
-                  <FaClock />
-                  <span>{match.time} Local</span>
-                </div>
-                <div className="info-item">
-                  <FaMapMarkerAlt />
-                  <span>{match.stadium}, {match.city}</span>
-                </div>
-              </div>
-
-              <div className="match-actions">
-                <a
-                  href="https://www.fifa.com/en/tickets"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="match-cta btn btn-outline"
-                  style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              <div className="filter-divider" />
+              <div className="filter-group-labeled">
+                <span className="filter-label">Group:</span>
+                <select
+                  value={groupFilter}
+                  onChange={(e) => setGroupFilter(e.target.value)}
+                  className="filter-select"
                 >
-                  Get Tickets
-                </a>
-                <button
-                  className="match-cta btn btn-secondary"
-                  onClick={() => planTransportForMatch(match)}
-                >
-                  Plan Transport
-                </button>
+                  {groups.map(g => <option key={g} value={g}>{g}</option>)}
+                </select>
               </div>
-            </motion.div>
-          ))
-        ) : (
-          <div className="no-matches">
-            <p>No matches found matching your criteria.</p>
+              <div className="filter-divider" />
+              <div className="filter-group-labeled">
+                <span className="filter-label">Stadium:</span>
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="filter-select"
+                >
+                  {stadiumsList.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
           </div>
-        )}
-      </main>
-    </div>
+        </section>
+
+        {/* ─── Matches Grid ─────────────────────────── */}
+        <main className="matches-grid container">
+          {filteredMatches.length > 0 ? (
+            filteredMatches.map(match => (
+              <motion.div
+                key={match.id}
+                className="match-card glass-panel"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <div className="match-header">
+                  <span className={`match-type ${match.type === 'Grand Final' ? 'final' : ''}`}>
+                    {match.type === 'Grand Final' ? <FaTrophy /> : <FaFutbol />}
+                    {match.type}
+                  </span>
+                  <span className="match-group">{match.group}</span>
+                </div>
+
+                <div className="match-teams">
+                  <div className="team">
+                    <div className="team-flag">
+                      {match.flagA === 'tbd' ? (
+                        <div className="flag-placeholder">?</div>
+                      ) : (
+                        <img
+                          src={`https://flagcdn.com/w160/${match.flagA}.png`}
+                          alt={`${match.teamA} flag`}
+                          loading="lazy"
+                        />
+                      )}
+                    </div>
+                    <span className="team-name">{match.teamA}</span>
+                  </div>
+                  <div className="match-vs">VS</div>
+                  <div className="team">
+                    <span className="team-name">{match.teamB}</span>
+                    <div className="team-flag">
+                      {match.flagB === 'tbd' ? (
+                        <div className="flag-placeholder">?</div>
+                      ) : (
+                        <img
+                          src={`https://flagcdn.com/w160/${match.flagB}.png`}
+                          alt={`${match.teamB} flag`}
+                          loading="lazy"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="match-info">
+                  <div className="info-item">
+                    <FaCalendarAlt />
+                    <span>{match.date}</span>
+                  </div>
+                  <div className="info-item">
+                    <FaClock />
+                    <span>{match.time} Local</span>
+                  </div>
+                  <div className="info-item">
+                    <FaMapMarkerAlt />
+                    <span>{match.stadium}, {match.city}</span>
+                  </div>
+                </div>
+
+                <div className="match-actions">
+                  <a
+                    href="https://www.fifa.com/en/tickets"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="match-cta btn btn-outline"
+                    style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    Get Tickets
+                  </a>
+                  <button
+                    className="match-cta btn btn-secondary"
+                    onClick={() => planTransportForMatch(match)}
+                  >
+                    Plan Transport
+                  </button>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <div className="no-matches">
+              <p>No matches found matching your criteria.</p>
+            </div>
+          )}
+        </main>
+      </div>
+    </ErrorBoundary>
   );
 }
 
