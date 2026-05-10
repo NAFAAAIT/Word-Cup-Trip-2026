@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import StadiumLocationMap from '../components/StadiumLocationMap';
 import HotelCard from '../components/HotelCard';
 import RestaurantCard from '../components/RestaurantCard';
@@ -195,6 +195,7 @@ function Stadiums() {
   const [matches, setMatches] = useState(mockMatches);
   const [hotels, setHotels] = useState(mockHotels);
   const [restaurants, setRestaurants] = useState(mockRestaurants);
+  const [searchParams] = useSearchParams();
 
   React.useEffect(() => {
     let mounted = true;
@@ -212,6 +213,16 @@ function Stadiums() {
     })();
     return () => { mounted = false; };
   }, []);
+
+  // Auto-open a specific stadium when ?stadium=NAME is in the URL
+  useEffect(() => {
+    const stadiumName = searchParams.get('stadium');
+    if (!stadiumName || stadiums.length === 0) return;
+    const found = stadiums.find(
+      s => s.name.toLowerCase() === decodeURIComponent(stadiumName).toLowerCase()
+    );
+    if (found) setSelectedStadium(found);
+  }, [searchParams, stadiums]);
 
   if (selectedStadium) {
     return <StadiumDetailView stadium={selectedStadium} onBack={() => setSelectedStadium(null)} matches={matches} hotels={hotels} restaurants={restaurants} />;

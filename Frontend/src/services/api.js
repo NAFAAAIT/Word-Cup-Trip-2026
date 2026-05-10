@@ -73,6 +73,18 @@ export async function login(email, password) {
     return res;
 }
 
+export async function register(fullName, email, password) {
+    const res = await request('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ fullName, email, password }),
+    });
+    if (res && res.token) {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user || null));
+    }
+    return res;
+}
+
 export async function getMe() {
     return request('/auth/me');
 }

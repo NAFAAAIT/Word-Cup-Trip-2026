@@ -31,7 +31,24 @@
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.6;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary-accent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  transition: opacity 0.2s;
+  text-decoration: none;
+}
+
+.footer-email:hover {
+  opacity: 0.8;
+  color: var(--primary-accent);
 }
 
 .social-links {

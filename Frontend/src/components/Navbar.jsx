@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FaFutbol, FaBars, FaTimes, FaUserCircle, FaSun, FaMoon } from 'react-icons/fa';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaFutbol, FaBars, FaTimes, FaSun, FaMoon, FaUserCircle, FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme ? savedTheme === 'dark' : true;
+    const saved = localStorage.getItem('theme');
+    return saved ? saved === 'dark' : true;
   });
+
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     if (isDarkMode) {
@@ -21,15 +26,25 @@ function Navbar() {
     }
   }, [isDarkMode]);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
   const isActive = (path) => location.pathname === path ? 'active-link' : '';
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
-    <nav className="navbar glass-panel">
+    <nav className={`navbar glass-panel${scrolled ? ' navbar-scrolled' : ''}`}>
       <div className="container flex items-center justify-between">
-        {/* Logo */}
+
         <Link to="/" className="navbar-brand">
           <FaFutbol className="brand-icon" />
           <div className="brand-text">
@@ -38,56 +53,75 @@ function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Links */}
         <div className="desktop-menu flex items-center gap-6">
           <Link to="/" className={`nav-link ${isActive('/')}`}>Home</Link>
-          <Link to="/hotels" className={`nav-link ${isActive('/hotels')}`}>Hotels</Link>
-          <Link to="/restaurants" className={`nav-link ${isActive('/restaurants')}`}>Dining</Link>
-          <Link to="/stadiums" className={`nav-link ${isActive('/stadiums')}`}>Stadiums</Link>
-          <Link to="/transport" className={`nav-link ${isActive('/transport')}`}>Transport</Link>
-          <Link to="/emergency" className={`nav-link ${isActive('/emergency')}`}>Emergency</Link>
-          <Link to="/matches" className={`nav-link ${isActive('/matches')}`}>Matches</Link>
+          <Link to="/about" className={`nav-link ${isActive('/about')}`}>About</Link>
+          <Link to="/services" className={`nav-link ${isActive('/services')}`}>Services</Link>
+          <Link to="/contact" className={`nav-link ${isActive('/contact')}`}>Contact</Link>
+          {user && (
+            <Link to="/dashboard" className={`nav-link ${isActive('/dashboard')}`}>Dashboard</Link>
+          )}
         </div>
 
-        {/* User Actions */}
         <div className="nav-actions flex items-center gap-3">
-          {/* Theme Toggle Button */}
-          <button 
-            className="theme-toggle-btn" 
-            onClick={toggleTheme} 
-            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          <button
+            className="theme-toggle-btn"
+            onClick={() => setIsDarkMode(d => !d)}
+            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             {isDarkMode ? <FaSun className="sun-icon" /> : <FaMoon className="moon-icon" />}
-            <span className="toggle-glow"></span>
+            <span className="toggle-glow" />
           </button>
 
-          <div className="user-profile">
-            <FaUserCircle className="profile-icon" />
-            <div className="profile-menu">
-              <Link to="/login" className="menu-item">Login</Link>
-              <Link to="/signup" className="menu-item">Sign Up</Link>
+          {user ? (
+            <div className="user-menu-wrap">
+              <button className="user-avatar-btn">
+                <FaUserCircle className="profile-icon" />
+                <span className="user-name-label">{user.fullName?.split(' ')[0] || 'User'}</span>
+              </button>
+              <div className="user-dropdown glass-panel">
+                <Link to="/dashboard" className="dropdown-item">
+                  <FaTachometerAlt /> Dashboard
+                </Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin" className="dropdown-item">Admin Panel</Link>
+                )}
+                <button className="dropdown-item dropdown-item-danger" onClick={handleLogout}>
+                  <FaSignOutAlt /> Sign Out
+                </button>
+              </div>
             </div>
-          </div>
-          {/* Mobile Menu Toggle */}
-          <button className="mobile-toggle" onClick={toggleMenu}>
+          ) : (
+            <div className="auth-btns flex items-center gap-2">
+              <Link to="/login" className="nav-link nav-login-link">Login</Link>
+              <Link to="/signup" className="btn btn-primary nav-signup-btn">Sign Up</Link>
+            </div>
+          )}
+
+          <button className="mobile-toggle" onClick={() => setIsOpen(o => !o)} aria-label="Toggle menu">
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="mobile-menu glass-panel">
-          <Link to="/" className="mobile-link" onClick={toggleMenu}>Home</Link>
-          <Link to="/hotels" className="mobile-link" onClick={toggleMenu}>Hotels</Link>
-          <Link to="/restaurants" className="mobile-link" onClick={toggleMenu}>Dining</Link>
-          <Link to="/stadiums" className="mobile-link" onClick={toggleMenu}>Stadiums</Link>
-          <Link to="/transport" className="mobile-link" onClick={toggleMenu}>Transport</Link>
-          <Link to="/emergency" className="mobile-link" onClick={toggleMenu}>Emergency</Link>
-          <Link to="/matches" className="mobile-link" onClick={toggleMenu}>Matches</Link>
-          <div className="mobile-divider"></div>
-          <Link to="/login" className="mobile-link" onClick={toggleMenu}>Login</Link>
-          <Link to="/signup" className="mobile-link" onClick={toggleMenu}>Sign Up</Link>
+          <Link to="/" className="mobile-link">Home</Link>
+          <Link to="/about" className="mobile-link">About</Link>
+          <Link to="/services" className="mobile-link">Services</Link>
+          <Link to="/contact" className="mobile-link">Contact</Link>
+          {user && <Link to="/dashboard" className="mobile-link">Dashboard</Link>}
+          <div className="mobile-divider" />
+          {user ? (
+            <button className="mobile-link mobile-logout" onClick={handleLogout}>
+              <FaSignOutAlt /> Sign Out
+            </button>
+          ) : (
+            <>
+              <Link to="/login" className="mobile-link">Login</Link>
+              <Link to="/signup" className="mobile-link mobile-signup">Sign Up</Link>
+            </>
+          )}
         </div>
       )}
     </nav>

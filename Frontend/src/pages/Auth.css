@@ -56,3 +56,13 @@
 .mb-8 { margin-bottom: 2rem; }
 .mb-10 { margin-bottom: 2.5rem; }
 .mb-12 { margin-bottom: 3rem; }
+
+.auth-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--danger-color);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}

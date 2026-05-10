@@ -786,3 +786,174 @@
   padding: 1rem 2.5rem;
   font-weight: 800;
 }
+
+/* ================================================
+   NEW LANDING PAGE COMPONENTS
+   ================================================ */
+
+/* Hero feature-card (right column) */
+.home-hero-feature-card {
+  padding: 2.25rem;
+  border-radius: 1.75rem;
+  background: rgba(13, 17, 28, 0.65) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.light-theme .home-hero-feature-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+}
+
+/* Hero checklist */
+.hero-features-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 2rem;
+}
+
+.hero-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.hero-feature-check {
+  color: var(--primary-accent);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.home-cta-main {
+  font-size: 1rem;
+  padding: 0.85rem 2rem;
+  font-weight: 700;
+}
+
+/* How it works card steps */
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.how-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.how-step-num {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary-accent);
+  color: var(--bg-dark);
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.how-step-icon {
+  font-size: 1rem;
+  color: var(--primary-accent);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.how-step-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.1rem;
+  line-height: 1.3;
+}
+
+.light-theme .how-step-title { color: var(--text-primary); }
+
+.how-step-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Features grid (4-card section) */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 580px) {
+  .features-grid { grid-template-columns: 1fr; }
+}
+
+.feature-card {
+  padding: 2rem 1.5rem;
+  border-radius: 1.25rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 238, 255, 0.1);
+}
+
+.feature-card-icon {
+  font-size: 2rem;
+  color: var(--primary-accent);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 1rem;
+  background: rgba(0, 238, 255, 0.08);
+  border: 1px solid rgba(0, 238, 255, 0.15);
+  margin: 0 auto 1.25rem;
+}
+
+.feature-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card-desc {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* Spinner */
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

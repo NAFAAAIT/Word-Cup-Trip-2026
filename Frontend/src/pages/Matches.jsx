@@ -35,8 +35,12 @@ function Matches() {
       try {
         const [mRes, sRes] = await Promise.all([getMatches({ limit: 100, page: 1 }), getStadiums()]);
         if (!mounted) return;
-        if (Array.isArray(mRes)) setMatches(mRes);
-        if (Array.isArray(sRes)) setStadiumsList(['All Stadiums', ...new Set(sRes.map(s => s.name))]);
+        if (Array.isArray(mRes) && mRes.length > 0) setMatches(mRes);
+        if (Array.isArray(sRes) && sRes.length > 0) {
+          setStadiumsList(['All Stadiums', ...new Set(sRes.map(s => s.name))]);
+        } else {
+          setStadiumsList(['All Stadiums', ...new Set(mockMatches.map(m => m.stadium))]);
+        }
       } catch (e) {
         // fallback to mock
         setStadiumsList(['All Stadiums', ...new Set(mockMatches.map(m => m.stadium))]);
@@ -57,13 +61,7 @@ function Matches() {
   });
 
   const planTransportForMatch = (match) => {
-    const params = new URLSearchParams({
-      city: match.city,
-      stadium: match.stadium,
-      kickoff: `${match.date} ${match.time}`,
-    });
-
-    navigate(`/transport?${params.toString()}`);
+    navigate(`/stadiums?stadium=${encodeURIComponent(match.stadium)}`);
   };
 
   return (

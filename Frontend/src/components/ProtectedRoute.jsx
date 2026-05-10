@@ -1,33 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getMe } from '../services/api';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function ProtectedRoute({ children, requireAdmin = false }) {
-    const navigate = useNavigate();
-    const [checking, setChecking] = useState(true);
+  const { user, loading } = useAuth();
 
-    useEffect(() => {
-        let mounted = true;
-        (async () => {
-            try {
-                const res = await getMe();
-                if (!mounted) return;
-                const role = res?.user?.role;
-                if (requireAdmin && role !== 'admin') {
-                    navigate('/login');
-                    return;
-                }
-                setChecking(false);
-            } catch (e) {
-                if (!mounted) return;
-                navigate('/login');
-            }
-        })();
-        return () => { mounted = false; };
-    }, [navigate, requireAdmin]);
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
+        <div className="spinner" />
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Loading...</p>
+      </div>
+    );
+  }
 
-    if (checking) return <div className="p-8 text-center">Checking authentication...</div>;
-    return children;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (requireAdmin && user.role !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 }
 
 export default ProtectedRoute;
