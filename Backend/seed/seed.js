@@ -352,7 +352,6 @@ const seedHotels = async (hotels, cityMap, stadiumMap, stadiumsByCity) => {
             image: hotel.image || null,
             price: hotel.price ?? null,
             rating: hotel.rating ?? null,
-            reviews: hotel.reviews || 0,
             distance: hotel.distance || null,
             amenities: Array.isArray(hotel.amenities) ? hotel.amenities : [],
             deal: hotel.deal || null,

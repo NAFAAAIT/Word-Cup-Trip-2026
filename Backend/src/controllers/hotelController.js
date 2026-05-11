@@ -15,7 +15,6 @@ const toHotelCard = (hotel) => ({
     image: hotel.image,
     price: hotel.price,
     rating: hotel.rating,
-    reviews: hotel.reviews || 0,
     distance: hotel.distance,
     amenities: hotel.amenities || [],
     deal: hotel.deal,

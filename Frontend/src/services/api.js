@@ -120,6 +120,32 @@ export async function deleteMatch(id) {
     return request(`/matches/${id}`, { method: 'DELETE' });
 }
 
+// Admin CRUD - Hotels
+export async function createHotel(payload) {
+    return request('/hotels', { method: 'POST', body: JSON.stringify(payload) });
+}
+
+export async function updateHotel(id, payload) {
+    return request(`/hotels/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+}
+
+export async function deleteHotel(id) {
+    return request(`/hotels/${id}`, { method: 'DELETE' });
+}
+
+// Admin CRUD - Restaurants
+export async function createRestaurant(payload) {
+    return request('/restaurants', { method: 'POST', body: JSON.stringify(payload) });
+}
+
+export async function updateRestaurant(id, payload) {
+    return request(`/restaurants/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+}
+
+export async function deleteRestaurant(id) {
+    return request(`/restaurants/${id}`, { method: 'DELETE' });
+}
+
 export async function updateEmergency(payload) {
     return request('/emergency', { method: 'PUT', body: JSON.stringify(payload) });
 }

@@ -31,22 +31,25 @@ function Footer() {
         {/* Links */}
         <div className="footer-links">
           <div className="link-group">
-            <h4>Company</h4>
+            <h4>Navigate</h4>
             <Link to="/">Home</Link>
             <Link to="/about">About</Link>
             <Link to="/contact">Contact</Link>
+            <Link to="/services">Services</Link>
           </div>
           <div className="link-group">
-            <h4>Explore</h4>
-            <Link to="/hotels">Hotels</Link>
-            <Link to="/restaurants">Restaurants</Link>
-            <Link to="/stadiums">Stadiums</Link>
-          </div>
-          <div className="link-group">
-            <h4>Plan</h4>
-            <Link to="/transport">Transport</Link>
+            <h4>Travel Tools</h4>
             <Link to="/matches">Matches</Link>
+            <Link to="/stadiums">Stadiums</Link>
+            <Link to="/hotels">Hotels</Link>
+            <Link to="/transport">Transport</Link>
             <Link to="/emergency">Emergency Info</Link>
+          </div>
+          <div className="link-group">
+            <h4>Support</h4>
+            <Link to="/login">Login</Link>
+            <Link to="/signup">Sign Up</Link>
+            <Link to="/dashboard">Dashboard</Link>
           </div>
         </div>
       </div>

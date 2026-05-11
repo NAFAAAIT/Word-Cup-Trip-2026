@@ -1,12 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { RiBusLine, RiDashboardLine, RiFootballLine, RiHotelBedLine, RiSettings3Line } from 'react-icons/ri';
 import {
     createStadium,
     createMatch,
+    createHotel,
+    createRestaurant,
     deleteMatch,
     deleteStadium,
     getCities,
     getEmergency,
+    getHotels,
     getMatches,
+    getRestaurants,
     getStadiums,
     updateEmergency,
     updateMatch,
@@ -67,6 +72,33 @@ const emptyMatchForm = () => ({
     type: 'Group Stage',
 });
 
+const emptyHotelForm = () => ({
+    name: '',
+    cityId: '',
+    stadiumId: '',
+    country: '',
+    description: '',
+    image: '',
+    price: '',
+    rating: '',
+    distance: '',
+    deal: '',
+    amenities: '',
+});
+
+const emptyRestaurantForm = () => ({
+    name: '',
+    cityId: '',
+    stadiumId: '',
+    country: '',
+    cuisine: '',
+    description: '',
+    image: '',
+    rating: '',
+    distance: '',
+    tags: '',
+});
+
 const sectionCopy = {
     overview: {
         title: 'Venue Operations',
@@ -75,6 +107,10 @@ const sectionCopy = {
     venues: {
         title: 'Stadiums & Matches',
         subtitle: 'Coordinate venue records, fixtures, and capacity details.',
+    },
+    hospitality: {
+        title: 'Hotels & Restaurants',
+        subtitle: 'Curate stays and dining experiences around every venue.',
     },
     transport: {
         title: 'Transport Logistics',
@@ -92,9 +128,15 @@ function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [showAllMatches, setShowAllMatches] = useState(false);
+    const [showAllStadiums, setShowAllStadiums] = useState(false);
+    const [showAllHotels, setShowAllHotels] = useState(false);
+    const [showAllRestaurants, setShowAllRestaurants] = useState(false);
 
     const [cities, setCities] = useState([]);
     const [stadiums, setStadiums] = useState([]);
+    const [hotels, setHotels] = useState([]);
+    const [restaurants, setRestaurants] = useState([]);
     const [matches, setMatches] = useState([]);
     const [emergency, setEmergency] = useState(normalizeEmergency(null));
 
@@ -102,6 +144,8 @@ function AdminDashboard() {
     const [editingStadiumId, setEditingStadiumId] = useState(null);
     const [matchForm, setMatchForm] = useState(emptyMatchForm());
     const [editingMatchId, setEditingMatchId] = useState(null);
+    const [hotelForm, setHotelForm] = useState(emptyHotelForm());
+    const [restaurantForm, setRestaurantForm] = useState(emptyRestaurantForm());
     const [emergencyForm, setEmergencyForm] = useState(normalizeEmergency(null));
     const [saving, setSaving] = useState(false);
 
@@ -110,15 +154,19 @@ function AdminDashboard() {
         setError('');
 
         try {
-            const [citiesRes, stadiumsRes, matchesRes, emergencyRes] = await Promise.all([
+            const [citiesRes, stadiumsRes, hotelsRes, restaurantsRes, matchesRes, emergencyRes] = await Promise.all([
                 getCities(),
                 getStadiums(),
+                getHotels(),
+                getRestaurants(),
                 getMatches(),
                 getEmergency(),
             ]);
 
             setCities(Array.isArray(citiesRes) ? citiesRes : []);
             setStadiums(Array.isArray(stadiumsRes) ? stadiumsRes : []);
+            setHotels(Array.isArray(hotelsRes) ? hotelsRes : []);
+            setRestaurants(Array.isArray(restaurantsRes) ? restaurantsRes : []);
             setMatches(Array.isArray(matchesRes) ? matchesRes : []);
 
             const normalizedEmergency = normalizeEmergency(emergencyRes);
@@ -156,16 +204,13 @@ function AdminDashboard() {
     }, [stadiums]);
 
     const stats = useMemo(() => {
-        const totalCapacity = stadiums.reduce((sum, stadium) => sum + (Number(stadium.capacity) || 0), 0);
-        const averageCapacity = stadiums.length ? Math.round(totalCapacity / stadiums.length) : 0;
-
         return [
             { label: 'Stadiums', value: stadiums.length, hint: `${cities.length} cities connected` },
             { label: 'Matches', value: matches.length, hint: 'Live schedule in MongoDB' },
-            { label: 'Hospitals', value: emergency?.hospitals?.length || 0, hint: 'Emergency coverage' },
-            { label: 'Avg Capacity', value: averageCapacity.toLocaleString(), hint: 'Seats per venue' },
+            { label: 'Restaurants', value: restaurants.length, hint: 'Dining records' },
+            { label: 'Hotels', value: hotels.length, hint: 'Stay records' },
         ];
-    }, [cities.length, emergency?.hospitals?.length, matches.length, stadiums]);
+    }, [cities.length, hotels.length, matches.length, restaurants.length, stadiums.length]);
 
     const filteredStadiums = useMemo(() => {
         const query = searchTerm.trim().toLowerCase();
@@ -182,6 +227,45 @@ function AdminDashboard() {
         });
     }, [searchTerm, stadiums]);
 
+    const filteredHotels = useMemo(() => {
+        const query = searchTerm.trim().toLowerCase();
+        if (!query) {
+            return hotels;
+        }
+
+        return hotels.filter((hotel) => {
+            return [hotel.name, hotel.city, hotel.country, hotel.stadiumName, hotel.description, hotel.distance]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase()
+                .includes(query);
+        });
+    }, [hotels, searchTerm]);
+
+    const filteredRestaurants = useMemo(() => {
+        const query = searchTerm.trim().toLowerCase();
+        if (!query) {
+            return restaurants;
+        }
+
+        return restaurants.filter((restaurant) => {
+            return [
+                restaurant.name,
+                restaurant.city,
+                restaurant.country,
+                restaurant.stadiumName,
+                restaurant.cuisine,
+                restaurant.description,
+                restaurant.distance,
+                ...(Array.isArray(restaurant.tags) ? restaurant.tags : []),
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase()
+                .includes(query);
+        });
+    }, [restaurants, searchTerm]);
+
     const filteredMatches = useMemo(() => {
         const query = searchTerm.trim().toLowerCase();
         if (!query) {
@@ -196,6 +280,22 @@ function AdminDashboard() {
                 .includes(query);
         });
     }, [matches, searchTerm]);
+
+    const visibleMatches = useMemo(() => {
+        return showAllMatches ? filteredMatches : filteredMatches.slice(0, 5);
+    }, [filteredMatches, showAllMatches]);
+
+    const visibleStadiums = useMemo(() => {
+        return showAllStadiums ? filteredStadiums : filteredStadiums.slice(0, 4);
+    }, [filteredStadiums, showAllStadiums]);
+
+    const visibleHotels = useMemo(() => {
+        return showAllHotels ? filteredHotels : filteredHotels.slice(0, 4);
+    }, [filteredHotels, showAllHotels]);
+
+    const visibleRestaurants = useMemo(() => {
+        return showAllRestaurants ? filteredRestaurants : filteredRestaurants.slice(0, 4);
+    }, [filteredRestaurants, showAllRestaurants]);
 
     const logisticsRows = useMemo(() => {
         return filteredMatches.slice(0, 5).map((match, index) => ({
@@ -358,6 +458,67 @@ function AdminDashboard() {
         openEditor('match');
     };
 
+    const submitHotel = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+
+        try {
+            const payload = {
+                name: hotelForm.name,
+                city: hotelForm.cityId,
+                stadium: hotelForm.stadiumId || undefined,
+                country: hotelForm.country || cityById.get(hotelForm.cityId)?.country || '',
+                description: hotelForm.description,
+                image: hotelForm.image,
+                price: hotelForm.price ? Number(hotelForm.price) : undefined,
+                rating: hotelForm.rating ? Number(hotelForm.rating) : undefined,
+                distance: hotelForm.distance,
+                deal: hotelForm.deal,
+                amenities: hotelForm.amenities
+                    ? hotelForm.amenities.split(',').map((item) => item.trim()).filter(Boolean)
+                    : [],
+            };
+
+            await createHotel(payload);
+            await loadData();
+            setHotelForm(emptyHotelForm());
+        } catch (submitError) {
+            setError(submitError.message || 'Could not save hotel');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const submitRestaurant = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+
+        try {
+            const payload = {
+                name: restaurantForm.name,
+                city: restaurantForm.cityId,
+                stadium: restaurantForm.stadiumId || undefined,
+                country: restaurantForm.country || cityById.get(restaurantForm.cityId)?.country || '',
+                cuisine: restaurantForm.cuisine,
+                description: restaurantForm.description,
+                image: restaurantForm.image,
+                rating: restaurantForm.rating ? Number(restaurantForm.rating) : undefined,
+                distance: restaurantForm.distance,
+                tags: restaurantForm.tags
+                    ? restaurantForm.tags.split(',').map((item) => item.trim()).filter(Boolean)
+                    : [],
+            };
+
+            await createRestaurant(payload);
+            await loadData();
+            setRestaurantForm(emptyRestaurantForm());
+        } catch (submitError) {
+            setError(submitError.message || 'Could not save restaurant');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const updateEmergencyContact = (key, field, value) => {
         setEmergencyForm((current) => ({
             ...current,
@@ -410,6 +571,12 @@ function AdminDashboard() {
 
     const onSectionChange = (section) => {
         setActiveSection(section);
+        try {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (e) {
+            // fallback for older browsers
+            window.scrollTo(0, 0);
+        }
     };
 
     const title = sectionCopy[activeSection] || sectionCopy.overview;
@@ -430,16 +597,24 @@ function AdminDashboard() {
 
                         <nav className="admin-nav">
                             <button className={`admin-nav-item ${activeSection === 'overview' ? 'active' : ''}`} onClick={() => onSectionChange('overview')}>
-                                Overview
+                                <RiDashboardLine className="admin-nav-icon" aria-hidden="true" />
+                                <span className="admin-nav-label">Overview</span>
                             </button>
                             <button className={`admin-nav-item ${activeSection === 'venues' ? 'active' : ''}`} onClick={() => onSectionChange('venues')}>
-                                Stadiums & Matches
+                                <RiFootballLine className="admin-nav-icon" aria-hidden="true" />
+                                <span className="admin-nav-label">Stadiums & Matches</span>
+                            </button>
+                            <button className={`admin-nav-item ${activeSection === 'hospitality' ? 'active' : ''}`} onClick={() => onSectionChange('hospitality')}>
+                                <RiHotelBedLine className="admin-nav-icon" aria-hidden="true" />
+                                <span className="admin-nav-label">Hotels & Restaurants</span>
                             </button>
                             <button className={`admin-nav-item ${activeSection === 'transport' ? 'active' : ''}`} onClick={() => onSectionChange('transport')}>
-                                Transport & Emergency
+                                <RiBusLine className="admin-nav-icon" aria-hidden="true" />
+                                <span className="admin-nav-label">Transport & Emergency</span>
                             </button>
                             <button className={`admin-nav-item ${activeSection === 'settings' ? 'active' : ''}`} onClick={() => onSectionChange('settings')}>
-                                Settings
+                                <RiSettings3Line className="admin-nav-icon" aria-hidden="true" />
+                                <span className="admin-nav-label">Settings</span>
                             </button>
                         </nav>
                     </div>
@@ -466,9 +641,6 @@ function AdminDashboard() {
                         </label>
 
                         <div className="admin-topbar-actions">
-                            <button className="admin-icon-btn" type="button">🔔</button>
-                            <button className="admin-icon-btn" type="button">?</button>
-                            <button className="admin-icon-btn" type="button">☷</button>
                             <button className="admin-primary-btn" type="button" onClick={() => openEditor('stadium')}>
                                 Add Record
                             </button>
@@ -516,7 +688,7 @@ function AdminDashboard() {
                                     </div>
 
                                     <div className="admin-card-list">
-                                        {filteredStadiums.map((stadium) => (
+                                        {visibleStadiums.map((stadium) => (
                                             <article key={stadium.id || stadium._id} className="admin-stadium-card">
                                                 <div className="admin-stadium-image">
                                                     {stadium.image ? <img src={stadium.image} alt={stadium.name} /> : <div className="admin-image-placeholder">No image</div>}
@@ -543,6 +715,16 @@ function AdminDashboard() {
                                             </article>
                                         ))}
                                     </div>
+
+                                    {filteredStadiums.length > 4 ? (
+                                        <button
+                                            className="admin-secondary-btn"
+                                            type="button"
+                                            onClick={() => setShowAllStadiums((current) => !current)}
+                                        >
+                                            {showAllStadiums ? 'Show less' : 'Show all'}
+                                        </button>
+                                    ) : null}
                                 </article>
 
                                 <article className="admin-panel admin-panel-table">
@@ -564,7 +746,7 @@ function AdminDashboard() {
                                             <span>Actions</span>
                                         </div>
 
-                                        {filteredMatches.map((match) => (
+                                        {visibleMatches.map((match) => (
                                             <div key={match.id || match._id} className="admin-table-row">
                                                 <span>
                                                     <strong>{match.date || 'TBD'}</strong>
@@ -585,6 +767,129 @@ function AdminDashboard() {
                                             </div>
                                         ))}
                                     </div>
+
+                                    {filteredMatches.length > 5 ? (
+                                        <button
+                                            className="admin-secondary-btn"
+                                            type="button"
+                                            onClick={() => setShowAllMatches((current) => !current)}
+                                        >
+                                            {showAllMatches ? 'Show less' : 'Show all'}
+                                        </button>
+                                    ) : null}
+                                </article>
+                            </section>
+                        )}
+
+                        {(activeSection === 'overview' || activeSection === 'hospitality') && (
+                            <section className="admin-grid admin-grid-hospitality">
+                                <article className="admin-panel admin-panel-large">
+                                    <div className="admin-panel-header">
+                                        <div>
+                                            <h2>Hotels</h2>
+                                            <p>{filteredHotels.length} records synced from MongoDB.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="admin-hospitality-list">
+                                        {visibleHotels.map((hotel) => (
+                                            <article key={hotel.id || hotel._id} className="admin-hospitality-card">
+                                                <div className="admin-hospitality-image">
+                                                    {hotel.image ? <img src={hotel.image} alt={hotel.name} /> : <div className="admin-image-placeholder">No image</div>}
+                                                </div>
+                                                <div className="admin-hospitality-body">
+                                                    <div className="admin-card-heading-row">
+                                                        <div>
+                                                            <h3>{hotel.name}</h3>
+                                                            <p>{hotel.city || 'City TBD'}, {hotel.country || 'Country TBD'}</p>
+                                                        </div>
+                                                        <div className="admin-hospitality-rating">★ {hotel.rating ?? 'N/A'}</div>
+                                                    </div>
+
+                                                    <div className="admin-hospitality-meta">
+                                                        <span>{hotel.stadiumName || 'No stadium linked'}</span>
+                                                        <span>{hotel.distance || 'Distance N/A'}</span>
+                                                        <span>{hotel.price ? `$${hotel.price}/night` : 'Price N/A'}</span>
+                                                        {hotel.deal ? <span className="is-highlight">{hotel.deal}</span> : null}
+                                                    </div>
+
+                                                    {Array.isArray(hotel.amenities) && hotel.amenities.length > 0 ? (
+                                                        <div className="admin-hospitality-tags">
+                                                            {hotel.amenities.slice(0, 6).map((amenity) => (
+                                                                <span key={amenity}>{amenity}</span>
+                                                            ))}
+                                                        </div>
+                                                    ) : null}
+
+                                                    <p className="admin-card-description">{hotel.description || 'No description available.'}</p>
+                                                </div>
+                                            </article>
+                                        ))}
+                                    </div>
+
+                                    {filteredHotels.length > 4 ? (
+                                        <button
+                                            className="admin-secondary-btn"
+                                            type="button"
+                                            onClick={() => setShowAllHotels((current) => !current)}
+                                        >
+                                            {showAllHotels ? 'Show less' : 'Show all'}
+                                        </button>
+                                    ) : null}
+                                </article>
+
+                                <article className="admin-panel admin-panel-large">
+                                    <div className="admin-panel-header">
+                                        <div>
+                                            <h2>Restaurants</h2>
+                                            <p>{filteredRestaurants.length} dining options around stadiums.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="admin-hospitality-list">
+                                        {visibleRestaurants.map((restaurant) => (
+                                            <article key={restaurant.id || restaurant._id} className="admin-hospitality-card">
+                                                <div className="admin-hospitality-image">
+                                                    {restaurant.image ? <img src={restaurant.image} alt={restaurant.name} /> : <div className="admin-image-placeholder">No image</div>}
+                                                </div>
+                                                <div className="admin-hospitality-body">
+                                                    <div className="admin-card-heading-row">
+                                                        <div>
+                                                            <h3>{restaurant.name}</h3>
+                                                            <p>{restaurant.city || 'City TBD'}, {restaurant.country || 'Country TBD'}</p>
+                                                        </div>
+                                                        <div className="admin-hospitality-rating">★ {restaurant.rating ?? 'N/A'}</div>
+                                                    </div>
+
+                                                    <div className="admin-hospitality-meta">
+                                                        <span>{restaurant.cuisine || 'Cuisine N/A'}</span>
+                                                        <span>{restaurant.stadiumName || 'No stadium linked'}</span>
+                                                        <span>{restaurant.distance || 'Distance N/A'}</span>
+                                                    </div>
+
+                                                    {Array.isArray(restaurant.tags) && restaurant.tags.length > 0 ? (
+                                                        <div className="admin-hospitality-tags">
+                                                            {restaurant.tags.slice(0, 6).map((tag) => (
+                                                                <span key={tag}>{tag}</span>
+                                                            ))}
+                                                        </div>
+                                                    ) : null}
+
+                                                    <p className="admin-card-description">{restaurant.description || 'No description available.'}</p>
+                                                </div>
+                                            </article>
+                                        ))}
+                                    </div>
+
+                                    {filteredRestaurants.length > 4 ? (
+                                        <button
+                                            className="admin-secondary-btn"
+                                            type="button"
+                                            onClick={() => setShowAllRestaurants((current) => !current)}
+                                        >
+                                            {showAllRestaurants ? 'Show less' : 'Show all'}
+                                        </button>
+                                    ) : null}
                                 </article>
                             </section>
                         )}
@@ -679,6 +984,8 @@ function AdminDashboard() {
                                 <div className="admin-editor-tabs">
                                     <button className={editorTab === 'stadium' ? 'active' : ''} type="button" onClick={() => setEditorTab('stadium')}>Stadium</button>
                                     <button className={editorTab === 'match' ? 'active' : ''} type="button" onClick={() => setEditorTab('match')}>Match</button>
+                                    <button className={editorTab === 'hotel' ? 'active' : ''} type="button" onClick={() => setEditorTab('hotel')}>Hotel</button>
+                                    <button className={editorTab === 'restaurant' ? 'active' : ''} type="button" onClick={() => setEditorTab('restaurant')}>Restaurant</button>
                                     <button className={editorTab === 'emergency' ? 'active' : ''} type="button" onClick={() => setEditorTab('emergency')}>Emergency</button>
                                 </div>
 
@@ -777,6 +1084,122 @@ function AdminDashboard() {
 
                                         <button className="admin-primary-btn admin-submit-btn" type="submit" disabled={saving}>
                                             {saving ? 'Saving...' : editingMatchId ? 'Update Match' : 'Create Match'}
+                                        </button>
+                                    </form>
+                                )}
+
+                                {editorTab === 'hotel' && (
+                                    <form className="admin-form-grid" onSubmit={submitHotel}>
+                                        <div className="admin-form-header">
+                                            <h2>Create Hotel</h2>
+                                            <button className="admin-secondary-btn" type="button" onClick={() => setHotelForm(emptyHotelForm())}>Reset</button>
+                                        </div>
+
+                                        <input className="admin-input" placeholder="Hotel name" value={hotelForm.name} onChange={(event) => setHotelForm((current) => ({ ...current, name: event.target.value }))} />
+
+                                        <div className="admin-form-two-col">
+                                            <select className="admin-input" value={hotelForm.cityId} onChange={(event) => {
+                                                const city = cityById.get(event.target.value);
+                                                setHotelForm((current) => ({
+                                                    ...current,
+                                                    cityId: event.target.value,
+                                                    country: city?.country || current.country,
+                                                }));
+                                            }}>
+                                                <option value="">Select city</option>
+                                                {cities.map((city) => (
+                                                    <option key={city.id || city._id} value={city.id || city._id}>
+                                                        {city.name} · {city.country}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select className="admin-input" value={hotelForm.stadiumId} onChange={(event) => setHotelForm((current) => ({ ...current, stadiumId: event.target.value }))}>
+                                                <option value="">Select stadium</option>
+                                                {stadiums.map((stadium) => (
+                                                    <option key={stadium.id || stadium._id} value={stadium.id || stadium._id}>
+                                                        {stadium.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="admin-form-two-col">
+                                            <input className="admin-input" placeholder="Country" value={hotelForm.country} onChange={(event) => setHotelForm((current) => ({ ...current, country: event.target.value }))} />
+                                            <input className="admin-input" placeholder="Distance" value={hotelForm.distance} onChange={(event) => setHotelForm((current) => ({ ...current, distance: event.target.value }))} />
+                                        </div>
+
+                                        <div className="admin-form-two-col">
+                                            <input className="admin-input" placeholder="Price" value={hotelForm.price} onChange={(event) => setHotelForm((current) => ({ ...current, price: event.target.value }))} />
+                                            <input className="admin-input" placeholder="Rating" value={hotelForm.rating} onChange={(event) => setHotelForm((current) => ({ ...current, rating: event.target.value }))} />
+                                        </div>
+
+                                        <div className="admin-form-two-col">
+                                            <input className="admin-input" placeholder="Deal" value={hotelForm.deal} onChange={(event) => setHotelForm((current) => ({ ...current, deal: event.target.value }))} />
+                                            <input className="admin-input" placeholder="Image URL" value={hotelForm.image} onChange={(event) => setHotelForm((current) => ({ ...current, image: event.target.value }))} />
+                                        </div>
+
+                                        <input className="admin-input" placeholder="Amenities comma separated" value={hotelForm.amenities} onChange={(event) => setHotelForm((current) => ({ ...current, amenities: event.target.value }))} />
+
+                                        <textarea className="admin-textarea" placeholder="Description" value={hotelForm.description} onChange={(event) => setHotelForm((current) => ({ ...current, description: event.target.value }))} />
+
+                                        <button className="admin-primary-btn admin-submit-btn" type="submit" disabled={saving}>
+                                            {saving ? 'Saving...' : 'Create Hotel'}
+                                        </button>
+                                    </form>
+                                )}
+
+                                {editorTab === 'restaurant' && (
+                                    <form className="admin-form-grid" onSubmit={submitRestaurant}>
+                                        <div className="admin-form-header">
+                                            <h2>Create Restaurant</h2>
+                                            <button className="admin-secondary-btn" type="button" onClick={() => setRestaurantForm(emptyRestaurantForm())}>Reset</button>
+                                        </div>
+
+                                        <input className="admin-input" placeholder="Restaurant name" value={restaurantForm.name} onChange={(event) => setRestaurantForm((current) => ({ ...current, name: event.target.value }))} />
+
+                                        <div className="admin-form-two-col">
+                                            <select className="admin-input" value={restaurantForm.cityId} onChange={(event) => {
+                                                const city = cityById.get(event.target.value);
+                                                setRestaurantForm((current) => ({
+                                                    ...current,
+                                                    cityId: event.target.value,
+                                                    country: city?.country || current.country,
+                                                }));
+                                            }}>
+                                                <option value="">Select city</option>
+                                                {cities.map((city) => (
+                                                    <option key={city.id || city._id} value={city.id || city._id}>
+                                                        {city.name} · {city.country}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select className="admin-input" value={restaurantForm.stadiumId} onChange={(event) => setRestaurantForm((current) => ({ ...current, stadiumId: event.target.value }))}>
+                                                <option value="">Select stadium</option>
+                                                {stadiums.map((stadium) => (
+                                                    <option key={stadium.id || stadium._id} value={stadium.id || stadium._id}>
+                                                        {stadium.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="admin-form-two-col">
+                                            <input className="admin-input" placeholder="Country" value={restaurantForm.country} onChange={(event) => setRestaurantForm((current) => ({ ...current, country: event.target.value }))} />
+                                            <input className="admin-input" placeholder="Cuisine" value={restaurantForm.cuisine} onChange={(event) => setRestaurantForm((current) => ({ ...current, cuisine: event.target.value }))} />
+                                        </div>
+
+                                        <div className="admin-form-two-col">
+                                            <input className="admin-input" placeholder="Distance" value={restaurantForm.distance} onChange={(event) => setRestaurantForm((current) => ({ ...current, distance: event.target.value }))} />
+                                            <input className="admin-input" placeholder="Rating" value={restaurantForm.rating} onChange={(event) => setRestaurantForm((current) => ({ ...current, rating: event.target.value }))} />
+                                        </div>
+
+                                        <input className="admin-input" placeholder="Image URL" value={restaurantForm.image} onChange={(event) => setRestaurantForm((current) => ({ ...current, image: event.target.value }))} />
+                                        <input className="admin-input" placeholder="Tags comma separated" value={restaurantForm.tags} onChange={(event) => setRestaurantForm((current) => ({ ...current, tags: event.target.value }))} />
+
+                                        <textarea className="admin-textarea" placeholder="Description" value={restaurantForm.description} onChange={(event) => setRestaurantForm((current) => ({ ...current, description: event.target.value }))} />
+
+                                        <button className="admin-primary-btn admin-submit-btn" type="submit" disabled={saving}>
+                                            {saving ? 'Saving...' : 'Create Restaurant'}
                                         </button>
                                     </form>
                                 )}

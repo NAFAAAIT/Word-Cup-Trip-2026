@@ -81,23 +81,14 @@ function Home() {
 
             <h1 className="home-hero-title">
               Plan your FIFA World Cup 2026 Trip{' '}
-              <span className="highlight">in minutes</span> 
-          
+              <span className="highlight">in minutes</span>
+
             </h1>
 
             <p className="home-hero-sub">
               Your all-in-one travel companion for the biggest football event in history —
               spanning <strong>USA</strong>, <strong>Canada</strong> &amp; <strong>Mexico</strong>.
             </p>
-
-            <ul className="hero-features-list">
-              {STEPS.map(s => (
-                <li key={s.title} className="hero-feature-item">
-                  <FaCheckCircle className="hero-feature-check" />
-                  <span>{s.title}</span>
-                </li>
-              ))}
-            </ul>
 
             <div className="home-hero-ctas">
               <Link to="/signup" className="btn btn-primary home-cta-main">
