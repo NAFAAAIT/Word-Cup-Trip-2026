@@ -12,8 +12,39 @@ const errorHandler = require("./middleware/errorMiddleware");
 
 const app = express();
 
+const allowedOrigins = new Set(
+    String(process.env.CLIENT_ORIGINS || process.env.CLIENT_ORIGIN || "http://localhost:5173")
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean)
+);
+
+const isAllowedOrigin = (origin) => {
+    if (!origin) {
+        return true;
+    }
+
+    if (allowedOrigins.has(origin)) {
+        return true;
+    }
+
+    try {
+        const parsed = new URL(origin);
+        return parsed.hostname.endsWith(".vercel.app");
+    } catch {
+        return false;
+    }
+};
+
 const corsOptions = {
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+    origin(origin, callback) {
+        if (isAllowedOrigin(origin)) {
+            callback(null, true);
+            return;
+        }
+
+        callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
 };
 

@@ -152,7 +152,7 @@ function StadiumDetailView({ stadium, onBack, matches, hotels, restaurants }) {
                 <h3 className="font-bold mb-4 flex items-center gap-2">
                   <FaMapMarkerAlt className="text-primary-accent" /> Stadium Location
                 </h3>
-                <StadiumLocationMap stadiumName={stadium.name} city={`${stadium.city}, ${stadium.country}`} />
+                <StadiumLocationMap stadium={stadium} city={`${stadium.city}, ${stadium.country}`} />
               </div>
             </ScrollReveal>
 

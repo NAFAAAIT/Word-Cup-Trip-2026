@@ -12,7 +12,7 @@ const STADIUM_COORDINATES = {
     'BC Place': [49.2768, -123.1119],
 };
 
-function FitToStadium({ center }) {
+function FitToStadium({ center, zoom }) {
     const map = useMap();
 
     useEffect(() => {
@@ -20,26 +20,38 @@ function FitToStadium({ center }) {
             return;
         }
 
-        map.setView(center, 13, { animate: true });
+        map.setView(center, zoom || 13, { animate: true });
     }, [map, center]);
 
     return null;
 }
 
-function StadiumLocationMap({ stadiumName, city }) {
-    const center = useMemo(
-        () => STADIUM_COORDINATES[stadiumName] || [39.8283, -98.5795],
-        [stadiumName]
-    );
+function StadiumLocationMap({ stadium, stadiumName, city }) {
+    // Accept either a full stadium object or stadiumName/city props for backward compatibility
+    const locFromProps = stadium?.location || null;
+
+    const center = useMemo(() => {
+        if (locFromProps && typeof locFromProps.lat === 'number' && typeof locFromProps.lng === 'number') {
+            return [locFromProps.lat, locFromProps.lng];
+        }
+
+        const name = stadium?.name || stadiumName;
+        return STADIUM_COORDINATES[name] || [39.8283, -98.5795];
+    }, [stadium, stadiumName]);
+
+    const zoom = useMemo(() => (locFromProps ? 15 : 13), [locFromProps]);
+
+    const labelName = stadium?.name || stadiumName || 'Stadium';
+    const labelCity = stadium?.city || city || '';
 
     return (
-        <div className="stadium-location-map-shell" role="region" aria-label={`Map of ${stadiumName}`}>
-            <MapContainer center={center} zoom={13} scrollWheelZoom={true} className="stadium-location-map">
+        <div className="stadium-location-map-shell" role="region" aria-label={`Map of ${labelName}`}>
+            <MapContainer center={center} zoom={zoom} scrollWheelZoom={true} className="stadium-location-map">
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <FitToStadium center={center} />
+                <FitToStadium center={center} zoom={zoom} />
 
                 <CircleMarker
                     center={center}
@@ -52,9 +64,9 @@ function StadiumLocationMap({ stadiumName, city }) {
                     }}
                 >
                     <Popup>
-                        <strong>{stadiumName}</strong>
+                        <strong>{labelName}</strong>
                         <br />
-                        {city}
+                        {labelCity}
                     </Popup>
                 </CircleMarker>
             </MapContainer>

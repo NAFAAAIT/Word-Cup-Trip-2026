@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { RiBusLine, RiDashboardLine, RiFootballLine, RiHotelBedLine, RiSettings3Line } from 'react-icons/ri';
+import { RiBusLine, RiDashboardLine, RiDeleteBin6Line, RiEdit2Line, RiFootballLine, RiHotelBedLine, RiSettings3Line, RiUser3Line } from 'react-icons/ri';
 import {
     createStadium,
     createMatch,
@@ -7,15 +7,26 @@ import {
     createRestaurant,
     deleteMatch,
     deleteStadium,
+    deleteUser,
+    deleteHotel,
+    deleteRestaurant,
+    updateHotel,
+    updateRestaurant,
     getCities,
     getEmergency,
     getHotels,
     getMatches,
     getRestaurants,
     getStadiums,
+    getTransports,
+    getUsers,
     updateEmergency,
     updateMatch,
+    updateUser,
     updateStadium,
+    createTransport,
+    updateTransport,
+    deleteTransport,
     uploadFile,
 } from '../services/api';
 import './AdminDashboard.css';
@@ -106,25 +117,59 @@ const sectionCopy = {
     },
     venues: {
         title: 'Stadiums & Matches',
-        subtitle: 'Coordinate venue records, fixtures, and capacity details.',
+        subtitle: '',
     },
     hospitality: {
         title: 'Hotels & Restaurants',
-        subtitle: 'Curate stays and dining experiences around every venue.',
+        subtitle: '',
     },
     transport: {
         title: 'Transport Logistics',
-        subtitle: 'Track venue flow, travel coverage, and emergency response.',
     },
     settings: {
         title: 'Record Editor',
         subtitle: 'Create, update, and publish records without leaving the dashboard.',
+    },
+    users: {
+        title: 'Users',
     },
 };
 
 function AdminDashboard() {
     const [activeSection, setActiveSection] = useState('overview');
     const [editorTab, setEditorTab] = useState('stadium');
+    const [showEditorPanel, setShowEditorPanel] = useState(false);
+    // Normalize various id shapes into a string id the API expects
+    const normalizeId = (val) => {
+        const extractHex24 = (s) => {
+            if (!s || typeof s !== 'string') return '';
+            const trimmed = s.trim();
+            const fullMatch = /^([a-fA-F0-9]{24})$/.exec(trimmed);
+            if (fullMatch) return fullMatch[1];
+            const found = trimmed.match(/([a-fA-F0-9]{24})/);
+            return found ? found[1] : '';
+        };
+
+        if (val === undefined || val === null) return '';
+        if (typeof val === 'string') return extractHex24(val) || val.trim();
+        if (typeof val === 'number') return String(val);
+        if (typeof val === 'object') {
+            if (val.id) return extractHex24(String(val.id)) || String(val.id);
+            if (val._id) {
+                if (typeof val._id === 'string') return extractHex24(val._id) || val._id;
+                if (val._id.$oid) return extractHex24(String(val._id.$oid)) || String(val._id.$oid);
+                try {
+                    const s = String(val._id);
+                    const extracted = extractHex24(s);
+                    if (extracted) return extracted;
+                    if (s && s !== '[object Object]') return s;
+                } catch (e) {
+                    // ignore
+                }
+            }
+        }
+        try { return String(val); } catch (e) { return ''; }
+    };
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
@@ -132,12 +177,14 @@ function AdminDashboard() {
     const [showAllStadiums, setShowAllStadiums] = useState(false);
     const [showAllHotels, setShowAllHotels] = useState(false);
     const [showAllRestaurants, setShowAllRestaurants] = useState(false);
+    const [showAllUsers, setShowAllUsers] = useState(false);
 
     const [cities, setCities] = useState([]);
     const [stadiums, setStadiums] = useState([]);
     const [hotels, setHotels] = useState([]);
     const [restaurants, setRestaurants] = useState([]);
     const [matches, setMatches] = useState([]);
+    const [users, setUsers] = useState([]);
     const [emergency, setEmergency] = useState(normalizeEmergency(null));
 
     const [stadiumForm, setStadiumForm] = useState(emptyStadiumForm());
@@ -145,37 +192,74 @@ function AdminDashboard() {
     const [matchForm, setMatchForm] = useState(emptyMatchForm());
     const [editingMatchId, setEditingMatchId] = useState(null);
     const [hotelForm, setHotelForm] = useState(emptyHotelForm());
+    const [editingHotelId, setEditingHotelId] = useState(null);
     const [restaurantForm, setRestaurantForm] = useState(emptyRestaurantForm());
+    const [editingRestaurantId, setEditingRestaurantId] = useState(null);
     const [emergencyForm, setEmergencyForm] = useState(normalizeEmergency(null));
+    const [editingUserId, setEditingUserId] = useState(null);
+    const [userForm, setUserForm] = useState({ fullName: '', email: '' });
     const [saving, setSaving] = useState(false);
 
-    const loadData = async () => {
-        setLoading(true);
+    const loadCoreData = async () => {
+        const [citiesRes, stadiumsRes, matchesRes, emergencyRes] = await Promise.all([
+            getCities(),
+            getStadiums(),
+            getMatches(),
+            getEmergency(),
+        ]);
+
+        setCities(Array.isArray(citiesRes) ? citiesRes : []);
+        setStadiums(Array.isArray(stadiumsRes) ? stadiumsRes : []);
+        setMatches(Array.isArray(matchesRes) ? matchesRes : []);
+
+        const normalizedEmergency = normalizeEmergency(emergencyRes);
+        setEmergency(normalizedEmergency);
+        setEmergencyForm(normalizedEmergency);
+    };
+
+    const loadSupplementaryData = async () => {
+        const [hotelsRes, restaurantsRes, usersRes] = await Promise.allSettled([
+            getHotels(),
+            getRestaurants(),
+            getUsers(),
+        ]);
+
+        if (hotelsRes.status === 'fulfilled') {
+            setHotels(Array.isArray(hotelsRes.value) ? hotelsRes.value : []);
+        }
+
+        if (restaurantsRes.status === 'fulfilled') {
+            setRestaurants(Array.isArray(restaurantsRes.value) ? restaurantsRes.value : []);
+        }
+
+        if (usersRes.status === 'fulfilled') {
+            setUsers(Array.isArray(usersRes.value) ? usersRes.value : []);
+        }
+    };
+
+    const loadData = async ({ showSpinner = false, loadSupplementary = true } = {}) => {
+        if (showSpinner) {
+            setLoading(true);
+        }
+
         setError('');
 
         try {
-            const [citiesRes, stadiumsRes, hotelsRes, restaurantsRes, matchesRes, emergencyRes] = await Promise.all([
-                getCities(),
-                getStadiums(),
-                getHotels(),
-                getRestaurants(),
-                getMatches(),
-                getEmergency(),
-            ]);
+            await loadCoreData();
 
-            setCities(Array.isArray(citiesRes) ? citiesRes : []);
-            setStadiums(Array.isArray(stadiumsRes) ? stadiumsRes : []);
-            setHotels(Array.isArray(hotelsRes) ? hotelsRes : []);
-            setRestaurants(Array.isArray(restaurantsRes) ? restaurantsRes : []);
-            setMatches(Array.isArray(matchesRes) ? matchesRes : []);
+            if (showSpinner) {
+                setLoading(false);
+            }
 
-            const normalizedEmergency = normalizeEmergency(emergencyRes);
-            setEmergency(normalizedEmergency);
-            setEmergencyForm(normalizedEmergency);
+            if (loadSupplementary) {
+                await loadSupplementaryData();
+            }
         } catch (fetchError) {
             setError(fetchError.message || 'Failed to load admin data');
         } finally {
-            setLoading(false);
+            if (showSpinner) {
+                setLoading(false);
+            }
         }
     };
 
@@ -187,7 +271,7 @@ function AdminDashboard() {
                 return;
             }
 
-            await loadData();
+            await loadData({ showSpinner: true });
         })();
 
         return () => {
@@ -209,8 +293,9 @@ function AdminDashboard() {
             { label: 'Matches', value: matches.length, hint: 'Live schedule in MongoDB' },
             { label: 'Restaurants', value: restaurants.length, hint: 'Dining records' },
             { label: 'Hotels', value: hotels.length, hint: 'Stay records' },
+            { label: 'Users', value: users.length, hint: 'Accounts in the database' },
         ];
-    }, [cities.length, hotels.length, matches.length, restaurants.length, stadiums.length]);
+    }, [cities.length, hotels.length, matches.length, restaurants.length, stadiums.length, users.length]);
 
     const filteredStadiums = useMemo(() => {
         const query = searchTerm.trim().toLowerCase();
@@ -266,6 +351,21 @@ function AdminDashboard() {
         });
     }, [restaurants, searchTerm]);
 
+    const filteredUsers = useMemo(() => {
+        const query = searchTerm.trim().toLowerCase();
+        if (!query) {
+            return users;
+        }
+
+        return users.filter((user) => {
+            return [user.fullName, user.email, user.role]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase()
+                .includes(query);
+        });
+    }, [searchTerm, users]);
+
     const filteredMatches = useMemo(() => {
         const query = searchTerm.trim().toLowerCase();
         if (!query) {
@@ -282,7 +382,7 @@ function AdminDashboard() {
     }, [matches, searchTerm]);
 
     const visibleMatches = useMemo(() => {
-        return showAllMatches ? filteredMatches : filteredMatches.slice(0, 5);
+        return showAllMatches ? filteredMatches : filteredMatches.slice(0, 4);
     }, [filteredMatches, showAllMatches]);
 
     const visibleStadiums = useMemo(() => {
@@ -297,7 +397,31 @@ function AdminDashboard() {
         return showAllRestaurants ? filteredRestaurants : filteredRestaurants.slice(0, 4);
     }, [filteredRestaurants, showAllRestaurants]);
 
+    const visibleUsers = useMemo(() => {
+        return showAllUsers ? filteredUsers : filteredUsers.slice(0, 8);
+    }, [filteredUsers, showAllUsers]);
+
+    const [transports, setTransports] = useState([]);
+    const [showTransportForm, setShowTransportForm] = useState(false);
+    const [editingTransport, setEditingTransport] = useState(null);
+    const [transportForm, setTransportForm] = useState({ routeId: '', type: 'Bus', destination: '', frequency: '', status: 'SCHEDULED' });
+
+    const loadTransports = async () => {
+        try {
+            const res = await getTransports();
+            setTransports(Array.isArray(res) ? res : (res?.data || []));
+        } catch (e) {
+            // ignore
+        }
+    };
+
+    useEffect(() => {
+        loadTransports();
+    }, []);
+
     const logisticsRows = useMemo(() => {
+        if (transports && transports.length) return transports;
+
         return filteredMatches.slice(0, 5).map((match, index) => ({
             routeId: `TR-${String(4000 + index).slice(-4)}`,
             type: index % 3 === 0 ? 'Bus' : index % 3 === 1 ? 'Shuttle' : 'Train',
@@ -306,11 +430,11 @@ function AdminDashboard() {
             status: index % 4 === 0 ? 'LIVE' : index % 4 === 1 ? 'DELAYED' : index % 4 === 2 ? 'LIVE' : 'SCHEDULED',
             note: `${match.teamA} vs ${match.teamB}`,
         }));
-    }, [filteredMatches]);
+    }, [filteredMatches, transports]);
 
     const openEditor = (tab = 'stadium') => {
         setEditorTab(tab);
-        setActiveSection('settings');
+        setShowEditorPanel(true);
     };
 
     const handleStadiumImageUpload = async (event) => {
@@ -354,7 +478,7 @@ function AdminDashboard() {
                 await createStadium(payload);
             }
 
-            await loadData();
+            await loadData({ loadSupplementary: false });
             setStadiumForm(emptyStadiumForm());
             setEditingStadiumId(null);
         } catch (submitError) {
@@ -373,7 +497,7 @@ function AdminDashboard() {
 
         try {
             await deleteStadium(id);
-            await loadData();
+            await loadData({ loadSupplementary: false });
         } catch (deleteError) {
             setError(deleteError.message || 'Could not delete stadium');
         } finally {
@@ -416,7 +540,7 @@ function AdminDashboard() {
                 await createMatch(payload);
             }
 
-            await loadData();
+            await loadData({ loadSupplementary: false });
             setMatchForm(emptyMatchForm());
             setEditingMatchId(null);
         } catch (submitError) {
@@ -435,7 +559,7 @@ function AdminDashboard() {
 
         try {
             await deleteMatch(id);
-            await loadData();
+            await loadData({ loadSupplementary: true });
         } catch (deleteError) {
             setError(deleteError.message || 'Could not delete match');
         } finally {
@@ -463,25 +587,31 @@ function AdminDashboard() {
         setSaving(true);
 
         try {
-            const payload = {
-                name: hotelForm.name,
-                city: hotelForm.cityId,
-                stadium: hotelForm.stadiumId || undefined,
-                country: hotelForm.country || cityById.get(hotelForm.cityId)?.country || '',
-                description: hotelForm.description,
-                image: hotelForm.image,
-                price: hotelForm.price ? Number(hotelForm.price) : undefined,
-                rating: hotelForm.rating ? Number(hotelForm.rating) : undefined,
-                distance: hotelForm.distance,
-                deal: hotelForm.deal,
-                amenities: hotelForm.amenities
-                    ? hotelForm.amenities.split(',').map((item) => item.trim()).filter(Boolean)
-                    : [],
-            };
+            const payload = {};
+            if (hotelForm.name) payload.name = hotelForm.name;
+            if (hotelForm.cityId) payload.city = hotelForm.cityId;
+            if (hotelForm.stadiumId) payload.stadium = hotelForm.stadiumId;
+            if (hotelForm.country) payload.country = hotelForm.country;
+            if (hotelForm.description) payload.description = hotelForm.description;
+            if (hotelForm.image) payload.image = hotelForm.image;
+            if (hotelForm.price) payload.price = Number(hotelForm.price);
+            if (hotelForm.rating) payload.rating = Number(hotelForm.rating);
+            if (hotelForm.distance) payload.distance = hotelForm.distance;
+            if (hotelForm.deal) payload.deal = hotelForm.deal;
+            if (hotelForm.amenities) payload.amenities = hotelForm.amenities.split(',').map((item) => item.trim()).filter(Boolean);
 
-            await createHotel(payload);
-            await loadData();
+            if (editingHotelId) {
+                const targetId = editingHotelId;
+                console.debug('Updating hotel id (stadium-style):', typeof targetId, JSON.stringify(targetId));
+                console.debug('Hotel payload:', payload);
+                await updateHotel(targetId, payload);
+            } else {
+                console.debug('Creating hotel payload:', payload);
+                await createHotel(payload);
+            }
+            await loadData({ loadSupplementary: true });
             setHotelForm(emptyHotelForm());
+            setEditingHotelId(null);
         } catch (submitError) {
             setError(submitError.message || 'Could not save hotel');
         } finally {
@@ -489,31 +619,166 @@ function AdminDashboard() {
         }
     };
 
+    const removeHotel = async (id) => {
+        if (!window.confirm('Delete this hotel?')) {
+            return;
+        }
+
+        setSaving(true);
+
+        try {
+            console.debug('Deleting hotel id (stadium-style):', typeof id, JSON.stringify(id));
+            await deleteHotel(id);
+            await loadData({ loadSupplementary: true });
+        } catch (deleteError) {
+            setError(deleteError.message || 'Could not delete hotel');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const editHotel = (hotel) => {
+        setEditingHotelId(hotel.id || hotel._id);
+        setHotelForm({
+            name: hotel.name || '',
+            cityId: hotel.cityId || hotel.city || '',
+            stadiumId: hotel.stadiumId || hotel.stadium || '',
+            country: hotel.country || '',
+            description: hotel.description || '',
+            image: hotel.image || '',
+            price: hotel.price || '',
+            rating: hotel.rating || '',
+            distance: hotel.distance || '',
+            deal: hotel.deal || '',
+            amenities: Array.isArray(hotel.amenities) ? hotel.amenities.join(', ') : '',
+        });
+        openEditor('hotel');
+    };
+
     const submitRestaurant = async (e) => {
         e.preventDefault();
         setSaving(true);
 
         try {
-            const payload = {
-                name: restaurantForm.name,
-                city: restaurantForm.cityId,
-                stadium: restaurantForm.stadiumId || undefined,
-                country: restaurantForm.country || cityById.get(restaurantForm.cityId)?.country || '',
-                cuisine: restaurantForm.cuisine,
-                description: restaurantForm.description,
-                image: restaurantForm.image,
-                rating: restaurantForm.rating ? Number(restaurantForm.rating) : undefined,
-                distance: restaurantForm.distance,
-                tags: restaurantForm.tags
-                    ? restaurantForm.tags.split(',').map((item) => item.trim()).filter(Boolean)
-                    : [],
-            };
+            const payload = {};
+            if (restaurantForm.name) payload.name = restaurantForm.name;
+            if (restaurantForm.cityId) payload.city = restaurantForm.cityId;
+            if (restaurantForm.stadiumId) payload.stadium = restaurantForm.stadiumId;
+            if (restaurantForm.country) payload.country = restaurantForm.country;
+            if (restaurantForm.cuisine) payload.cuisine = restaurantForm.cuisine;
+            if (restaurantForm.description) payload.description = restaurantForm.description;
+            if (restaurantForm.image) payload.image = restaurantForm.image;
+            if (restaurantForm.rating) payload.rating = Number(restaurantForm.rating);
+            if (restaurantForm.distance) payload.distance = restaurantForm.distance;
+            if (restaurantForm.tags) payload.tags = restaurantForm.tags.split(',').map((item) => item.trim()).filter(Boolean);
 
-            await createRestaurant(payload);
-            await loadData();
+            if (editingRestaurantId) {
+                const targetId = editingRestaurantId;
+                console.debug('Updating restaurant id (stadium-style):', typeof targetId, JSON.stringify(targetId));
+                console.debug('Restaurant payload:', payload);
+                await updateRestaurant(targetId, payload);
+            } else {
+                console.debug('Creating restaurant payload:', payload);
+                await createRestaurant(payload);
+            }
+            await loadData({ loadSupplementary: true });
             setRestaurantForm(emptyRestaurantForm());
+            setEditingRestaurantId(null);
         } catch (submitError) {
             setError(submitError.message || 'Could not save restaurant');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const removeRestaurant = async (id) => {
+        if (!window.confirm('Delete this restaurant?')) {
+            return;
+        }
+
+        setSaving(true);
+
+        try {
+            console.debug('Deleting restaurant id (stadium-style):', typeof id, JSON.stringify(id));
+            await deleteRestaurant(id);
+            await loadData({ loadSupplementary: true });
+        } catch (deleteError) {
+            setError(deleteError.message || 'Could not delete restaurant');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const editRestaurant = (restaurant) => {
+        setEditingRestaurantId(restaurant.id || restaurant._id);
+        setRestaurantForm({
+            name: restaurant.name || '',
+            cityId: restaurant.cityId || restaurant.city || '',
+            stadiumId: restaurant.stadiumId || restaurant.stadium || '',
+            country: restaurant.country || '',
+            cuisine: restaurant.cuisine || '',
+            description: restaurant.description || '',
+            image: restaurant.image || '',
+            rating: restaurant.rating || '',
+            distance: restaurant.distance || '',
+            tags: Array.isArray(restaurant.tags) ? restaurant.tags.join(', ') : '',
+        });
+        openEditor('restaurant');
+    };
+
+    const openUserEditor = (user) => {
+        setEditingUserId(user.id || user._id);
+        setUserForm({
+            fullName: user.fullName || '',
+            email: user.email || '',
+        });
+        setActiveSection('users');
+    };
+
+    const resetUserEditor = () => {
+        setEditingUserId(null);
+        setUserForm({ fullName: '', email: '' });
+    };
+
+    const submitUser = async (e) => {
+        e.preventDefault();
+
+        if (!editingUserId) {
+            return;
+        }
+
+        setSaving(true);
+
+        try {
+            await updateUser(editingUserId, {
+                fullName: userForm.fullName,
+                email: userForm.email,
+            });
+            await loadData({ loadSupplementary: true });
+            resetUserEditor();
+        } catch (submitError) {
+            setError(submitError.message || 'Could not save user');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const removeUserRecord = async (id) => {
+        if (!window.confirm('Delete this user account?')) {
+            return;
+        }
+
+        setSaving(true);
+
+        try {
+            await deleteUser(id);
+            await loadData({ loadSupplementary: true });
+
+            if (editingUserId === id) {
+                resetUserEditor();
+            }
+        } catch (deleteError) {
+            setError(deleteError.message || 'Could not delete user');
         } finally {
             setSaving(false);
         }
@@ -561,7 +826,7 @@ function AdminDashboard() {
 
         try {
             await updateEmergency(emergencyForm);
-            await loadData();
+            await loadData({ loadSupplementary: true });
         } catch (saveError) {
             setError(saveError.message || 'Could not save emergency contacts');
         } finally {
@@ -612,6 +877,10 @@ function AdminDashboard() {
                                 <RiBusLine className="admin-nav-icon" aria-hidden="true" />
                                 <span className="admin-nav-label">Transport & Emergency</span>
                             </button>
+                            <button className={`admin-nav-item ${activeSection === 'users' ? 'active' : ''}`} onClick={() => onSectionChange('users')}>
+                                <RiUser3Line className="admin-nav-icon" aria-hidden="true" />
+                                <span className="admin-nav-label">Users</span>
+                            </button>
                             <button className={`admin-nav-item ${activeSection === 'settings' ? 'active' : ''}`} onClick={() => onSectionChange('settings')}>
                                 <RiSettings3Line className="admin-nav-icon" aria-hidden="true" />
                                 <span className="admin-nav-label">Settings</span>
@@ -650,11 +919,9 @@ function AdminDashboard() {
                     <main className="admin-content">
                         <section className="admin-hero">
                             <div>
-                                <div className="admin-hero-kicker">LIVE SYNC</div>
                                 <h1>{title.title}</h1>
-                                <p>{title.subtitle}</p>
+                                {title.subtitle ? <p>{title.subtitle}</p> : null}
                             </div>
-                            <div className="admin-hero-badge">MongoDB connected</div>
                         </section>
 
                         {error ? (
@@ -666,10 +933,9 @@ function AdminDashboard() {
 
                         <section className="admin-stats-grid">
                             {stats.map((stat) => (
-                                <article key={stat.label} className="admin-stat-card">
+                                <article key={stat.label} className="admin-stat-card admin-stat-card-compact">
                                     <span>{stat.label}</span>
                                     <strong>{stat.value}</strong>
-                                    <small>{stat.hint}</small>
                                 </article>
                             ))}
                         </section>
@@ -680,7 +946,6 @@ function AdminDashboard() {
                                     <div className="admin-panel-header">
                                         <div>
                                             <h2>Stadiums</h2>
-                                            <p>Operational records for the host venues.</p>
                                         </div>
                                         <button className="admin-secondary-btn" type="button" onClick={() => openEditor('stadium')}>
                                             + New Stadium
@@ -709,8 +974,6 @@ function AdminDashboard() {
                                                         <span>Capacity {stadium.capacity ? Number(stadium.capacity).toLocaleString() : 'N/A'}</span>
                                                         <span>{stadium.matches || 0} matches</span>
                                                     </div>
-
-                                                    <p className="admin-card-description">{stadium.description || 'Venue record synced from MongoDB.'}</p>
                                                 </div>
                                             </article>
                                         ))}
@@ -731,7 +994,6 @@ function AdminDashboard() {
                                     <div className="admin-panel-header">
                                         <div>
                                             <h2>Match Schedule</h2>
-                                            <p>Update fixtures and venue assignments.</p>
                                         </div>
                                         <button className="admin-primary-btn" type="button" onClick={() => openEditor('match')}>
                                             + Schedule Match
@@ -739,12 +1001,7 @@ function AdminDashboard() {
                                     </div>
 
                                     <div className="admin-table">
-                                        <div className="admin-table-row admin-table-head">
-                                            <span>Date & Time</span>
-                                            <span>Matchup</span>
-                                            <span>Venue</span>
-                                            <span>Actions</span>
-                                        </div>
+
 
                                         {visibleMatches.map((match) => (
                                             <div key={match.id || match._id} className="admin-table-row">
@@ -787,8 +1044,10 @@ function AdminDashboard() {
                                     <div className="admin-panel-header">
                                         <div>
                                             <h2>Hotels</h2>
-                                            <p>{filteredHotels.length} records synced from MongoDB.</p>
                                         </div>
+                                        <button className="admin-secondary-btn" type="button" onClick={() => openEditor('hotel')}>
+                                            + New Hotel
+                                        </button>
                                     </div>
 
                                     <div className="admin-hospitality-list">
@@ -803,7 +1062,10 @@ function AdminDashboard() {
                                                             <h3>{hotel.name}</h3>
                                                             <p>{hotel.city || 'City TBD'}, {hotel.country || 'Country TBD'}</p>
                                                         </div>
-                                                        <div className="admin-hospitality-rating">★ {hotel.rating ?? 'N/A'}</div>
+                                                        <div className="admin-card-actions">
+                                                            <button type="button" onClick={() => editHotel(hotel)}><RiEdit2Line /></button>
+                                                            <button type="button" onClick={() => removeHotel(hotel.id || hotel._id)}><RiDeleteBin6Line /></button>
+                                                        </div>
                                                     </div>
 
                                                     <div className="admin-hospitality-meta">
@@ -820,8 +1082,6 @@ function AdminDashboard() {
                                                             ))}
                                                         </div>
                                                     ) : null}
-
-                                                    <p className="admin-card-description">{hotel.description || 'No description available.'}</p>
                                                 </div>
                                             </article>
                                         ))}
@@ -842,8 +1102,10 @@ function AdminDashboard() {
                                     <div className="admin-panel-header">
                                         <div>
                                             <h2>Restaurants</h2>
-                                            <p>{filteredRestaurants.length} dining options around stadiums.</p>
                                         </div>
+                                        <button className="admin-secondary-btn" type="button" onClick={() => openEditor('restaurant')}>
+                                            + New Restaurant
+                                        </button>
                                     </div>
 
                                     <div className="admin-hospitality-list">
@@ -858,7 +1120,10 @@ function AdminDashboard() {
                                                             <h3>{restaurant.name}</h3>
                                                             <p>{restaurant.city || 'City TBD'}, {restaurant.country || 'Country TBD'}</p>
                                                         </div>
-                                                        <div className="admin-hospitality-rating">★ {restaurant.rating ?? 'N/A'}</div>
+                                                        <div className="admin-card-actions">
+                                                            <button type="button" onClick={() => editRestaurant(restaurant)}><RiEdit2Line /></button>
+                                                            <button type="button" onClick={() => removeRestaurant(restaurant.id || restaurant._id)}><RiDeleteBin6Line /></button>
+                                                        </div>
                                                     </div>
 
                                                     <div className="admin-hospitality-meta">
@@ -874,8 +1139,6 @@ function AdminDashboard() {
                                                             ))}
                                                         </div>
                                                     ) : null}
-
-                                                    <p className="admin-card-description">{restaurant.description || 'No description available.'}</p>
                                                 </div>
                                             </article>
                                         ))}
@@ -900,13 +1163,63 @@ function AdminDashboard() {
                                     <div className="admin-panel-header">
                                         <div>
                                             <h2>Transport Logistics</h2>
-                                            <p>Route cards generated from the live match schedule.</p>
                                         </div>
                                         <div className="admin-inline-actions">
-                                            <button className="admin-secondary-btn" type="button">Filter</button>
-                                            <button className="admin-secondary-btn" type="button">Export</button>
+                                            <button
+                                                className="admin-primary-btn"
+                                                type="button"
+                                                onClick={() => {
+                                                    setEditingTransport(null);
+                                                    setTransportForm({ routeId: '', type: 'Bus', destination: '', frequency: '', status: 'SCHEDULED' });
+                                                    setShowTransportForm(true);
+                                                }}
+                                            >
+                                                Add Transport
+                                            </button>
                                         </div>
                                     </div>
+
+                                    {showTransportForm && (
+                                        <form
+                                            className="admin-user-editor-panel admin-transport-form"
+                                            onSubmit={async (e) => {
+                                                e.preventDefault();
+                                                try {
+                                                    if (editingTransport) {
+                                                        await updateTransport(editingTransport.id, transportForm);
+                                                    } else {
+                                                        await createTransport(transportForm);
+                                                    }
+                                                } catch (err) {
+                                                    // ignore for now
+                                                }
+                                                setShowTransportForm(false);
+                                                loadTransports();
+                                            }}
+                                        >
+                                            <div className="admin-user-editor-fields">
+                                                <input className="admin-input" placeholder="Route ID" value={transportForm.routeId} onChange={(e) => setTransportForm((s) => ({ ...s, routeId: e.target.value }))} required />
+                                                <select className="admin-input" value={transportForm.type} onChange={(e) => setTransportForm((s) => ({ ...s, type: e.target.value }))}>
+                                                    <option value="Bus">Bus</option>
+                                                    <option value="Train">Train</option>
+                                                    <option value="Shuttle">Shuttle</option>
+                                                    <option value="Taxi">Taxi</option>
+                                                </select>
+                                                <input className="admin-input" placeholder="Destination" value={transportForm.destination} onChange={(e) => setTransportForm((s) => ({ ...s, destination: e.target.value }))} required />
+                                                <input className="admin-input" placeholder="Frequency (ex: Every 10 mins)" value={transportForm.frequency} onChange={(e) => setTransportForm((s) => ({ ...s, frequency: e.target.value }))} />
+                                                <select className="admin-input" value={transportForm.status} onChange={(e) => setTransportForm((s) => ({ ...s, status: e.target.value }))}>
+                                                    <option value="SCHEDULED">SCHEDULED</option>
+                                                    <option value="LIVE">LIVE</option>
+                                                    <option value="DELAYED">DELAYED</option>
+                                                    <option value="SUSPENDED">SUSPENDED</option>
+                                                </select>
+                                            </div>
+                                            <div className="admin-user-editor-actions">
+                                                <button type="submit" className="admin-primary-btn">Save</button>
+                                                <button type="button" className="admin-secondary-btn" onClick={() => setShowTransportForm(false)}>Cancel</button>
+                                            </div>
+                                        </form>
+                                    )}
 
                                     <div className="admin-table admin-transport-table">
                                         <div className="admin-table-row admin-table-head">
@@ -915,6 +1228,7 @@ function AdminDashboard() {
                                             <span>Destination</span>
                                             <span>Frequency</span>
                                             <span>Status</span>
+                                            <span>Actions</span>
                                         </div>
 
                                         {logisticsRows.map((row) => (
@@ -924,8 +1238,40 @@ function AdminDashboard() {
                                                 <span>{row.destination}</span>
                                                 <span>{row.frequency}</span>
                                                 <span>
-                                                    <span className={`admin-status ${row.status.toLowerCase()}`}>{row.status}</span>
+                                                    <span className={`admin-status ${(row.status || '').toLowerCase()}`}>{row.status}</span>
                                                     <small>{row.note}</small>
+                                                </span>
+                                                <span className="admin-row-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="admin-icon-btn"
+                                                        onClick={() => {
+                                                            setEditingTransport(row);
+                                                            setTransportForm({ routeId: row.routeId, type: row.type, destination: row.destination, frequency: row.frequency, status: row.status });
+                                                            setShowTransportForm(true);
+                                                        }}
+                                                    >
+                                                        <RiEdit2Line />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="admin-icon-btn"
+                                                        disabled={!row.id}
+                                                        title={row.id ? 'Delete transport' : 'No transport id available'}
+                                                        onClick={async () => {
+                                                            if (!row.id) return;
+                                                            const confirmed = window.confirm(`Delete transport ${row.routeId}?`);
+                                                            if (!confirmed) return;
+                                                            try {
+                                                                await deleteTransport(row.id);
+                                                                loadTransports();
+                                                            } catch (e) {
+                                                                // ignore
+                                                            }
+                                                        }}
+                                                    >
+                                                        <RiDeleteBin6Line />
+                                                    </button>
                                                 </span>
                                             </div>
                                         ))}
@@ -947,7 +1293,6 @@ function AdminDashboard() {
                                     <div className="admin-panel-header">
                                         <div>
                                             <h2>Emergency Contacts</h2>
-                                            <p>Keep the response numbers current for each zone.</p>
                                         </div>
                                         <button className="admin-secondary-btn" type="button" onClick={() => openEditor('emergency')}>
                                             Edit Contacts
@@ -979,14 +1324,109 @@ function AdminDashboard() {
                             </section>
                         )}
 
-                        {activeSection === 'settings' && (
+                        {activeSection === 'users' && (
+                            <section className="admin-grid admin-grid-users">
+                                <article className="admin-panel admin-panel-large">
+                                    <div className="admin-panel-header">
+                                        <div>
+                                            <h2>Users</h2>
+                                            <p>{filteredUsers.length} accounts available in MongoDB.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="admin-table admin-user-table">
+                                        <div className="admin-table-row admin-table-head">
+                                            <span>Name</span>
+                                            <span>Email</span>
+                                            <span>Role</span>
+                                            <span>Actions</span>
+                                        </div>
+
+                                        {visibleUsers.map((user) => (
+                                            <div key={user.id || user._id} className="admin-table-row admin-user-row">
+                                                <span>
+                                                    <strong>{user.fullName || 'Unnamed user'}</strong>
+                                                </span>
+                                                <span>
+                                                    <strong>{user.email || 'No email'}</strong>
+                                                    <small>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'No date'}</small>
+                                                </span>
+                                                <span>
+                                                    <span className={`admin-status ${user.role === 'admin' ? 'live' : 'scheduled'}`}>{user.role || 'user'}</span>
+                                                </span>
+                                                <span className="admin-table-actions">
+                                                    <button type="button" onClick={() => openUserEditor(user)} aria-label={`Edit ${user.fullName || user.email}`}>
+                                                        <RiEdit2Line />
+                                                    </button>
+                                                    <button type="button" onClick={() => removeUserRecord(user.id || user._id)} aria-label={`Delete ${user.fullName || user.email}`}>
+                                                        <RiDeleteBin6Line />
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {filteredUsers.length > 8 ? (
+                                        <button className="admin-secondary-btn" type="button" onClick={() => setShowAllUsers((current) => !current)}>
+                                            {showAllUsers ? 'Show less' : 'Show all'}
+                                        </button>
+                                    ) : null}
+                                </article>
+
+                                <article className="admin-panel admin-user-editor-panel">
+                                    <div className="admin-panel-header">
+                                        <div>
+                                            <h2>Edit User</h2>
+                                            <p>Update the user name or email address.</p>
+                                        </div>
+                                    </div>
+
+                                    {editingUserId ? (
+                                        <form className="admin-form-grid" onSubmit={submitUser}>
+                                            <input
+                                                className="admin-input"
+                                                placeholder="Full name"
+                                                value={userForm.fullName}
+                                                onChange={(event) => setUserForm((current) => ({ ...current, fullName: event.target.value }))}
+                                            />
+                                            <input
+                                                className="admin-input"
+                                                type="email"
+                                                placeholder="Email"
+                                                value={userForm.email}
+                                                onChange={(event) => setUserForm((current) => ({ ...current, email: event.target.value }))}
+                                            />
+
+                                            <button className="admin-primary-btn admin-submit-btn" type="submit" disabled={saving}>
+                                                {saving ? 'Saving...' : 'Update User'}
+                                            </button>
+                                            <button className="admin-secondary-btn" type="button" onClick={resetUserEditor}>
+                                                Cancel
+                                            </button>
+                                        </form>
+                                    ) : (
+                                        <div className="admin-empty-state">
+                                            Select a user from the list to edit their name or email.
+                                        </div>
+                                    )}
+                                </article>
+                            </section>
+                        )}
+
+                        {showEditorPanel && (
                             <section className="admin-panel admin-editor-panel">
-                                <div className="admin-editor-tabs">
-                                    <button className={editorTab === 'stadium' ? 'active' : ''} type="button" onClick={() => setEditorTab('stadium')}>Stadium</button>
-                                    <button className={editorTab === 'match' ? 'active' : ''} type="button" onClick={() => setEditorTab('match')}>Match</button>
-                                    <button className={editorTab === 'hotel' ? 'active' : ''} type="button" onClick={() => setEditorTab('hotel')}>Hotel</button>
-                                    <button className={editorTab === 'restaurant' ? 'active' : ''} type="button" onClick={() => setEditorTab('restaurant')}>Restaurant</button>
-                                    <button className={editorTab === 'emergency' ? 'active' : ''} type="button" onClick={() => setEditorTab('emergency')}>Emergency</button>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div className="admin-editor-tabs">
+                                        <button className={editorTab === 'stadium' ? 'active' : ''} type="button" onClick={() => setEditorTab('stadium')}>Stadium</button>
+                                        <button className={editorTab === 'match' ? 'active' : ''} type="button" onClick={() => setEditorTab('match')}>Match</button>
+                                        <button className={editorTab === 'transport' ? 'active' : ''} type="button" onClick={() => setEditorTab('transport')}>Transport</button>
+                                        <button className={editorTab === 'hotel' ? 'active' : ''} type="button" onClick={() => setEditorTab('hotel')}>Hotel</button>
+                                        <button className={editorTab === 'restaurant' ? 'active' : ''} type="button" onClick={() => setEditorTab('restaurant')}>Restaurant</button>
+                                        <button className={editorTab === 'emergency' ? 'active' : ''} type="button" onClick={() => setEditorTab('emergency')}>Emergency</button>
+                                    </div>
+                                    <div>
+                                        <button className="admin-secondary-btn" type="button" onClick={() => setShowEditorPanel(false)}>Close</button>
+                                    </div>
                                 </div>
 
                                 {editorTab === 'stadium' && (
@@ -1091,8 +1531,8 @@ function AdminDashboard() {
                                 {editorTab === 'hotel' && (
                                     <form className="admin-form-grid" onSubmit={submitHotel}>
                                         <div className="admin-form-header">
-                                            <h2>Create Hotel</h2>
-                                            <button className="admin-secondary-btn" type="button" onClick={() => setHotelForm(emptyHotelForm())}>Reset</button>
+                                            <h2>{editingHotelId ? 'Update Hotel' : 'Create Hotel'}</h2>
+                                            <button className="admin-secondary-btn" type="button" onClick={() => { setEditingHotelId(null); setHotelForm(emptyHotelForm()); }}>Reset</button>
                                         </div>
 
                                         <input className="admin-input" placeholder="Hotel name" value={hotelForm.name} onChange={(event) => setHotelForm((current) => ({ ...current, name: event.target.value }))} />
@@ -1143,7 +1583,59 @@ function AdminDashboard() {
                                         <textarea className="admin-textarea" placeholder="Description" value={hotelForm.description} onChange={(event) => setHotelForm((current) => ({ ...current, description: event.target.value }))} />
 
                                         <button className="admin-primary-btn admin-submit-btn" type="submit" disabled={saving}>
-                                            {saving ? 'Saving...' : 'Create Hotel'}
+                                            {saving ? 'Saving...' : (editingHotelId ? 'Update Hotel' : 'Create Hotel')}
+                                        </button>
+                                    </form>
+                                )}
+
+                                {editorTab === 'transport' && (
+                                    <form className="admin-form-grid" onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        setSaving(true);
+                                        try {
+                                            if (editingTransport && editingTransport.id) {
+                                                await updateTransport(editingTransport.id, transportForm);
+                                            } else {
+                                                await createTransport(transportForm);
+                                            }
+                                            await loadTransports();
+                                            setEditingTransport(null);
+                                            setTransportForm({ routeId: '', type: 'Bus', destination: '', frequency: '', status: 'SCHEDULED' });
+                                        } catch (err) {
+                                            setError(err.message || 'Could not save transport');
+                                        } finally {
+                                            setSaving(false);
+                                        }
+                                    }}>
+                                        <div className="admin-form-header">
+                                            <h2>{editingTransport && editingTransport.id ? 'Update Transport' : 'Create Transport'}</h2>
+                                            <button className="admin-secondary-btn" type="button" onClick={() => { setEditingTransport(null); setTransportForm({ routeId: '', type: 'Bus', destination: '', frequency: '', status: 'SCHEDULED' }); }}>Reset</button>
+                                        </div>
+
+                                        <input className="admin-input" placeholder="Route ID" value={transportForm.routeId} onChange={(event) => setTransportForm((current) => ({ ...current, routeId: event.target.value }))} />
+
+                                        <div className="admin-form-two-col">
+                                            <select className="admin-input" value={transportForm.type} onChange={(event) => setTransportForm((current) => ({ ...current, type: event.target.value }))}>
+                                                <option value="Bus">Bus</option>
+                                                <option value="Train">Train</option>
+                                                <option value="Shuttle">Shuttle</option>
+                                                <option value="Taxi">Taxi</option>
+                                            </select>
+                                            <input className="admin-input" placeholder="Destination" value={transportForm.destination} onChange={(event) => setTransportForm((current) => ({ ...current, destination: event.target.value }))} />
+                                        </div>
+
+                                        <div className="admin-form-two-col">
+                                            <input className="admin-input" placeholder="Frequency" value={transportForm.frequency} onChange={(event) => setTransportForm((current) => ({ ...current, frequency: event.target.value }))} />
+                                            <select className="admin-input" value={transportForm.status} onChange={(event) => setTransportForm((current) => ({ ...current, status: event.target.value }))}>
+                                                <option value="SCHEDULED">SCHEDULED</option>
+                                                <option value="LIVE">LIVE</option>
+                                                <option value="DELAYED">DELAYED</option>
+                                                <option value="SUSPENDED">SUSPENDED</option>
+                                            </select>
+                                        </div>
+
+                                        <button className="admin-primary-btn admin-submit-btn" type="submit" disabled={saving}>
+                                            {saving ? 'Saving...' : (editingTransport && editingTransport.id ? 'Update Transport' : 'Create Transport')}
                                         </button>
                                     </form>
                                 )}
@@ -1151,8 +1643,8 @@ function AdminDashboard() {
                                 {editorTab === 'restaurant' && (
                                     <form className="admin-form-grid" onSubmit={submitRestaurant}>
                                         <div className="admin-form-header">
-                                            <h2>Create Restaurant</h2>
-                                            <button className="admin-secondary-btn" type="button" onClick={() => setRestaurantForm(emptyRestaurantForm())}>Reset</button>
+                                            <h2>{editingRestaurantId ? 'Update Restaurant' : 'Create Restaurant'}</h2>
+                                            <button className="admin-secondary-btn" type="button" onClick={() => { setEditingRestaurantId(null); setRestaurantForm(emptyRestaurantForm()); }}>Reset</button>
                                         </div>
 
                                         <input className="admin-input" placeholder="Restaurant name" value={restaurantForm.name} onChange={(event) => setRestaurantForm((current) => ({ ...current, name: event.target.value }))} />
@@ -1199,7 +1691,7 @@ function AdminDashboard() {
                                         <textarea className="admin-textarea" placeholder="Description" value={restaurantForm.description} onChange={(event) => setRestaurantForm((current) => ({ ...current, description: event.target.value }))} />
 
                                         <button className="admin-primary-btn admin-submit-btn" type="submit" disabled={saving}>
-                                            {saving ? 'Saving...' : 'Create Restaurant'}
+                                            {saving ? 'Saving...' : (editingRestaurantId ? 'Update Restaurant' : 'Create Restaurant')}
                                         </button>
                                     </form>
                                 )}

@@ -43,6 +43,30 @@ export async function getRestaurants() {
     return unwrapData(await request('/restaurants'));
 }
 
+// Transports
+export async function getTransports(params = {}) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            query.append(key, String(value));
+        }
+    });
+    const suffix = query.toString() ? `?${query.toString()}` : '';
+    return unwrapData(await request(`/transports${suffix}`));
+}
+
+export async function createTransport(payload) {
+    return unwrapData(await request('/transports', { method: 'POST', body: JSON.stringify(payload) }));
+}
+
+export async function updateTransport(id, payload) {
+    return unwrapData(await request(`/transports/${id}`, { method: 'PUT', body: JSON.stringify(payload) }));
+}
+
+export async function deleteTransport(id) {
+    return unwrapData(await request(`/transports/${id}`, { method: 'DELETE' }));
+}
+
 export async function getMatches(params = {}) {
     const query = new URLSearchParams();
 
@@ -58,6 +82,10 @@ export async function getMatches(params = {}) {
 
 export async function getEmergency() {
     return unwrapData(await request('/emergency'));
+}
+
+export async function getUsers() {
+    return unwrapData(await request('/users'));
 }
 
 // Auth
@@ -150,6 +178,14 @@ export async function updateEmergency(payload) {
     return request('/emergency', { method: 'PUT', body: JSON.stringify(payload) });
 }
 
+export async function updateUser(id, payload) {
+    return unwrapData(await request(`/users/${id}`, { method: 'PUT', body: JSON.stringify(payload) }));
+}
+
+export async function deleteUser(id) {
+    return request(`/users/${id}`, { method: 'DELETE' });
+}
+
 export async function uploadFile(formData) {
     const token = localStorage.getItem('token');
     const headers = {};
@@ -183,5 +219,8 @@ export default {
     getRestaurants,
     getMatches,
     getEmergency,
+    getUsers,
     updateEmergency,
+    updateUser,
+    deleteUser,
 };
